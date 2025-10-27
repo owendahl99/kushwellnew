@@ -1,0 +1,39 @@
+﻿<div class="kw-card" aria-label="Comparative Analytics">
+  <div class="kw-card__head">
+    <h2 class="kw-card__title">Comparative Analytics</h2>
+  </div>
+
+  <div id="comparative-analytics">
+    {% for metric in metrics %}
+      <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+        <span>{{ metric.label }}</span>
+        <span id="change-{{ metric.name }}">0%</span>
+      </div>
+    {% endfor %}
+    <hr>
+    <div style="display:flex; justify-content:space-between; font-weight:bold;">
+      <span>Total Change</span>
+      <span id="total-change">0%</span>
+    </div>
+  </div>
+</div>
+
+<script>
+function updateScore(){
+  {% for metric in metrics %}
+  const val{{ loop.index }} = document.querySelector('[name="{{ metric.name }}"]').value;
+  const last{{ loop.index }} = {{ metric.last_value }};
+  const change{{ loop.index }} = ((val{{ loop.index }} - last{{ loop.index }}) / last{{ loop.index }})*100 || 0;
+  document.getElementById('change-{{ metric.name }}').innerText = (change{{ loop.index }}>0?'+':'') + change{{ loop.index }}.toFixed(0) + '%';
+  {% endfor %}
+  // Calculate total
+  let total = 0;
+  {% for metric in metrics %}
+  total += parseFloat(document.querySelector('[name="{{ metric.name }}"]').value || 0);
+  {% endfor %}
+  let lastTotal = {{ total_last_score }};
+  document.getElementById('total-change').innerText = ((total-lastTotal)/lastTotal*100).toFixed(0) + '%';
+}
+</script>
+
+

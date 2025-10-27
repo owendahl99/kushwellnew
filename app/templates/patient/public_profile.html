@@ -1,0 +1,97 @@
+﻿{% extends "base.html" %}
+{% block title %}{{ bundle.alias or bundle.display_name or 'Profile' }} | Kushwell{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+  <h1>{{ bundle.alias or bundle.display_name or 'Profile' }}</h1>
+  {% if bundle.alias and bundle.display_name %}
+    <p class="text-dim">Also known as <strong>{{ bundle.display_name }}</strong></p>
+  {% endif %}
+
+  {% if bundle._viewer_is_owner %}
+    <p class="text-dim">
+      You’re viewing your public page. 
+      <a href="{{ url_for('patient.security') }}">Adjust visibility in Security &amp; Sharing</a>.
+    </p>
+  {% elif bundle._viewer_is_friend %}
+    <p class="text-dim">You are friends — some friend-only sections may appear.</p>
+  {% endif %}
+</section>
+
+<div class="grid" style="gap:1rem; max-width: 1000px; margin: 0 auto;">
+
+  {% if bundle.recommendations %}
+    <section class="kw-card">
+      <h2>Recommendations</h2>
+      <ul>
+        {% for r in bundle.recommendations %}
+          <li>{{ r.title or r.name }}</li>
+        {% endfor %}
+      </ul>
+    </section>
+  {% endif %}
+
+  {% if bundle.qol_scores %}
+    <section class="kw-card">
+      <h2>Quality of Life</h2>
+      <div>
+        {% for score in bundle.qol_scores %}
+          <p>{{ score.metric }}: {{ score.value }}</p>
+        {% endfor %}
+      </div>
+    </section>
+  {% endif %}
+
+  {% if bundle.afflictions %}
+    <section class="kw-card">
+      <h2>Afflictions</h2>
+      <ul>
+        {% for a in bundle.afflictions %}
+          <li>{{ a }}</li>
+        {% endfor %}
+      </ul>
+    </section>
+  {% endif %}
+
+  {% if bundle.afflictions_over_time %}
+    <section class="kw-card">
+      <h2>Afflictions Over Time</h2>
+      <div>
+        {% for entry in bundle.afflictions_over_time %}
+          <p>{{ entry.date }}: {{ entry.name }}</p>
+        {% endfor %}
+      </div>
+    </section>
+  {% endif %}
+
+  {% if bundle.favorite_dispensary %}
+    <section class="kw-card">
+      <h2>Favorite Dispensary</h2>
+      <p>{{ bundle.favorite_dispensary }}</p>
+    </section>
+  {% endif %}
+
+  {% if bundle.favorites %}
+    <section class="kw-card">
+      <h2>Favorites</h2>
+      <ul>
+        {% for f in bundle.favorites %}
+          <li>{{ f }}</li>
+        {% endfor %}
+      </ul>
+    </section>
+  {% endif %}
+
+  {% if bundle.voting_history %}
+    <section class="kw-card">
+      <h2>Voting History</h2>
+      <div>
+        {% for vote in bundle.voting_history %}
+          <p>{{ vote.product_name }}: {{ vote.value }}</p>
+        {% endfor %}
+      </div>
+    </section>
+  {% endif %}
+
+</div>
+{% endblock %}

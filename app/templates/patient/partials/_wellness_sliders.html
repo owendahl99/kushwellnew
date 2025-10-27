@@ -1,0 +1,139 @@
+﻿{# FILE: app/templates/patient/partials/_wellness_section.html #}
+
+<div class="kw-dashboard-grid grid grid-cols-12 gap-6">
+
+  {# --- Left Column: Sliders --- #}
+  <div class="col-span-7">
+    <section class="kw-card" aria-label="Wellness Sliders">
+      <div class="kw-card__head">
+        <h3 class="kw-card__title">Daily Wellness Check-in</h3>
+        <div class="kw-meta">Use the sliders to reflect how you feel today.</div>
+      </div>
+
+      <div class="kw-card__body space-y-6">
+        {% set metrics = [
+          {"name": "pain", "label": "Pain", "inverse": true, "min_emoji": "??", "max_emoji": "??"},
+          {"name": "sleep", "label": "Sleep", "inverse": false, "min_emoji": "??", "max_emoji": "??"},
+          {"name": "mood", "label": "Mood", "inverse": false, "min_emoji": "??", "max_emoji": "??"},
+          {"name": "energy", "label": "Energy", "inverse": false, "min_emoji": "??", "max_emoji": "?"},
+          {"name": "clarity", "label": "Clarity", "inverse": false, "min_emoji": "??", "max_emoji": "??"},
+          {"name": "appetite", "label": "Appetite", "inverse": false, "min_emoji": "??", "max_emoji": "???"}
+        ] %}
+
+        {% for m in metrics %}
+          <div class="kw-slider-row">
+            <label for="slider-{{ m.name }}" class="kw-subhead block mb-2">{{ m.label }}</label>
+            <div class="kw-slider-container flex items-center gap-3">
+              <span class="kw-slider-emoji">{{ m.min_emoji }}</span>
+              <input type="range"
+                     id="slider-{{ m.name }}"
+                     data-metric="{{ m.name }}"
+                     name="{{ m.name }}"
+                     min="0" max="10" step="1"
+                     value="{{ last_levels.get(m.name, 5) }}"
+                     class="kw-slider {{ 'inverse' if m.inverse else '' }}">
+              <span class="kw-slider-emoji">{{ m.max_emoji }}</span>
+              <span id="value-{{ m.name }}" class="kw-slider-value text-lg font-bold ml-2">
+                {{ last_levels.get(m.name, 5) }}
+              </span>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </section>
+  </div>
+
+  {# --- Right Column: Comparative Analytics & QOL --- #}
+  <div class="col-span-5">
+    <section class="kw-card" aria-label="Wellness Analytics">
+      <div class="kw-card__head">
+        <h3 class="kw-card__title">Wellness Analytics</h3>
+        <div class="kw-meta">Real-time comparison and overall QOL score</div>
+      </div>
+
+      <div class="kw-card__body space-y-4">
+        <div class="flex justify-between items-center mb-4">
+          <div><strong>Overall QOL Score:</strong> <span id="qol-score">0</span>%</div>
+          <div><strong>? Change:</strong> <span id="qol-delta">0</span>%</div>
+        </div>
+
+        <table class="kw-table w-full kw-analytics">
+          <thead>
+            <tr>
+              <th>Metric</th>
+              <th>Last</th>
+              <th>Now</th>
+              <th>?</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for m in ["pain", "sleep", "mood", "energy", "clarity", "appetite"] %}
+              {% set last_val = last_levels.get(m, 5) %}
+              <tr data-metric="{{ m }}">
+                <td>{{ m|capitalize }}</td>
+                <td class="last-val">{{ last_val }}</td>
+                <td class="current-val">{{ last_val }}</td>
+                <td class="delta-val">0</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+</div>
+
+<script>
+function computeQOL() {
+  const metrics = ["pain","sleep","mood","energy","clarity","appetite"];
+  let sumLast = 0, sumCurrent = 0;
+
+  metrics.forEach(m => {
+    const row = document.querySelector(`tr[data-metric='${m}']`);
+    const last = parseFloat(row.querySelector(".last-val").textContent) || 0;
+    const current = parseFloat(row.querySelector(".current-val").textContent) || last;
+
+    // Pain is inverse
+    const valLast = m === "pain" ? 10 - last : last;
+    const valCurrent = m === "pain" ? 10 - current : current;
+
+    sumLast += valLast;
+    sumCurrent += valCurrent;
+
+    const deltaCell = row.querySelector(".delta-val");
+    deltaCell.textContent = (valCurrent - valLast).toFixed(1);
+    deltaCell.className = "delta-val " + (valCurrent - valLast > 0 ? "pos" : valCurrent - valLast < 0 ? "neg" : "neutral");
+  });
+
+  const overallLast = sumLast * 2; // 0-100 scale
+  const overallCurrent = sumCurrent * 2;
+  const deltaPct = overallCurrent - overallLast;
+
+  document.getElementById("qol-score").textContent = overallCurrent.toFixed(1);
+  document.getElementById("qol-delta").textContent = (deltaPct > 0 ? "+" : "") + deltaPct.toFixed(1);
+  document.getElementById("qol-delta").className = deltaPct > 0 ? "pos" : deltaPct < 0 ? "neg" : "neutral";
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  computeQOL();
+
+  const sliders = document.querySelectorAll(".kw-slider");
+  sliders.forEach(slider => {
+    slider.addEventListener("input", () => {
+      const metric = slider.dataset.metric;
+      const value = parseInt(slider.value);
+      document.getElementById(`value-${metric}`).textContent = value;
+
+      const row = document.querySelector(`tr[data-metric='${metric}']`);
+      if (row) {
+        row.querySelector(".current-val").textContent = value;
+      }
+
+      computeQOL();
+    });
+  });
+});
+</script>
+
+

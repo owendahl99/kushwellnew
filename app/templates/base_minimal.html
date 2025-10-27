@@ -1,0 +1,19 @@
+{# FILE: app/templates/base_minimal.html #}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Kushwell{% endblock %}</title>
+
+    {# ---------- CSRF Token for JS ---------- #}
+    {% if csrf_token %}
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+    {% endif %}
+
+    {# Optional blocks for additional head elements if needed #}
+    {% block head %}{% endblock %}
+</head>
+<body>
+    {% block body %}{% endblock %}
+</body>
+</html>

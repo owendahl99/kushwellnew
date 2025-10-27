@@ -1,0 +1,35 @@
+# FILE: app/constants/strains.py
+
+STRAINS = [
+    {"rank": 1, "name": "Gelato", "thc_percent": "20-25%", "type": "Hybrid", "dominant_terpenes": ["Limonene", "Caryophyllene", "Myrcene"], "description": "Balanced effects; relaxing yet euphoric; dessert-like aroma."},
+    {"rank": 2, "name": "Blue Dream", "thc_percent": "18-24%", "type": "Hybrid", "dominant_terpenes": ["Myrcene", "Pinene", "Caryophyllene"], "description": "Uplifting sativa-dominant hybrid; daytime use for mood and creativity."},
+    {"rank": 3, "name": "Sour Diesel", "thc_percent": "20-25%", "type": "Sativa", "dominant_terpenes": ["Limonene", "Caryophyllene", "Myrcene"], "description": "Energizing and fast-acting; pungent diesel aroma."},
+    {"rank": 4, "name": "OG Kush", "thc_percent": "20-25%", "type": "Hybrid", "dominant_terpenes": ["Myrcene", "Limonene", "Caryophyllene"], "description": "Complex aroma with notes of fuel, skunk, and spice; relaxing and sedative."},
+    {"rank": 5, "name": "Wedding Cake", "thc_percent": "22-25%", "type": "Hybrid", "dominant_terpenes": ["Limonene", "Caryophyllene", "Myrcene"], "description": "Sweet and earthy flavor; uplifting and relaxing effects."},
+    {"rank": 6, "name": "Gorilla Glue #4", "thc_percent": "25-30%", "type": "Hybrid", "dominant_terpenes": ["Caryophyllene", "Limonene", "Myrcene"], "description": "Heavy euphoria and relaxation; earthy and piney aroma."},
+    {"rank": 7, "name": "Green Crack", "thc_percent": "15-25%", "type": "Sativa", "dominant_terpenes": ["Myrcene", "Caryophyllene", "Pinene"], "description": "Energetic and uplifting; citrus and earthy aroma."},
+    {"rank": 8, "name": "Girl Scout Cookies", "thc_percent": "18-28%", "type": "Hybrid", "dominant_terpenes": ["Caryophyllene", "Limonene", "Myrcene"], "description": "Sweet and earthy flavor; euphoric and relaxing effects."},
+    {"rank": 9, "name": "White Widow", "thc_percent": "18-25%", "type": "Hybrid", "dominant_terpenes": ["Caryophyllene", "Myrcene", "Limonene"], "description": "Balanced effects; earthy and woody aroma."},
+    {"rank": 10, "name": "Pineapple Express", "thc_percent": "19-26%", "type": "Hybrid", "dominant_terpenes": ["Limonene", "Caryophyllene", "Myrcene"], "description": "Tropical fruit flavor; energetic and creative effects."},
+    {"rank": 11, "name": "Jack Herer", "thc_percent": "18-24%", "type": "Sativa", "dominant_terpenes": ["Terpinolene", "Pinene", "Caryophyllene"], "description": "Uplifting and clear-headed; pine and citrus aroma."},
+    {"rank": 12, "name": "Northern Lights", "thc_percent": "16-21%", "type": "Indica", "dominant_terpenes": ["Myrcene", "Caryophyllene", "Pinene"], "description": "Relaxing and sedative; sweet and spicy aroma."},
+    {"rank": 13, "name": "Chemdawg", "thc_percent": "20-22%", "type": "Hybrid", "dominant_terpenes": ["Caryophyllene", "Limonene", "Myrcene"], "description": "Pungent diesel aroma; cerebral and relaxing effects."},
+    {"rank": 14, "name": "Granddaddy Purple", "thc_percent": "17-23%", "type": "Indica", "dominant_terpenes": ["Myrcene", "Caryophyllene", "Pinene"], "description": "Sweet and fruity flavor; relaxing and sedative effects."},
+    {"rank": 15, "name": "Strawberry Cough", "thc_percent": "18-22%", "type": "Sativa", "dominant_terpenes": ["Pinene", "Myrcene", "Caryophyllene"], "description": "Sweet strawberry flavor; uplifting and euphoric effects."},
+    {"rank": 16, "name": "AK-47", "thc_percent": "13-20%", "type": "Hybrid", "dominant_terpenes": ["Myrcene", "Caryophyllene", "Limonene"], "description": "Earthy and floral aroma; relaxing and uplifting effects."},
+    {"rank": 17, "name": "Bubba Kush", "thc_percent": "15-22%", "type": "Indica", "dominant_terpenes": ["Myrcene", "Caryophyllene", "Limonene"], "description": "Sweet and earthy flavor; relaxing and sedative effects."},
+    {"rank": 18, "name": "Super Lemon Haze", "thc_percent": "15-22%", "type": "Sativa", "dominant_terpenes": ["Limonene", "Terpinolene", "Pinene"], "description": "Zesty lemon flavor; energetic and uplifting effects."},
+    {"rank": 19, "name": "Trainwreck", "thc_percent": "18-25%", "type": "Hybrid", "dominant_terpenes": ["Caryophyllene", "Limonene", "Myrcene"], "description": "Piney and earthy aroma; euphoric and creative effects."},
+    {"rank": 20, "name": "Banana Kush", "thc_percent": "18-25%", "type": "Hybrid", "dominant_terpenes": ["Myrcene", "Caryophyllene", "Limonene"], "description": "Sweet banana flavor; relaxing and euphoric effects."},
+    {"rank": 21, "name": "Durban Poison", "thc_percent": "15-25%", "type": "Sativa", "dominant_terpenes": ["Terpinolene", "Pinene", "Limonene"], "description": "Sweet and earthy flavor; energetic and uplifting effects."},
+    {"rank": 22, "name": "Critical Mass", "thc_percent": "18-22%", "type": "Indica", "dominant_terpenes": ["Myrcene", "Caryophyllene", "Limonene"], "description": "Sweet and earthy flavor; relaxing and sedative effects."},
+    {"rank": 23, "name": "Maui Wowie", "thc_percent": "15-20%", "type": "Sativa", "dominant_terpenes": ["Pinene", "Myrcene", "Limonene"], "description": "Tropical fruit flavor; uplifting and euphoric effects."},
+    {"rank": 24, "name": "Purple Haze", "thc_percent": "15-20%", "type": "Sativa", "dominant_terpenes": ["Terpinolene", "Pinene", "Myrcene"], "description": "Earthy and sweet flavor; energetic and creative effects."},
+    {"rank": 25, "name": "Blueberry", "thc_percent": "16-24%", "type": "Indica", "dominant_terpenes": ["Myrcene", "Caryophyllene", "Limonene"], "description": "Sweet blueberry flavor; relaxing and sedative effects."},
+    {"rank": 26, "name": "Blue Cheese", "thc_percent": "15-20%", "type": "Indica", "dominant_terpenes": ["Myrcene", "Caryophyllene", "Limonene"], "description": "Earthy and cheesy flavor; relaxing and sedative effects."},
+    {"rank": 27, "name": "Skywalker OG", "thc_percent": "20-25%", "type": "Indica", "dominant_terpenes": ["Myrcene", "Caryophyllene", "Limonene"], "description": "Earthy and spicy flavor; relaxing and sedative effects."},
+    {"rank": 28, "name": "Thin Mint GSC", "thc_percent": "18-24%", "type": "Hybrid", "dominant_terpenes": ["Caryophyllene", "Limonene", "Myrcene"], "description": "Minty and sweet flavor; euphoric and relaxing effects."},
+    {"rank": 29, "name": "Amnesia Haze", "thc_percent": "20-25%", "type": "Sativa", "dominant_terpenes": ["Terpinolene", "Pinene", "Myrcene"], "description": "Earthy and citrus flavor; uplifting and creative effects."},
+    {"rank": 30, "name": "Candyland", "thc_percent": "15-22%", "type": "Hybrid", "dominant_terpenes": ["Limonene", "Caryophyllene", "Myrcene"], "description": "Sweet and fruity flavor; uplifting and euphoric effects."}
+]
+        

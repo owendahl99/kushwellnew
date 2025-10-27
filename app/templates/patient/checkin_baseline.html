@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+  <title>Patient Initial Check-In</title>
+  <style>
+
+    @media (max-width: 900px) {
+  .row {
+    grid-template-columns: 1fr;
+  }
+  .venn-container {
+    margin: 0 auto 40px auto;
+  }
+}
+
+/* Logo */
+#kushwellLogo {
+  position: absolute;
+  top: 5px;
+  right: 25px;
+  width: 195px;
+  height: auto;
+  z-index: 10000; /* one level above the banner */
+  border: 3px solid gold;
+  border-radius: 12px;
+  box-shadow: 3px 3px 10px rgba(0,0,0,0.5);
+}
+
+/* Industrial Banner — sleek, narrower, below logo width */
+#industrialBanner {
+  position: relative;
+  top: -8px;               /* drop slightly below top so it doesn't touch */
+  left: -55px;              /* a bit of margin from the edge */
+  width: calc(100% - 180px); /* narrower than logo space */
+  height:60px;            /* thinner strip height */
+  
+  background: linear-gradient(145deg, #0c4619ff, #adb77fff);
+  border: 3px solid #666565ff;
+  border-radius: 12px;
+  box-shadow: 4px 4px 10px rgba(0,0,0,0.5);
+  color: #dad777ff;
+  font-weight: 600;
+  font-size: 1.1rem;
+  line-height: 12px;       /* vertically center text */ 
+  text-align: left;
+  padding-left: 25px;      /* slight left padding */
+   padding-top:  5px;      /* slight left padding */
+  padding-bottom: 25px;      /* slight left padding */
+
+  z-index: 9999;
+}
+
+/* Push main content down just enough to clear both banner and logo */
+body,
+.main-content,
+section {
+  padding-top:30px;
+}
+
+     #mainContainer {
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+      max-width: 1000px;``
+      width: 100%;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap:  1rem;
+      width: 98%;
+    }
+
+    .card, .industrial-card {
+      position: relative;
+      background: linear-gradient(45deg, #142114ff, #1e3409ff, #92d27bff);
+      border: 4px solid #7d7d7d;
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: 5px 5px 15px rgba(0,0,0,0.5);
+      color: #fff;
+      font-weight: bold;
+      transition: all 0.3s ease;
+    }
+
+    .card, .industrial-card.callout {
+      position: relative;
+      background: linear-gradient(45deg, #142114ff, #1e3409ff, #92d27bff);
+      border: 4px solid #7d7d7d;
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: 5px 5px 15px rgba(0,0,0,0.5);
+      color: #fff;
+      font-weight: bold;
+      transition: all 0.3s ease;
+    }
+    .card.pain {
+      background: linear-gradient(45deg, #3e4a18ff, #ede7e8ff, #bc420eff);
+      box-shadow: 0 8px 25px rgba(139, 43, 43, 0.5);
+      transform: scale(1.02);
+    }
+
+    .card h3, .card h2 {
+      margin-top: 0;
+      text-align: center;
+      text-shadow: 1px 1px 3px #000;
+    }
+
+    .card label, .sliderLabel {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+      font-size: 1rem;
+    }
+
+    .card input[type="range"] {
+      width: 100%;
+      margin-top: 5px;
+    }
+
+  .button-row {
+    display: flex;
+    justify-content: center; /* centers horizontally */
+    align-items: center;     /* centers vertically if row has height */
+    margin-top: 1.5rem;
+  }
+  body {
+    font-family: 'Arial', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px;
+    background: #e6bdbdff;
+  }
+
+.venn-in-card {
+  position: relative;
+  width: 90%;
+  max-width: 520px;
+  height: 280px;
+  margin: 0 auto;
+}
+
+/* --- Base circle styles --- */
+.circle {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.55;
+  transition: all 0.35s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: white;
+  font-weight: 600;
+  padding: 5px;
+}
+
+.circle:hover {
+  opacity: 1;
+  z-index: 5;
+  transform: scale(1.05);
+}
+
+/* --- Large outer circles (180 px) --- */
+.circle.independent,
+.circle.community,
+.circle.safety {
+  width: 135px;
+  height: 135px; 
+  font-size: 0.95rem;
+}
+
+/* --- Small center circle (120 px) --- */
+.circle.kushwell {
+  width: 120px;
+  height: 120px;
+  font-size: 1rem;
+  font-weight: 700;
+  opacity: 0.9;
+  z-index: 3;
+  background: rgba(230, 180, 0, 0.9); /* gold center */
+}
+
+/* --- Positions --- */
+.circle.independent {
+  background: rgba(0, 60, 255, 0.55); /* deep blue */
+  left: 10%;
+  top: 0%;
+}
+.circle.community {
+  background: rgba(0, 120, 0, 0.55); /* deep green */
+  right: 10%;
+  top: 0%;
+}
+.circle.safety {
+  background: rgba(120, 0, 180, 0.55); /* deep purple */
+  left: 50%;
+  top: 30%;
+  transform: translateX(-50%);
+}
+.circle.kushwell {
+  left: 50%;
+  top: 42%;
+  transform: translate(-50%, -50%);
+}
+
+/* --- Hover fades others --- */
+.venn-in-card:hover .circle {
+  opacity: 0.3;
+}
+.venn-in-card .circle:hover {
+  opacity: 1 !important;
+}
+
+/* --- Hover text below diagram --- */
+.hover-text {
+  position: absolute;
+  bottom: -80px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 260px;
+  background: rgba(0,0,0,0.85);
+  color: #fff;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  opacity: 0;
+  visibility: hidden;
+  text-align: left;
+  line-height: 1.4;
+  transition: all 0.3s ease;
+}
+
+.circle:hover .hover-text {
+  opacity: 1;
+  visibility: visible;
+}
+
+  .submit-btn {
+    background: #3fa34d;
+    color: #fff;
+    font-size: 1.2rem;
+    padding: 12px 28px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s ease-in-out;
+  }
+
+  .submit-btn:hover {
+    background: #2e7d32;
+  }
+
+  .sliderLabel {
+  display: flex;
+  align-items: center;
+  gap: 10px;            /* space between label text and slider */
+  margin-bottom: 12px;  /* spacing between rows */
+}
+
+.sliderLabel span {
+  flex: 0 0 80px;       /* fixed width for all labels */
+  text-align: right;
+  font-weight: bold;
+  color: #fff;
+}
+
+.sliderLabel input[type="range"] {
+  flex: 1;              /* slider fills remaining space */
+}
+
+
+  input[type="range"]::-webkit-slider-thumb { 
+    -webkit-appearance: none;
+    width: 36px;
+    height: 36px;
+    background: #ffd700;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid #fff;
+  }
+
+  input[type="range"]::-moz-range-thumb {
+    width: 36px;
+    height: 36px;
+    background: #ffd700;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid #fff;
+    }
+
+#qolContainer { position: relative; width: 380px; height: 240px; }
+#rpmCanvas { width: 100%; height: 100%; display:block; background:transparent; }
+
+/* QoL number (below needle, centered horizontally) */
+#rpmNumber {
+  position: absolute;
+  left: 50%;
+  top: 72%;              /* move it downward visually */
+  transform: translateX(-50%);
+  font-size: 28px;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.7);
+  pointer-events: none;  /* make sure it never blocks sliders */
+}
+
+/* Needle - pivot from bottom center of needle element */
+#rpmNeedle {
+  position: absolute;
+  left: 50%;
+  top: 36px;              /* tune so needle pivot aligns with arc center */
+  width: 6px;
+  height: 120px;          /* long needle */
+  transform-origin: bottom center;
+  transform: rotate(-90deg);
+  border-radius: 3px;
+  pointer-events: none;
+  z-index: 3;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.6);
+}
+
+/* needle visual: use pseudo elements for tapered look */
+#rpmNeedle::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 6px;
+  height: 100%;
+  background: linear-gradient(to top, #fff 0%, #ffd 30%, rgba(255,255,255,0.2) 100%);
+  border-radius: 3px;
+  box-shadow: 0 0 8px rgba(255,255,255,0.25);
+}
+
+/* optional center cap */
+#rpmNeedle::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -8px;
+  transform: translateX(-50%);
+  width: 18px;
+  height: 18px;
+  background: #222;
+  border-radius: 50%;
+  border: 4px solid #ffd966;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.6);
+  z-index: 4;
+
+</style>
+</head>
+
+<body>
+  <img id="kushwellLogo" src="{{ url_for('static', filename='images/kushwell_logo.png') }}" alt="Kushwell Logo">
+
+
+  <div id="industrialBanner" class="card industrial-card">
+    <h1>Welcome to Kushwell</h1>
+    <h2 style="color:#00bfa6; font-weight:500;">Hello, {{ alias_name }} — let’s get you checked in!</h2>
+  </div>
+
+<section class="row">
+  <div class="card industrial-card">
+    <h2 class="text-xl font-semibold mb-4">Medical Conditions</h2>
+
+    <!-- AFFLICTION + SEVERITY -->
+    <form id="afflictionForm" class="space-y-4">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="flex items-center gap-3 bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl px-4 py-3 shadow-sm hover:shadow-md transition-all">
+        <!-- Typeahead Affliction -->
+        <input
+          type="text"
+          id="afflictionInput"
+          placeholder="e.g., Anxiety Disorder"
+          list="afflictionOptions"
+          class="flex-1 rounded-xl bg-transparent border border-white/20 text-white placeholder-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+        >
+
+        <!-- Severity Dropdown -->
+        <select
+          id="severitySelect"
+          class="rounded-xl bg-transparent border border-white/20 text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+        >
+          {% for level in AFFLICTION_LEVELS %}
+            <option value="{{ level }}">{{ level }}</option>
+          {% endfor %}
+        </select>
+
+        <button
+          type="button"
+          id="addAfflictionBtn"
+          class="px-4 py-2 bg-green-600 text-white font-semibold rounded-xl hover:bg-green-700 transition-all focus:ring-2 focus:ring-green-400"
+        >
+          Add
+        </button>
+      </div>
+
+      <!-- Typeahead list for afflictions -->
+      <datalist id="afflictionOptions">
+        {% for aff in AFFLICTION_LIST %}
+          <option value="{{ aff }}">
+        {% endfor %}
+      </datalist>
+    </form>
+
+    <!-- Affliction Table -->
+    <table id="afflictionTable" class="mt-4 w-full text-left border-collapse">
+      <thead>
+        <tr class="border-b border-white/10 text-gray-300">
+          <th class="py-2">Condition Summary</th>
+          <th class="py-2">Actions</th>
+        </tr>
+      </thead>
+      <tbody id="afflictionTableBody"></tbody>
+    </table>
+  </div>
+  
+
+<div class="card industrial-card.callout">
+  <h2 style="text-align:center;">What is Kushwell Care?</h2>
+
+  <div class="venn-in-card">
+    <div class="venn-container">
+    <div class="circle independent">
+      <div class="label">Independent</div>
+      <div class="hover-text">Kushwell remains independent — free from outside influence — ensuring unbiased patient guidance.</div>
+    </div>
+
+    <div class="circle community">
+      <div class="label">Community Focused</div>
+      <div class="hover-text">Our foundation is built on community — shared experience, connection, and patient empowerment.</div>
+    </div>
+
+    <div class="circle safety">
+      <div class="label">Safe & Secure</div>
+      <div class="hover-text">Privacy and security are essential. Kushwell safeguards your journey with HIPAA-grade protection.</div>
+    </div>
+
+    <div class="circle kushwell">
+      <div class="label">Kushwell Care</div>
+      <div class="hover-text">At the heart of it all: trust, compassion, and data-driven care that empowers patient choice.</div>
+    </div>
+  </div>
+</div>
+</section>
+
+    <!-- ROW 2: Wellness Sliders + Pain + QoL -->
+    <section class="row">
+      <div class="card industrial-card" id="wellnessCard">
+  <h3>On a scale of 1 (worst) to 10 (best), rate your...</h3>
+
+  <label class="sliderLabel"><span>Mood</span> <input type="range" min="1" max="10" value="5" class="wellnessSlider" name="mood"> 😊</label>
+  <label class="sliderLabel"><span>Energy</span> <input type="range" min="1" max="10" value="5" class="wellnessSlider" name="energy"> ⚡</label>
+  <label class="sliderLabel"><span>Clarity</span> <input type="range" min="1" max="10" value="5" class="wellnessSlider" name="clarity"> 🧠</label>
+  <label class="sliderLabel"><span>Appetite</span> <input type="range" min="1" max="10" value="5" class="wellnessSlider" name="appetite"> 🍽️</label>
+  <label class="sliderLabel"><span>Sleep</span> <input type="range" min="1" max="10" value="5" class="wellnessSlider" name="sleep"> 🛌</label>
+
+  <h3>On a scale of 1 (pain-free) to 10 (severe)...</h3>
+  <label class="sliderLabel"><span>Pain</span><input type="range" min="1" max="10" value="5" class="wellnessSlider" name="pain" id="painSlider"> 😡
+</div>
+
+          <div class="card industrial-card" id="qolCard">
+            <h3>Your First Kushwell QoL Score</h3>
+            <!-- Gauge HTML -->
+            <div id="qolContainer" style="width:380px; margin:0 auto;">
+              <canvas id="rpmCanvas" width="380" height="240" aria-hidden="true"></canvas>
+              <div id="rpmNumber" aria-live="polite">--</div>
+              <div id="rpmNeedle" aria-hidden="true"></div>
+            </div>
+     <h3 class="text-xl font-semibold mb-3">Unique slider inputs contribute to overall wellness</h3>
+</section>
+
+<!-- ===============================
+Cannabis Use Section
+=============================== -->
+<div id="cannabisCard" class="card industrial-card p-4 space-y-6">
+  <!-- Primary Question (Always Visible) -->
+  <div>
+    <label for="usedCannabis" class="block text-lg font-semibold text-gray-200">
+      Have you used any cannabis products in the past 30 days?
+    </label>
+    <select
+      id="usedCannabis"
+      class="mt-2 rounded-xl bg-transparent border border-white/20 text-white px-3 py-2 
+             focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+    >
+      <option value="">Select one...</option>
+      <option value="yes">Yes</option>
+      <option value="no">No</option>
+    </select>
+  </div>
+
+  <!-- Hidden Details Card (entire section hidden until yes) -->
+  <div id="productDetails" style="display: none;" class="space-y-4">
+    <!-- Frequency -->
+    <div>
+      <label class="block text-gray-200">How frequently?</label>
+      <select
+        class="rounded-xl bg-transparent border border-white/20 text-white px-3 py-2 
+               focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+      >
+        <option value="">Select frequency...</option>
+        <option>Multiple times per day</option>
+        <option>Once per day</option>
+        <option>Several times per week</option>
+        <option>Occasionally</option>
+        <option>Just once or twice socially</option>
+      </select>
+    </div>
+
+    <!-- Application Methods -->
+    <div>
+      <label class="block text-gray-200">What is your preferred consumption method(s)? Select all that apply:</label>
+      <select
+        id="applicationMethods"
+        multiple
+        class="rounded-xl bg-transparent border border-white/20 text-white px-3 py-2 
+               focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+        >
+          {% for method in APPLICATION_METHODS %}
+            <option value="{{ method }}">{{ method }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Favorite Product / Brand / Strain -->
+      <div class="space-y-3">
+        <h4 class="text-lg font-semibold text-gray-200">Favorite Products / Brands / Strains</h4>
+
+        <!-- PRODUCT -->
+        <div>
+          <label>If you have any favorite Products, share them:</label>
+          <div id="favoriteProductsContainer" class="space-y-2"></div>
+          <div class="flex gap-2 mt-2">
+            <input type="text" id="favoriteProductInput" placeholder="Search product..." list="productList"
+              class="flex-1 rounded-xl bg-transparent border border-white/20 text-white placeholder-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
+            <button type="button" id="addFavoriteProductBtn" class="px-3 py-1 bg-green-600 rounded-xl text-white hover:bg-green-700">Add</button>
+          </div>
+        </div>
+
+        <!-- BRAND -->
+        <div>
+          <label>If you gravitate towards a specific brand, let us know:</label>
+          <div id="favoriteBrandsContainer" class="space-y-2"></div>
+          <div class="flex gap-2 mt-2">
+            <input type="text" id="favoriteBrandInput" placeholder="Search brand..." list="brandList"
+              class="flex-1 rounded-xl bg-transparent border border-white/20 text-white placeholder-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
+            <button type="button" id="addFavoriteBrandBtn" class="px-3 py-1 bg-green-600 rounded-xl text-white hover:bg-green-700">Add</button>
+          </div>
+        </div>
+
+        <!-- STRAIN -->   
+        <div>
+          <label>If you have a go-to Strain, let us know :</label>
+          <div id="favoriteStrainsContainer" class="space-y-2"></div>
+          <div class="flex gap-2 mt-2">
+            <input type="text" id="favoriteStrainInput" placeholder="Search strain..." list="strainList"
+              class="flex-1 rounded-xl bg-transparent border border-white/20 text-white placeholder-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
+            <button type="button" id="addFavoriteStrainBtn" class="px-3 py-1 bg-green-600 rounded-xl text-white hover:bg-green-700">Add</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Datalists -->
+  <datalist id="productList">
+    {% for p in ALL_PRODUCTS %}
+      <option value="{{ p.name }}"></option>
+    {% endfor %}
+  </datalist>
+
+  <datalist id="brandList">
+    {% for b in ALL_BRANDS %}
+      <option value="{{ b }}"></option>
+    {% endfor %}
+  </datalist>
+
+  <datalist id="strainList">
+    {% for s in STRAIN_NAMES %}
+      <option value="{{ s }}"></option>
+    {% endfor %}
+  </datalist>
+  </section>   
+
+<!-- ROW 4: Submit -->
+<section class="row button-row">
+ <button class="submit-btn">Submit Check-In</button>
+</section>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const csrfToken = "{{ csrf_token() }}";
+
+  // --------------------------
+  // Afflictions Table
+  // --------------------------
+  const afflictionInput = document.getElementById("afflictionInput");
+  const severitySelect = document.getElementById("severitySelect");
+  const afflictionTableBody = document.getElementById("afflictionTableBody");
+  const addAfflictionBtn = document.getElementById("addAfflictionBtn");
+
+  addAfflictionBtn?.addEventListener("click", () => {
+    const affliction = afflictionInput.value.trim();
+    const severity = severitySelect.value;
+    if (!affliction || !severity) {
+      alert("Please enter a condition and select a severity.");
+      return;
+    }
+
+    const row = document.createElement("tr");
+    row.dataset.affliction = affliction;
+    row.dataset.severity = severity;
+
+    const summaryCell = document.createElement("td");
+    summaryCell.textContent = `${severity} ${affliction}`;
+
+    const actionCell = document.createElement("td");
+    actionCell.innerHTML = `<button class="remove-btn">Remove</button>`;
+
+    row.appendChild(summaryCell);
+    row.appendChild(actionCell);
+    afflictionTableBody.appendChild(row);
+
+    row.querySelector(".remove-btn").addEventListener("click", () => row.remove());
+    afflictionInput.value = "";
+    severitySelect.selectedIndex = 0;
+
+    summaryCell.scrollIntoView({ behavior: "smooth", block: "center" });
+  });
+
+  // --------------------------
+  // Cannabis Usage Toggle
+  // --------------------------
+  const usedCannabis = document.getElementById("usedCannabis");
+  const productDetails = document.getElementById("productDetails");
+
+  const toggleProducts = () => {
+    if (!usedCannabis || !productDetails) return;
+    productDetails.style.display = usedCannabis.value === "yes" ? "block" : "none";
+  };
+
+  toggleProducts(); // initial state
+  usedCannabis?.addEventListener("change", toggleProducts);
+
+  // --------------------------
+  // Expandable Favorites Utility
+  // --------------------------
+  const addExpandableItem = (inputId, containerId, btnId) => {
+    const input = document.getElementById(inputId);
+    const container = document.getElementById(containerId);
+    const btn = document.getElementById(btnId);
+    if (!input || !container || !btn) return;
+
+    btn.addEventListener("click", () => {
+      if (productDetails?.style.display === "none") return;
+      const val = input.value.trim();
+      if (!val) return;
+
+      const row = document.createElement("div");
+      row.className = "flex justify-between items-center bg-white/5 rounded-xl px-3 py-1 mt-1";
+      row.innerHTML = `<span>${val}</span><button type="button" class="text-red-400 hover:text-red-600 remove-btn">Remove</button>`;
+      container.appendChild(row);
+
+      row.querySelector(".remove-btn").addEventListener("click", () => row.remove());
+      input.value = "";
+    });
+  };
+
+  // Initialize all expandable favorites
+  addExpandableItem("favoriteProductInput", "favoriteProductsContainer", "addFavoriteProductBtn");
+  addExpandableItem("favoriteBrandInput", "favoriteBrandsContainer", "addFavoriteBrandBtn");
+  addExpandableItem("favoriteStrainInput", "favoriteStrainsContainer", "addFavoriteStrainBtn");
+
+  // --------------------------
+  // QoL Gauge & Sliders
+  // --------------------------
+  const sliders = Array.from(document.querySelectorAll(".wellnessSlider"));
+  const painSlider = document.getElementById("painSlider");
+  const canvas = document.getElementById("rpmCanvas");
+  const ctx = canvas?.getContext("2d");
+  const needleEl = document.getElementById("rpmNeedle");
+  const numberEl = document.getElementById("rpmNumber");
+
+  const computeQoL = () => {
+    let sum = 0;
+    sliders.forEach(s => sum += s.id === "painSlider" ? 11 - Number(s.value) : Number(s.value));
+    return Math.min(100, Math.max(0, (sum / 60) * 100));
+  };
+
+  const paintGauge = (qol) => {
+    if (!ctx || !needleEl || !numberEl) return;
+    const W = canvas.width, H = canvas.height, cx = W / 2, cy = H * 0.75;
+    const radius = Math.min(W * 0.42, H * 0.48);
+
+    ctx.clearRect(0, 0, W, H);
+    ctx.lineCap = "round";
+
+    ctx.lineWidth = 36;
+    ctx.strokeStyle = "rgba(0,0,0,0.25)";
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius, Math.PI, 0);
+    ctx.stroke();
+
+    const grad = ctx.createLinearGradient(cx - radius, 0, cx + radius, 0);
+    grad.addColorStop(0, "#ecddddff");
+    grad.addColorStop(0.45, "#cbc6c1ff");
+    grad.addColorStop(1, "rgba(200, 217, 201, 1)");
+
+    ctx.lineWidth = 24;
+    ctx.strokeStyle = grad;
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius, Math.PI, 0);
+    ctx.stroke();
+
+    const sweep = Math.PI * (qol / 100);
+    const color = qol < 40 ? "#c7cfe1ff" : qol < 70 ? "#b379f6ff" : "#5410bbff";
+    ctx.lineWidth = 26;
+    ctx.strokeStyle = color;
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius, Math.PI, Math.PI + sweep);
+    ctx.stroke();
+
+    needleEl.style.transform = `translateX(-50%) rotate(${-90 + 180 * (qol / 100)}deg)`;
+    numberEl.textContent = Math.round(qol);
+    numberEl.style.position = "absolute";
+    numberEl.style.left = "50%";
+    numberEl.style.top = "74%";
+    numberEl.style.transform = "translate(-50%, -50%)";
+  };
+
+  const updateGauge = () => paintGauge(computeQoL());
+  sliders.forEach(s => s.addEventListener("input", updateGauge));
+  painSlider?.addEventListener("input", updateGauge);
+  updateGauge();
+
+  // --------------------------
+  // Submit Button Handler
+  // --------------------------
+  document.querySelector(".submit-btn")?.addEventListener("click", async (e) => {
+    e.preventDefault();
+
+    // --------------------------
+    // Sliders
+    // --------------------------
+    const sliderData = {};
+    sliders.forEach(s => sliderData[s.name] = parseInt(s.value));
+
+    // --------------------------
+    // Afflictions
+    // --------------------------
+    const conditions = {};
+    document.querySelectorAll("#afflictionTableBody tr").forEach(row => {
+      const aff = row.dataset.affliction;
+      const sev = row.dataset.severity;
+      if (aff && sev) conditions[aff] = sev;
+    });
+
+    // --------------------------
+    // Expandable Favorites
+    // --------------------------
+    const getExpandableValues = (containerId) =>
+      Array.from(document.querySelectorAll(`#${containerId} div span`)).map(s => s.textContent);
+
+    const applicationMethodSelect = document.getElementById("applicationMethods");
+    const applicationMethods = applicationMethodSelect
+      ? Array.from(applicationMethodSelect.selectedOptions).map(o => o.value)
+      : [];
+
+    const preferences = {
+      favorite_products: getExpandableValues("favoriteProductsContainer"),
+      favorite_brands: getExpandableValues("favoriteBrandsContainer"),
+      favorite_strains: getExpandableValues("favoriteStrainsContainer"),
+      application_methods: applicationMethods,
+      strain_type: document.querySelector("#strainSelect")?.value || null,
+      company_name: document.querySelector("#companyInput")?.value || null,
+      thc_min: parseFloat(document.querySelector("#thcMin")?.value || 0),
+      thc_max: parseFloat(document.querySelector("#thcMax")?.value || 0),
+    };
+
+    const payload = { sliders: sliderData, conditions, preferences };
+
+    try {
+      const response = await fetch("/patient/baseline_checkin", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": csrfToken
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        window.location.href = "/patient/dashboard"; // or whatever route you want
+      } else {
+        alert("Error saving baseline check-in.");
+      }
+
+    } catch (err) {
+      console.error("Submission failed:", err);
+      alert("Submission failed. See console for details.");
+    }
+  });
+});
+</script>

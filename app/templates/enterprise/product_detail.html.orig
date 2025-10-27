@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}Product Details{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+  <h1 class="text-2xl font-semibold mb-2">{{ product.name }}</h1>
+  <div class="mb-4">
+    {% if product.image_path %}
+      <img src="{{ url_for('static', filename=product.image_path) }}" alt="{{ product.name }}" class="w-full max-h-64 object-contain mb-2" />
+    {% endif %}
+    <p class="text-gray-700">{{ product.description }}</p>
+    {% if avg_qol is not none %}
+      <p class="mt-2">Average QoL Score: <strong>{{ avg_qol }}</strong></p>
+    {% endif %}
+    {% if votes %}
+      <p class="mt-1 text-sm">Upvotes: {{ votes.get('upvotes', 0) }}, Downvotes: {{ votes.get('downvotes', 0) }}</p>
+    {% endif %}
+  </div>
+
+  <div class="space-x-2 flex items-center">
+    <a href="{{ url_for('patient_bp.products_list') }}" class="text-blue-600 hover:underline">Back to products</a>
+
+    <!-- Chem Profile trigger -->
+    <a href="#"
+       class="inline-flex items-center px-3 py-1.5 rounded border border-blue-600 text-blue-600 hover:bg-blue-50"
+       id="chem-profile-btn"
+       data-product-id="{{ product.id }}">
+      Chem Profile
+    </a>
+  </div>
+</div>
+
+<!-- Modal root gets injected via fetch -->
+<div id="chem-profile-modal-root"></div>
+
+<!-- JavaScript to fetch and show the modal -->
+<script>
+  // simple Tailwind-style modal show/hide (no Bootstrap needed)
+  function showTailwindModal() {
+    const modal = document.getElementById('chemProfileModalTW');
+    if (!modal) return;
+    modal.classList.remove('hidden', 'opacity-0', 'pointer-events-none');
+  }
+
+  function hideTailwindModal() {
+    const modal = document.getElementById('chemProfileModalTW');
+    if (!modal) return;
+    modal.classList.add('opacity-0');
+    // delay to allow transition (if present)
+    setTimeout(() => modal.classList.add('hidden', 'pointer-events-none'), 150);
+  }
+
+  document.addEventListener('click', async (e) => {
+    // open button
+    const btn = e.target.closest('#chem-profile-btn');
+    if (btn) {
+      e.preventDefault();
+      const id = btn.getAttribute('data-product-id');
+      if (!id) return;
+
+      try {
+        const res = await fetch(`/patient/products/${id}/chem-profile`, {
+          headers: { 'X-Requested-With': 'fetch' }
+        });
+        if (!res.ok) throw new Error('Failed to load chem profile');
+
+        const html = await res.text();
+        const root = document.getElementById('chem-profile-modal-root');
+        root.innerHTML = html;  // server returns full modal HTML
+        showTailwindModal();
+      } catch (err) {
+        console.error(err);
+        alert('Unable to load chemical profile right now.');
+      }
+    }
+
+    // close handlers (overlay click or explicit close buttons)
+    if (e.target.matches('[data-close-chem-modal]')) {
+      e.preventDefault();
+      hideTailwindModal();
+    }
+  });
+
+  // escape key to close modal
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') hideTailwindModal();
+  });
+</script>
+{% endblock %}
+

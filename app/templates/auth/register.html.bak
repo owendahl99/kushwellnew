@@ -1,0 +1,76 @@
+{# FILE: templates/auth/register.html #}
+{% extends "base.html" %}
+{% block title %}Register — Kushwell{% endblock %}
+
+{% block content %}
+  <div class="kw-container">
+    <div class="kw-card" role="region" aria-labelledby="register-title">
+      <h1 id="register-title" class="kw-card__title">Create your account</h1>
+
+      {# Flash messages #}
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            {% if category in ['success'] %}
+              <div class="kw-alert kw-success">{{ message }}</div>
+            {% elif category in ['error','danger'] %}
+              <div class="kw-alert kw-error">{{ message }}</div>
+            {% else %}
+              <div class="kw-alert kw-info">{{ message }}</div>
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      <form action="{{ url_for('auth.register', role=preset_role) }}" method="post" novalidate>
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        {# CSRF already global in your app #}
+
+        <label for="email">
+          <span>Email</span>
+          <input id="email" name="email" type="email" required autocomplete="email" class="kw-input">
+        </label>
+
+        <label for="password">
+          <span>Password</span>
+          <input id="password" name="password" type="password" required autocomplete="new-password" class="kw-input">
+        </label>
+
+        {# Role selection / preset #}
+        {% if preset_role %}
+          <input type="hidden" name="role" value="{{ preset_role }}">
+          <div class="kw-alert kw-info">
+            Registering as:
+            <strong>
+              {% if preset_role == 'patient' %}
+                Consumer / Patient
+              {% else %}
+                Enterprise (Supplier, Provider, Dispensary)
+              {% endif %}
+            </strong>
+            <a href="{{ url_for('auth.register') }}" class="kw-link">change</a>
+          </div>
+        {% else %}
+          <label for="role">
+            <span>Register as</span>
+            <select id="role" name="role" required class="kw-input">
+              <option value="patient">Consumer / Patient</option>
+              <option value="enterprise">Enterprise (Supplier, Provider, Dispensary)</option>
+            </select>
+          </label>
+        {% endif %}
+
+        <p>
+          <button type="submit" class="kw-btn primary">Create account</button>
+        </p>
+      </form>
+
+      <p>
+        Already have an account?
+        <a href="{{ url_for('auth.login') }}" class="kw-link">Sign in</a>
+      </p>
+    </div>
+  </div>
+{% endblock %}
+
+

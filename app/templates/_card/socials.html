@@ -1,0 +1,193 @@
+<div class="kw-card kw-socials">
+  <div class="kw-card__head">👥 Social Connections</div>
+
+  <div class="kw-card__body">
+    <div class="kw-socials-grid">
+      <!-- FRIENDS & FOLLOWERS -->
+      <div class="kw-section">
+        <h3 class="kw-section__title">Friends & Followers</h3>
+        <div id="friends-list" class="kw-list">
+          <div class="kw-meta">Loading connections...</div>
+        </div>
+        <div class="kw-actions">
+          <a class="kw-btn kw-btn--ghost" href="{{ url_for('patient.friends') }}">Search People</a>
+          <a class="kw-btn kw-btn--primary" href="{{ url_for('patient.friends') }}">View All</a>
+        </div>
+      </div>
+
+      <!-- SUPPORT GROUPS -->
+      <div class="kw-section">
+        <h3 class="kw-section__title">Support Groups</h3>
+        <form id="join-group" method="POST" action="{{ url_for('patient.group_join') }}" class="kw-form">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <label for="group-search" class="kw-label">Join a group</label>
+          <div class="kw-input-wrap">
+            <input id="group-search" class="kw-input" list="group-list" placeholder="Search group name...">
+            <datalist id="group-list">
+              {% for g in AFFLICTION_LIST %}
+                <option value="{{ g }}"></option>
+              {% endfor %}
+            </datalist>
+            <button class="kw-btn kw-btn--primary" type="submit" disabled id="join-btn">Join</button>
+          </div>
+        </form>
+        <div class="kw-actions">
+          <a href="{{ url_for('patient.groups_index') }}" class="kw-btn kw-btn--ghost kw-btn--sm">All Groups</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+/* ===========================================================
+   SOCIAL CONNECTIONS CARD (Fixed Layout, Chalk Theme)
+=========================================================== */
+.kw-socials {
+  background: linear-gradient(135deg, #064e3b 0%, #15803d 100%);
+  color: #fff;
+  border-radius: 18px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.kw-card__head {
+  font-family: "Chalkduster", "Patrick Hand SC", "Reenie Beanie", cursive;
+  font-size: 1.6rem;
+  font-weight: 600;
+  padding: 14px 22px;
+  background: rgba(255,255,255,0.06);
+  border-bottom: 1px solid rgba(255,255,255,0.12);
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+}
+
+.kw-card__body {
+  padding: 20px;
+}
+
+.kw-socials-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+}
+
+.kw-section {
+  background: rgba(255,255,255,0.07);
+  border-radius: 12px;
+  padding: 14px;
+  box-shadow: inset 0 0 6px rgba(0,0,0,0.25);
+}
+
+.kw-section__title {
+  font-family: "Patrick Hand SC", "Reenie Beanie", sans-serif;
+  font-size: 1.3rem;
+  margin-bottom: 12px;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+}
+
+.kw-list {
+  background: rgba(255,255,255,0.06);
+  border-radius: 8px;
+  padding: 10px;
+  min-height: 60px;
+}
+
+.kw-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 12px;
+}
+
+.kw-btn {
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 6px 12px;
+  transition: all 0.2s ease-in-out;
+}
+.kw-btn--primary {
+  background: #22c55e;
+  color: #fff;
+}
+.kw-btn--ghost {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.3);
+  color: #fff;
+}
+.kw-btn--primary[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Form styling */
+.kw-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.kw-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.kw-input {
+  flex: 1;
+  border: none;
+  border-radius: 6px;
+  padding: 8px;
+  font-size: 0.9rem;
+  color: #333;
+}
+.kw-input:focus {
+  outline: 2px solid #22c55e;
+}
+
+/* Responsive fix */
+@media (max-width: 900px) {
+  .kw-socials-grid {
+    grid-template-columns: 1fr;
+  }
+  .kw-section__title {
+    text-align: center;
+  }
+}
+</style>
+
+<script>
+/* -----------------------------------------------
+   Friends Preview Loader
+----------------------------------------------- */
+const mount = document.getElementById('friends-list');
+if (mount) {
+  fetch("{{ url_for('patient.friends_preview') }}")
+    .then(r => r.ok ? r.json() : Promise.reject(r.status))
+    .then(data => {
+      const rows = data.top || [];
+      if (!rows.length) {
+        mount.innerHTML = '<div class="kw-meta">No connections yet.</div>';
+        return;
+      }
+      mount.innerHTML = `
+        <ul style="list-style:none;margin:0;padding:0;">
+          ${rows.map(f => `
+            <li style="padding:6px 8px;margin-bottom:4px;border-radius:6px;background:rgba(255,255,255,0.1);">
+              ${f.name || f.username}
+            </li>`).join('')}
+        </ul>`;
+    })
+    .catch(() => mount.innerHTML = '<div class="kw-meta">Failed to load.</div>');
+}
+
+/* -----------------------------------------------
+   Support Group Join Logic
+----------------------------------------------- */
+const input = document.getElementById('group-search');
+const btn = document.getElementById('join-btn');
+if (input && btn) {
+  input.addEventListener('input', () => {
+    btn.disabled = input.value.trim().length < 2;
+  });
+}
+</script>

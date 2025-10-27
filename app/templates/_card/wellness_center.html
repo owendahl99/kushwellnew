@@ -1,0 +1,120 @@
+<div class="kw-card kw-wellness-center" style="
+   background: linear-gradient(180deg,#080909,#727e1d,#035e2a);
+  grid-column: span 2;
+  min-height: 420px;
+">
+  <div class="kw-card__head">
+    <h2 class="kw-card__title">🌿 Wellness Center</h2>
+  </div>
+
+  <div class="kw-card__body" style="display:grid; grid-template-columns: 1fr 1fr; gap:24px; align-items:center;">
+
+    <!-- LEFT: AI Feedback -->
+    <div style="padding:1rem;">
+      <h3 class="text-lg font-semibold mb-2">Kushwell Care AI</h3>
+      {% if ai_feedback %}
+        <p class="kw-ai-text" style="margin:0 0 0.5rem;">
+          {{ ai_feedback.ai_feedback }}
+        </p>
+        <div class="kw-ai-meta" style="font-size:0.85rem; color: #f3f4f6;">
+          <small>Last updated: {{ ai_feedback.updated_at.strftime("%b %d, %Y") }}</small>
+        </div>
+      {% else %}
+        <p class="kw-ai-placeholder" style="color:#6b7280;">
+          You must have at least two wellness checks logged to activate our algorithms.
+          Complete a wellness check-in to get personalized feedback.
+        </p>
+      {% endif %}
+    </div>
+
+    <!-- RIGHT: QOL Gauge -->
+    <div style="display:flex; flex-direction:column; align-items:center; justify-content:center;">
+      <canvas id="qolGauge" width="240" height="240" aria-label="Quality of Life Gauge"></canvas>
+      <p class="kw-ai-meta" style="margin-top:0.5rem;">
+        <small>QOL Score (Last check-in: {{ last_checkin_date.strftime('%b %d, %Y') if last_checkin_date else 'N/A' }})</small>
+      </p>
+    </div>
+
+  </div>
+
+  <div class="kw-card__actions" style="display:flex; justify-content:center; gap:20px; margin-top:30px;">
+    <a href="{{ url_for('patient.checkins_hub') if has_endpoint('patient.checkins_hub') else '#' }}"
+       class="kw-btn kw-btn--primary">New Check-In</a>
+  </div>
+</div>
+
+<style>
+.kw-wellness-center {
+  background: linear-gradient(135deg, #8bdb57ff, #0fb13a5b);
+  border-radius: 20px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+  padding: 1rem 1.5rem 1.5rem;
+}
+.kw-ai-text {
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #030c20aa;
+  font-weight: 500;
+}
+.kw-ai-placeholder {
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+.kw-ai-meta small {
+  font-size: 0.85rem;
+  color: #0e1e3eff;
+}
+</style>
+
+<script>
+(function() {
+  const canvas = document.getElementById('qolGauge');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const centerX = canvas.width / 2;
+  const centerY = canvas.height / 2;
+  const radius = 95;
+  const qolValue = {{ current_user.qol_score if current_user.qol_score is defined else 50 }};
+
+  const outerColor = getComputedStyle(canvas.closest('.kw-card')).getPropertyValue('--outer-color').trim() || '#6b21a8';
+  const middleColor = getComputedStyle(canvas.closest('.kw-card')).getPropertyValue('--middle-color').trim() || '#84cc16';
+  const innerColor = getComputedStyle(canvas.closest('.kw-card')).getPropertyValue('--inner-color').trim() || '#f5f3ff';
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.lineWidth = 18;
+  ctx.lineCap = 'round';
+
+  // Background
+  ctx.beginPath();
+  ctx.arc(centerX, centerY, radius, Math.PI*0.75, Math.PI*0.25, false);
+  ctx.strokeStyle = '#e5e7eb';
+  ctx.stroke();
+
+  // QOL arc
+  const startAngle = Math.PI * 0.75;
+  const endAngle = startAngle + (Math.PI * 1.5) * (qolValue / 100);
+  const gradient = ctx.createLinearGradient(centerX-radius, centerY, centerX+radius, centerY);
+  gradient.addColorStop(0, outerColor);
+  gradient.addColorStop(0.5, middleColor);
+  gradient.addColorStop(1, innerColor);
+
+  ctx.beginPath();
+  ctx.arc(centerX, centerY, radius, startAngle, endAngle, false);
+  ctx.strokeStyle = gradient;
+  ctx.shadowColor = "rgba(0,0,0,0.25)";
+  ctx.shadowBlur = 10;
+  ctx.stroke();
+
+  // Central number
+  ctx.shadowBlur = 0;
+  ctx.fillStyle = '#FFD338'; // Kushwell Yellow
+  ctx.font = "bold 40px Segoe UI";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(qolValue + "%", centerX, centerY);
+
+  ctx.font = "16px Segoe UI";
+  ctx.fillStyle = '#374151';
+  ctx.fillText("Wellness", centerX, centerY + 28);
+})();
+</script>

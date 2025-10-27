@@ -1,0 +1,39 @@
+﻿{# FILE: app/templates/patient/partials/_wellness_last_checkin.html #}
+{# expects: last_row (WellnessCheck instance), last_attributions, last_checkin_at, latest_qol #}
+
+<section class="kw-card" aria-labelledby="last-checkin">
+  <div class="kw-card__head">
+    <h3 id="last-checkin" class="kw-card__title">Last Check-in</h3>
+    <div class="kw-meta">Snapshot from your most recent check-in (for comparison).</div>
+  </div>
+  <div class="kw-card__body">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <div>
+        <div style="font-size:20px; font-weight:700;">{{ latest_qol|default(0) }} / 100</div>
+        <div class="kw-meta">Last: {{ last_checkin_at or 'â€”' }}</div>
+      </div>
+      <div>
+        <div style="min-width:180px;">
+          <dl>
+            {% for metric, col in [
+                ('pain','pain_level'),
+                ('mood','mood_level'),
+                ('energy','energy_level'),
+                ('clarity','clarity_level'),
+                ('appetite','appetite_level')
+            ] %}
+              {% set base_value = getattr(last_row, col, 6) %}
+              {% set attr_value = last_attributions[metric]|default(0) %}
+              {% set display_value = base_value + attr_value %}
+              <dt class="kw-meta">{{ metric|capitalize }}</dt>
+              <dd>{{ display_value }}</dd>
+            {% endfor %}
+          </dl>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  
+
+

@@ -1,0 +1,30 @@
+﻿{# FILE: app/templates/patient/friends.html #}
+{% extends "base.html" %}
+
+{% block title %}My Friends{% endblock %}
+
+{% block content %}
+  <div class="kw-container">
+    <div class="kw-card">
+      <h2 class="kw-card__title">Friends</h2>
+
+      {% if friends and friends|length %}
+        <ul>
+          {% for fr in friends %}
+            <li class="kw-card">
+              <span>Friend ID:
+                {{ fr.friend_id if fr.user_id == current_user.id else fr.user_id }}
+              </span>
+              {# Placeholder for more details; implement user lookup later #}
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="kw-muted">You have no friends yet. Go make some connections!</p>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}
+
+
+

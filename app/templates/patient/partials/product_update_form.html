@@ -1,0 +1,132 @@
+﻿{# FILE: app/templates/patient/_partials/product_update_form.html #}
+
+<section class="kw-card kw-card--nested" aria-labelledby="product-update-card-title">
+  <div class="kw-card__head">
+    <h3 id="product-update-card-title" class="kw-card__title">
+      Update Your Products
+    </h3>
+    <div class="kw-meta">
+        Modify grassroots products, confirm authorized ones, or add new grassroots entries if needed.
+    </div>
+  </div>
+
+  <form id="product-update-inner-form">
+    <table class="kw-table">
+      <thead>
+        <tr>
+          <th scope="col">Product</th>
+          <th scope="col">Dosage</th>
+          <th scope="col">Frequency</th>
+          <th scope="col">Effectiveness</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody id="product-rows">
+        {% for product in current_products %}
+          <tr>
+            <td>
+              {% if product.is_grassroots %}
+                <input type="text" name="products[{{ loop.index0 }}][name]" 
+                       value="{{ product.name }}" class="kw-input">
+              {% else %}
+                <input type="text" value="{{ product.name }}" class="kw-input" readonly>
+                <input type="hidden" name="products[{{ loop.index0 }}][name]" value="{{ product.name }}">
+              {% endif %}
+            </td>
+            <td>
+              {% if product.is_grassroots %}
+                <input type="text" name="products[{{ loop.index0 }}][dosage]" 
+                       value="{{ product.dosage }}" class="kw-input">
+              {% else %}
+                <input type="text" value="{{ product.dosage }}" class="kw-input" readonly>
+                <input type="hidden" name="products[{{ loop.index0 }}][dosage]" value="{{ product.dosage }}">
+              {% endif %}
+            </td>
+            <td>
+              {% if product.is_grassroots %}
+                <input type="text" name="products[{{ loop.index0 }}][frequency]" 
+                       value="{{ product.frequency }}" class="kw-input">
+              {% else %}
+                <input type="text" value="{{ product.frequency }}" class="kw-input" readonly>
+                <input type="hidden" name="products[{{ loop.index0 }}][frequency]" value="{{ product.frequency }}">
+              {% endif %}
+            </td>
+            <td>
+              <!-- Effectiveness slider -->
+              <input type="range"
+                     name="products[{{ loop.index0 }}][effectiveness]"
+                     id="effectiveness_{{ loop.index0 }}"
+                     min="0" max="10" step="1"
+                     value="{{ product.effectiveness or 5 }}"
+                     class="kw-slider" />
+              <span class="slider-value" id="val_{{ loop.index0 }}">
+                {{ product.effectiveness or 5 }}
+              </span>/10
+            </td>
+            <td>
+              {% if product.is_grassroots %}
+                <button type="button" class="kw-btn kw-btn--danger" onclick="removeProductRow(this)">
+                  Remove
+                </button>
+              {% else %}
+                <span class="kw-meta">Locked</span>
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <!-- Add New Grassroots Product -->
+    <div class="kw-actions" style="margin-top:1rem;">
+      <button type="button" class="kw-btn kw-btn--secondary" onclick="addNewProductRow()">
+        + Add New Product
+      </button>
+    </div>
+  </form>
+</section>
+
+<script>
+  function addNewProductRow() {
+    const tableBody = document.getElementById("product-rows");
+    const index = tableBody.rows.length;
+
+    const newRow = document.createElement("tr");
+    newRow.innerHTML = `
+      <td><input type="text" name="products[${index}][name]" placeholder="Product name" class="kw-input"></td>
+      <td><input type="text" name="products[${index}][dosage]" placeholder="Dosage" class="kw-input"></td>
+      <td><input type="text" name="products[${index}][frequency]" placeholder="Frequency" class="kw-input"></td>
+      <td>
+        <input type="range" name="products[${index}][effectiveness]" id="effectiveness_${index}" 
+               min="0" max="10" step="1" value="5" class="kw-slider" />
+        <span class="slider-value" id="val_${index}">5</span>/10
+      </td>
+      <td><button type="button" class="kw-btn kw-btn--danger" onclick="removeProductRow(this)">Remove</button></td>
+    `;
+    tableBody.appendChild(newRow);
+
+    // wire up slider live-update
+    const slider = newRow.querySelector(".kw-slider");
+    slider.addEventListener("input", e => {
+      const valSpan = newRow.querySelector(".slider-value");
+      valSpan.textContent = e.target.value;
+    });
+  }
+
+  function removeProductRow(button) {
+    const row = button.closest("tr");
+    row.remove();
+  }
+
+  // live update existing slider values
+  document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll(".kw-slider").forEach(slider => {
+      slider.addEventListener("input", e => {
+        const valSpan = document.getElementById("val_" + e.target.id.split("_")[1]);
+        if (valSpan) valSpan.textContent = e.target.value;
+      });
+    });
+  });
+</script>
+
+

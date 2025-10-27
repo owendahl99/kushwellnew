@@ -1,0 +1,73 @@
+﻿{# FILE: app/templates/patient/partials/checkin_trends.html #}
+
+<section class="kw-card">
+  <h2 class="section-header">Wellness Trends Over Time</h2>
+
+  <div class="kw-meta" style="margin-bottom:8px;">
+    View your wellness scores over time. Select a category to overlay product usage.
+  </div>
+
+  <!-- Category Selector -->
+  <label style="display:block; margin-bottom:12px;">
+    <span class="kw-meta">Category:</span>
+    <select id="trend-category" class="kw-input">
+      <option value="overall">Overall Score</option>
+      <option value="pain">Pain Index</option>
+      <option value="sleep">Sleep</option>
+      <option value="appetite">Appetite</option>
+      <option value="energy">Energy</option>
+      <!-- Add more categories as needed -->
+    </select>
+  </label>
+
+  <!-- Chart Container -->
+  <canvas id="trendChart" width="100%" height="250" style="background:#fff; border:1px solid rgba(0,0,0,0.15); border-radius:6px;"></canvas>
+</section>
+
+<script>
+(function() {
+  // Safely handle undefined trend_data
+  const trendData = {{ trend_data|default([])|tojson }};
+  const productOverlay = {{ product_overlay|default([])|tojson }};
+
+  const ctx = document.getElementById('trendChart').getContext('2d');
+
+  let chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: trendData.map(d => d.date || ''), // fallback if date missing
+      datasets: [{
+        label: 'Wellness Score',
+        data: trendData.map(d => d.value || 0),
+        borderColor: 'rgba(75,192,192,1)',
+        backgroundColor: 'rgba(75,192,192,0.2)',
+        fill: true,
+        tension: 0.3
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: true },
+        tooltip: { mode: 'index', intersect: false }
+      },
+      interaction: { mode: 'nearest', intersect: false },
+      scales: {
+        x: { title: { display: true, text: 'Check-in Date' } },
+        y: { title: { display: true, text: 'Score' }, min: 0, max: 100 }
+      }
+    }
+  });
+
+  // Category change handler (optional overlay of product usage)
+  document.getElementById('trend-category').addEventListener('change', function() {
+    const category = this.value;
+
+    // Update chart data dynamically
+    chart.data.datasets[0].data = trendData.map(d => d[category] ?? 0);
+    chart.update();
+  });
+})();
+</script>
+
+

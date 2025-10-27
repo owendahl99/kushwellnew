@@ -1,0 +1,63 @@
+{# FILE: app/templates/_partials/comm_card.html #}
+{% include "_card/_head.html" %}
+{# Expects CSRF available as {{ csrf_token() }}. #}
+
+<section class="kw-card" role="region" aria-labelledby="comm-title">
+  <div>
+    <h2 id="comm-title" class="kw-card__title">Messages</h2>
+    <p>
+      <a href="{{ url_for('comm_bp.inbox') }}" class="kw-btn secondary">Open Inbox</a>
+    </p>
+  </div>
+
+  {# Optional: recent threads if your dashboard route passes `conversations` + `unread_map` #}
+  {% if conversations is defined and conversations %}
+    <ul>
+      {% for c in conversations[:5] %}
+        <li class="kw-card">
+          <a href="{{ url_for('comm_bp.view_conversation', conversation_id=c.id) }}" class="kw-link">
+            {{ c.title or ('Broadcast' if c.is_broadcast else ('Group' if c.is_group else 'Direct')) }}
+          </a>
+          {% if unread_map is defined %}
+            <span class="kw-chip">{{ unread_map.get(c.id, 0) }} unread</span>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="kw-muted">No recent threads. Start a conversation below.</p>
+  {% endif %}
+
+  {# Quick compose: starts a direct or group conversation #}
+  <form method="post" action="{{ url_for('comm_bp.start_conversation') }}" aria-describedby="comm-help">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+    <label for="comm-title-input">
+      <span>Title (optional)</span>
+      <input id="comm-title-input"
+             name="title"
+             class="kw-input"
+             autocomplete="off"
+             placeholder="e.g., Check-in with provider">
+    </label>
+
+    <label for="comm-participants">
+      <span>Participant IDs (comma-separated)</span>
+      <input id="comm-participants"
+             name="participant_ids"
+             required
+             class="kw-input"
+             autocomplete="off"
+             inputmode="numeric"
+             pattern="^\s*\d+(?:\s*,\s*\d+)*\s*$"
+             placeholder="e.g., 42, 1337">
+      <span id="comm-help" class="kw-muted">You are added automatically; include at least one other user ID.</span>
+    </label>
+
+    <p>
+      <button type="submit" class="kw-btn primary">Start Conversation</button>
+    </p>
+  </form>
+</section>
+
+

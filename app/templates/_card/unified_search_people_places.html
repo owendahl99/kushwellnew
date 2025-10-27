@@ -1,0 +1,166 @@
+<section id="kw-unified-search" class="kw-card kw-unified-search" role="region" aria-labelledby="kw-unified-title">
+  <div class="kw-card__head">
+    <h3 id="kw-unified-title" class="kw-card__title">🌍 Unified Search</h3>
+  </div>
+
+  <div class="kw-card__body">
+    <!-- Preferred entities -->
+    <div class="kw-preferred-section">
+      <h4 class="kw-subtitle">Your Preferred Connections</h4>
+      <ul class="kw-preferred-list">
+        {% if current_user.preferred_dispensaries %}
+          {% for d in current_user.preferred_dispensaries %}
+          <li>
+            <span class="kw-entity-label">Dispensary:</span>
+            <a href="{{ url_for('patient.dispensary_detail', id=d.id) }}" class="kw-link">{{ d.name }}</a>
+          </li>
+          {% endfor %}
+        {% endif %}
+        {% if current_user.preferred_providers %}
+          {% for p in current_user.preferred_providers %}
+          <li>
+            <span class="kw-entity-label">Provider:</span>
+            <a href="{{ url_for('patient.provider_detail', id=p.id) }}" class="kw-link">{{ p.display_name or p.alias }}</a>
+          </li>
+          {% endfor %}
+        {% endif %}
+        {% if current_user.preferred_enterprises %}
+          {% for e in current_user.preferred_enterprises %}
+          <li>
+            <span class="kw-entity-label">Enterprise:</span>
+            <a href="{{ url_for('enterprise.enterprise_profile', id=e.id) }}" class="kw-link">{{ e.name }}</a>
+          </li>
+          {% endfor %}
+        {% endif %}
+        {% if not (current_user.preferred_dispensaries or current_user.preferred_providers or current_user.preferred_enterprises) %}
+          <li><span class="kw-muted">No preferred connections yet.</span></li>
+        {% endif %}
+      </ul>
+    </div>
+
+    <!-- Divider -->
+    <div class="kw-divider"></div>
+
+    <!-- Search -->
+    <form id="unified-search-form" method="get"
+          action="{{ url_for('search.unified') if has_endpoint('search.unified') else '#' }}"
+          role="search" aria-label="Unified people/places search"
+          style="display:flex; flex-direction:column; gap:10px;">
+
+      <label class="kw-label" for="unified-search-input">Find People or Places</label>
+      <div class="kw-search-row">
+        <input id="unified-search-input" name="q" class="kw-input" placeholder="Search people, dispensaries, or enterprises…" autocomplete="off">
+        <select id="unified-search-scope" name="scope" class="kw-select">
+          <option value="people">People</option>
+          <option value="dispensaries">Dispensaries</option>
+          <option value="providers">Providers</option>
+          <option value="enterprises">Enterprises</option>
+        </select>
+        <button class="kw-btn kw-btn--primary" type="submit">Search</button>
+      </div>
+    </form>
+  </div>
+</section>
+
+<style>
+.kw-unified-search {
+  background: linear-gradient(145deg, #102017, #1c2c22);
+  border-radius: 16px;
+  color: #f9fafb;
+  padding: 1rem 1.25rem 1.25rem;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+  width: 100%;
+  max-width: 480px;
+}
+
+.kw-subtitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #c5f907;
+  margin-bottom: 6px;
+}
+
+.kw-preferred-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.kw-preferred-list li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.95rem;
+  padding: 2px 0;
+}
+.kw-entity-label {
+  font-weight: 500;
+  color: #9ca3af;
+}
+.kw-muted {
+  color: #6b7280;
+}
+
+.kw-divider {
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  margin: 0.75rem 0;
+}
+
+.kw-search-row {
+  display: grid;
+  grid-template-columns: 1fr 160px 100px;
+  gap: 8px;
+}
+.kw-select, .kw-input {
+  border-radius: 8px;
+  font-size: 0.95rem;
+}
+.kw-btn--primary {
+  background-color: #16a34a;
+  color: #fff;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+.kw-btn--primary:hover {
+  background-color: #22c55e;
+}
+</style>
+
+<script>
+(function(){
+  const form = document.getElementById('unified-search-form');
+  const input = document.getElementById('unified-search-input');
+  const scope = document.getElementById('unified-search-scope');
+
+  // Simple typeahead local filter
+  const data = {
+    people: {{ typeahead_source.people|tojson|safe if typeahead_source else "[]" }},
+    dispensaries: {{ typeahead_source.dispensaries|tojson|safe if typeahead_source else "[]" }},
+    providers: {{ typeahead_source.providers|tojson|safe if typeahead_source else "[]" }},
+    enterprises: {{ typeahead_source.enterprises|tojson|safe if typeahead_source else "[]" }}
+  };
+
+  const list = document.createElement('ul');
+  list.className = 'kw-typeahead__list';
+  list.style = 'position:absolute;z-index:15;background:#fff;color:#000;max-height:220px;overflow:auto;display:none;border-radius:10px;border:1px solid rgba(0,0,0,0.2);';
+  input.parentNode.style.position = 'relative';
+  input.parentNode.appendChild(list);
+
+  input.addEventListener('input', ()=>{
+    const val = input.value.trim().toLowerCase();
+    const mode = scope.value;
+    if(!val || val.length<2){ list.style.display='none'; return; }
+    const filtered = (data[mode]||[]).filter(x=>x.name.toLowerCase().includes(val)).slice(0,8);
+    list.innerHTML = filtered.map(x=>`<li style="padding:6px 10px;cursor:pointer;">${x.name}</li>`).join('');
+    list.style.display = filtered.length?'block':'none';
+  });
+
+  list.addEventListener('click', e=>{
+    if(e.target.tagName==='LI'){ input.value=e.target.textContent; list.style.display='none'; form.submit(); }
+  });
+
+  document.addEventListener('click', e=>{
+    if(!e.target.closest('#kw-unified-search')) list.style.display='none';
+  });
+})();
+</script>

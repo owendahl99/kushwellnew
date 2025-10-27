@@ -1,0 +1,61 @@
+﻿{# FILE: app/templates/patient/partials/_afflictions_question.html #}
+<section class="kw-card" aria-labelledby="afflictions-section">
+  <div class="kw-card__head">
+    <h2 id="afflictions-section" class="kw-card__title">Afflictions</h2>
+    <div class="kw-meta">Select your current afflictions and indicate the level (Iâ€“IV)</div>
+  </div>
+
+  <div class="kw-card__body">
+    <div id="afflictions-container">
+      {# last_row may be passed by the view; else empty {} #}
+      {% set last_affs = (last_row.afflictions if (last_row is defined and last_row and last_row.afflictions is defined) else {}) %}
+
+      {% for aff in AFFLICTION_LIST %}
+      {% set aid = loop.index0 %}
+      {% set sel = '' %}
+      {% if last_affs %}
+        {% if aff in last_affs %}
+          {% set sel = last_affs[aff] %}
+        {% elif (aid|string) in last_affs %}
+          {% set sel = last_affs[aid|string] %}
+        {% elif aid in last_affs %}
+          {% set sel = last_affs[aid] %}
+        {% endif %}
+      {% endif %}
+      <div class="kw-affliction-row">
+        <label for="afflict-{{ aid }}">{{ aff }}</label>
+        <select name="afflictions[{{ aid }}]" id="afflict-{{ aid }}" class="kw-select">
+          {% for level in AFFLICTION_LEVELS %}
+          <option value="{{ level }}" {% if sel == level %}selected{% endif %}>{{ level }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  const container = document.getElementById('afflictions-container');
+  if(!container) return;
+
+  const rows = Array.from(container.querySelectorAll('.kw-affliction-row'));
+  // Add a search box at the top
+  const searchBox = document.createElement('input');
+  searchBox.type = 'text';
+  searchBox.placeholder = 'Search afflictions...';
+  searchBox.className = 'kw-input kw-input--search';
+  container.prepend(searchBox);
+
+  searchBox.addEventListener('input', function(){
+    const term = this.value.trim().toLowerCase();
+    rows.forEach(r => {
+      const label = (r.querySelector('label')?.textContent || '').toLowerCase();
+      r.style.display = label.includes(term) ? '' : 'none';
+    });
+  });
+});
+</script>
+
+

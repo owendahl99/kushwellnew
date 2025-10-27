@@ -1,0 +1,38 @@
+﻿{# FILE: app/templates/patient/partials/_usage_history.html #}
+<div class="usage-history">
+  <h2>Product Usage History</h2>
+
+  {% if usage_json %}
+  <table class="usage-table">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Check-ins</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for day in usage_json %}
+      <tr>
+        <td>{{ day.day }}</td>
+        <td>{{ day.count }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p>No usage history available.</p>
+  {% endif %}
+
+  {% if last_products %}
+  <h3>Last Products Used</h3>
+  <ul class="last-products-list">
+    {% for p in last_products %}
+      <li>
+        <a href="{{ p.url }}">{{ p.product_name }}</a> - {{ p.dosage_mg }} mg, {{ p.times_per_day }}x/day
+      </li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+</div>
+
+

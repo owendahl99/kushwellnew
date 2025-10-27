@@ -1,0 +1,262 @@
+{# FILE: app/templates/patient/checkins_hub.html #}
+{% extends "base.html" %}
+{% block title %}Check-Ins Hub{% endblock %}
+{% block body_class %}kw-body theme-chalk{% endblock %}
+
+{% set GLOBAL = inject_master_globals() %} {# inject global context everywhere #}
+
+{% block content %}
+<div id="checkins-hub" class="kw-container" style="display:flex; flex-direction:column; gap:32px; max-width:1200px; margin:0 auto;">
+
+  <!-- === Row 1: AI Banner === -->
+  <section id="ai-banner" class="kw-banner hidden"
+           style="background-color:#223322; color:#fff; padding:20px; border-radius:14px; text-align:center;">
+    <h2 style="margin-bottom:12px;">KUSHWELL CARE AI Recommendations</h2>
+    <div id="ai-feedback">{{ ai_feedback or "" }}</div>
+  </section>
+
+  <!-- DEBUG OUTPUT -->
+  <div class="debug-block">
+    <h4>Debug Data</h4>
+    <pre>
+      Last Check-in:
+        Pain: {{ last_checkin.pain_level if  last_checkin else "None" }}
+        Clarity: {{ last_checkin.clarity_level if last_checkin else "None" }}
+        Energy: {{ last_checkin.energy_level if last_checkin else "None" }}
+        Mood: {{ last_checkin.mood_level if last_checkin else "None" }}
+        Appetite: {{ last_checkin.appetite_level if last_checkin else "None" }}
+
+      Comparisons:
+        Pain avg: {{ comparisons.pain }}
+        Clarity avg: {{ comparisons.clarity }}
+        Energy avg: {{ comparisons.energy }}
+        Mood avg: {{ comparisons.mood }}
+        Appetite avg: {{ comparisons.appetite }}
+
+      Global Context (sample):
+        Afflictions: {{ GLOBAL.AFFLICTION_LIST }}
+        Affliction Levels: {{ GLOBAL.AFFLICTION_LEVELS }}
+        Products: {{ GLOBAL.ALL_PRODUCTS_NAMES }}
+        Strains: {{ GLOBAL.STRAIN_NAMES }}
+        Factoid: {{ GLOBAL.FACTOID }}
+        Snippet: {{ GLOBAL.KUSHWELL_SNIPPET }}
+    </pre>
+  </div>
+
+  <!-- === Row 2: QoL Gauges === -->
+  <section id="qol-gauges" style="display:grid; grid-template-columns:1fr 200px 1fr; gap:24px; align-items:center;">
+
+    <!-- Current QoL -->
+   <div class="checkins-card card-bg" style="background: linear-gradient(135deg, #1e3b1e, #2f5a2f, #3a6a3a); padding:8px; border-radius:14px; text-align:left; position:relative; height:200px;">
+      <h3 style="margin-bottom:8px;">Current QoL</h3>
+      <div style="position:absolute; top:10px; left:0; right:-450; bottom:50; display:flex; justify-content:center; align-items:center;">
+        <svg width="700" height="110" style="overflow:visible;">
+          <!-- Background semi-circle -->
+          <path d="M20,100 A100,100 0 0,1 240,100" stroke="#45b747ff" stroke-width="20" fill="none"/>
+          <!-- Dynamic fill arc -->
+          <path id="left-gauge-fill" d="M20,100 A100,100 0 0,1 240,100" stroke="url(#current-gauge-gradient)" stroke-width="20" fill="none" stroke-dasharray="0,400"/>
+          <!-- Gradient definition -->
+          <defs>
+            <linearGradient id="current-gauge-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#ec380fff"/>
+              <stop offset="25%" stop-color="#9c7f3cff"/>
+              <stop offset="50%" stop-color="#ece09aff"/>
+              <stop offset="75%" stop-color="#f0f073ff"/>
+              <stop offset="100%" stop-color="#FFD700"/>
+            </linearGradient>
+          </defs>
+          <!-- Centered number -->
+          <text x="130" y="70" text-anchor="middle" fill="#45b747ff" font-size="48" font-weight="700">{{ latest_qol or 0 }}</text>
+        </svg>
+      </div>
+      <p style="margin-top:100px; font-size:1rem; color:#e0ffe0;">
+        Kushwell Quality of Life Index: A measure of key attributes that account for your healthy existence.
+      </p>
+    </div>
+
+    <!-- ? Change -->
+    <div class="checkins-card card-bg" style="background: linear-gradient(135deg, #1b271bff, #2f5a2f, #3a6a3a); text-align:center; padding:20px; border-radius:14px; height:150px; display:flex; flex-direction:column; justify-content:center;">
+      <h3>? Change</h3>
+      <p id="pct-overall" style="font-size:1.5rem; margin:4px 0;">0%</p>
+      <p style="margin-top:8px; font-size:1rem; color:#cfc;">Relative to previous check-in.</p>
+    </div>
+
+    <!-- Last QoL -->
+    <div class="checkins-card card-bg" style="background: linear-gradient(135deg, #1e3b1e, #2f5a2f, #3a6a3a); padding:8px; border-radius:14px; text-align:left; position:relative; height:200px;">
+      <h3 style="margin-bottom:8px;">Last QoL</h3>
+      <div style="position:absolute; top:10px; left:0; right:-450; bottom:50; display:flex; justify-content:center; align-items:center;">
+        <svg width="700" height="130" style="overflow:visible;">
+          <path d="M20,110 A100,100 0 0,1 240,110" stroke="#ccc" stroke-width="20" fill="none"/>
+          <path d="M20,110 A100,100 0 0,1 240,110" stroke="#70a070" stroke-width="20" fill="none" stroke-dasharray="0,400"/>
+          <text x="130" y="80" text-anchor="middle" fill="#fff" font-size="48" font-weight="700">{{ latest_qol or 0 }}</text>
+        </svg>
+      </div>
+      <p style="margin-top:100px; font-size:1rem; color:#e0ffe0;">
+        Last check-in: {% if last_checkin_at %}{{ last_checkin_at.strftime("%m-%d-%Y") }}{% else %}No previous check-in{% endif %}. Track your progress over time below.
+      </p>
+    </div>
+
+  </section>
+
+  <!-- === Section: Wellness Sliders === -->
+  <section id="qol-hub" style="display:flex; flex-direction:column; gap:20px;">
+    {% for metric in ['pain','mood','energy','clarity','appetite'] %}
+    <div class="qol-row {{ metric }}">
+
+      <!-- Left: Slider + Emojis -->
+      <div>
+        <div class="qol-index">
+          Current {{ metric|capitalize }}:
+          <span class="current-index">
+            {% if metric == 'pain' %}
+              {{ 11 - last_levels['pain_level'] }}
+            {% else %}
+              {{ last_levels[metric+'_level'] }}
+            {% endif %}
+          </span>
+        </div>
+
+        <input type="range" min="1" max="10"
+              value="{% if metric == 'pain' %}{{ 11 - last_levels['pain_level'] }}{% else %}{{ last_levels[metric+'_level'] }}{% endif %}"
+              class="slider current-slider"
+              data-metric="{{ metric }}"
+              style="width:90%; margin-left:0;">
+
+        <div class="qol-emojis" style="display:flex; justify-content:space-between; margin-top:4px; font-size:2rem; padding-left:8%; padding-right:8%;">
+          {% for emoji in GLOBAL.AFFLICTION_LIST %} {# Sample usage: replace with actual metric-appropriate emoji map if desired #}
+            <span>{{ emoji }}</span>
+          {% endfor %}
+        </div>
+
+        <div class="qol-question">
+          {% if metric == 'pain' %}
+            On a scale of 1–10, with 10 being your worst pain, how would you rate your pain?
+          {% elif metric == 'mood' %}
+            On a scale of 1–10, with 10 being your happiest, how would you rate your mood?
+          {% elif metric == 'energy' %}
+            On a scale of 1–10, with 10 being most energetic, how would you rate your energy?
+          {% elif metric == 'clarity' %}
+            On a scale of 1–10, with 10 being clear-minded and focused, how would you rate your clarity?
+          {% elif metric == 'appetite' %}
+            On a scale of 1–10, with 10 being eating well, how would you rate your appetite?
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Middle: % Change -->
+      <div style="text-align:center; font-weight:700; font-size:2rem;" id="{{ metric }}-pct">0%</div>
+
+      <!-- Right: Analytics Sentence -->
+      <div id="{{ metric }}-text" style="font-size:1.5rem; padding-left:2rem; line-height:1.5;">
+        That's <span id="{{ metric }}-pct-text">0%</span> change since 
+        {% if last_checkin_at %}{{ last_checkin_at.strftime("%m-%d-%Y") }}{% else %}previous check-in{% endif %} 
+        when you registered a 
+        <span id="{{ metric }}-last">{{ last_levels[metric+'_level'] }}</span>.
+      </div>
+
+    </div>
+    {% endfor %}
+  </section>
+
+  <!-- === Row 4: Afflictions === -->
+  <section>
+    <div class="checkins-card card-bg" style="background: linear-gradient(135deg, #1e3b1e, #2f5a2f, #3a6a3a); padding:16px; border-radius:14px;">
+      <h3>Afflictions</h3>
+      <div style="width:100%;">
+        {% include "patient/partials/_afflictions_question.html" with context %}
+        {# Inside _afflictions_question.html you can reference GLOBAL.AFFLICTION_LIST, GLOBAL.AFFLICTION_LEVELS #}
+      </div>
+    </div>
+  </section>
+
+  <!-- === Row 5: Product Check-In === -->
+  <section>
+    <div class="checkins-card card-bg" style="background: linear-gradient(135deg, #1e3b1e, #2f5a2f, #3a6a3a); padding:16px; border-radius:14px;">
+      <h3>Product Check-In</h3>
+      <div style="width:100%;">
+        {% include "patient/partials/product_checkin.html" with context %}
+        {# Inside product_checkin.html you can reference GLOBAL.ALL_PRODUCTS, GLOBAL.ALL_PRODUCTS_NAMES #}
+      </div>
+    </div>
+  </section>
+
+  <!-- === Row 5.5: Submit Button === -->
+  <section style="text-align:center;">
+    <button id="submit-checkin" class="kw-btn kw-btn--primary" disabled>Submit Check-In</button>
+  </section>
+
+  <!-- === Row 6: Long-Term Chart === -->
+  <section>
+    <div class="checkins-card card-bg" style="background: linear-gradient(135deg, #1e3b1e, #2f5a2f, #3a6a3a); padding:16px; border-radius:14px;">
+      <h3>Wellness Over Time</h3>
+      <canvas id="longterm-chart"></canvas>
+    </div>
+  </section>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<style>
+  /* === Emoji Row Styling === */
+  .emoji-row {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: var(--emoji-gap, 6px); /* adjustable gap */
+  }
+  .emoji-row span {
+    font-size: 1.4rem;
+    line-height: 1;
+  }
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const lastLevels = {{ last_levels|tojson|safe }};
+  const currentLevels = {...lastLevels};
+  const lastCheckinDate = "{{ last_checkin_at.strftime('%m-%d-%Y') if last_checkin_at else '' }}";
+
+  function updateMetricDisplay(metric) {
+    let cur = currentLevels[metric];
+    const last = lastLevels[metric] || 0;
+    if(metric === 'pain_level') cur = 11 - cur;
+    const delta = cur - last;
+    const pct = last ? (delta / last * 100) : 0;
+
+    document.querySelector(`#${metric}-pct`).innerText = (pct >= 0 ? "+" : "") + pct.toFixed(0) + "%";
+    document.querySelector(`#${metric}-pct-text`).innerText = (pct >= 0 ? "+" : "") + pct.toFixed(0) + "%";
+    document.querySelector(`#${metric}-last`).innerText = last;
+    document.querySelector(`#${metric}-text`).innerText =
+      `That's ${pct.toFixed(0)}% change since ${lastCheckinDate || "previous check-in"} when you registered a ${last}.`;
+  }
+
+  function calculateTotalQoL(levels) {
+    return (11 - levels.pain_level) + levels.mood_level + levels.energy_level + levels.clarity_level + levels.appetite_level;
+  }
+
+  function updateOverallGauge() {
+    const leftTotal = calculateTotalQoL(currentLevels);
+    const rightTotal = calculateTotalQoL(lastLevels);
+    const delta = leftTotal - rightTotal;
+    const pctChange = rightTotal ? (delta / rightTotal * 100) : 0;
+
+    document.getElementById("left-gauge-fill").setAttribute("stroke-dasharray", `${leftTotal*3.14},314`);
+    document.getElementById("delta-overall").innerText = (delta >= 0 ? "+" : "") + delta.toFixed(0);
+    document.getElementById("pct-overall").innerText = pctChange.toFixed(0) + "%";
+  }
+
+  document.querySelectorAll(".current-slider").forEach(slider => {
+    const metric = slider.dataset.metric;
+    slider.addEventListener("input", () => {
+      currentLevels[metric] = parseFloat(slider.value);
+      updateMetricDisplay(metric);
+      updateOverallGauge();
+    });
+  });
+
+  ['pain_level','mood_level','energy_level','clarity_level','appetite_level'].forEach(m => updateMetricDisplay(m));
+  updateOverallGauge();
+});
+</script>
+{% endblock %}

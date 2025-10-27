@@ -1,0 +1,25 @@
+﻿{% extends "base.html" %}
+{% block title %}Kushwell Patient{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+  <h1>Welcome to Kushwell Patient</h1>
+  <p>
+    At Kushwell, we welcome anyone who wants to learn, grow, and build
+    best practices together in a community that cares about one another.
+  </p>
+    <p>
+      Whether youâ€™re new to cannabis care or experienced, Kushwell gives you
+      a space to track wellness, explore trusted products, and connect with
+      others who share your journey.
+    </p>
+    <a href="{{ url_for('patient.dashboard') }}" class="btn btn-primary">
+      Enter Patient Portal
+  </a>
+</section>
+
+{% include "_partials/_join_family_banner.html" %}
+{% endblock %}
+
+
+

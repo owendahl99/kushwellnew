@@ -1,0 +1,17 @@
+﻿{% extends "base.html" %}
+
+{% block title %}Dispensary Profile{% endblock %}
+
+{% block content %}
+<h1 class="text-2xl font-semibold mb-2">{{ dispensary.name }}</h1>
+<p class="mb-2">Address: {{ dispensary.address }}</p>
+<p class="mb-2">Phone: {{ dispensary.contact_phone }}</p>
+<p class="mb-2">Email: {{ dispensary.contact_email }}</p>
+<p class="mb-2">Website: <a href="{{ dispensary.website }}" class="text-blue-600 hover:underline" target="_blank">{{ dispensary.website }}</a></p>
+<p class="mb-2">Upvotes: {{ votes.get('upvotes', 0) }}, Downvotes: {{ votes.get('downvotes', 0) }}</p>
+<a href="{{ url_for('enterprise.enterprise_dashboard') }}" class="text-blue-600 hover:underline">Back</a>
+{% include "partials/follow_button.html" %}
+{% endblock %}
+
+
+

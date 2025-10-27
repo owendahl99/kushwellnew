@@ -1,0 +1,56 @@
+﻿{% extends "base.html" %}
+{% block title %}{{ 'Edit' if product else 'Add' }} Product{% endblock %}
+{% block content %}
+<h1 class="text-2xl font-bold mb-4">{{ 'Edit' if product else 'Add' }} Product</h1>
+<form action="" method="post" enctype="multipart/form-data" class="space-y-4">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div>
+        <label class="block text-sm font-medium">Name</label>
+        <input type="text" name="name" value="{{ product.name if product else '' }}" class="mt-1 block w-full border rounded p-2" required />
+    </div>
+    <div>
+        <label class="block text-sm font-medium">Description</label>
+        <textarea name="description" class="mt-1 block w-full border rounded p-2" required>{{ product.description if product else '' }}</textarea>
+    </div>
+    <div>
+        <label class="block text-sm font-medium">Application Method</label>
+        <select name="application_method" class="mt-1 block w-full border rounded p-2">
+            {% for method in APPLICATION_METHODS %}
+                <option value="{{ method }}" {% if product and product.application_method == method %}selected{% endif %}>{{ method }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div>
+        <label class="block text-sm font-medium">Suggested Treatment</label>
+        <input type="text" name="suggested_treatment" value="{{ product.suggested_treatment if product else '' }}" class="mt-1 block w-full border rounded p-2" />
+    </div>
+    <div class="flex space-x-4">
+        <div class="flex-1">
+            <label class="block text-sm font-medium">THC Content</label>
+            <input type="text" name="thc_content" value="{{ product.thc_content if product else '' }}" class="mt-1 block w-full border rounded p-2" />
+        </div>
+        <div class="flex-1">
+            <label class="block text-sm font-medium">CBD Content</label>
+            <input type="text" name="cbd_content" value="{{ product.cbd_content if product else '' }}" class="mt-1 block w-full border rounded p-2" />
+        </div>
+    </div>
+    <div>
+        <label class="block text-sm font-medium">Manufacturer Claim</label>
+        <input type="text" name="manufacturer_claim" value="{{ product.manufacturer_claim if product else '' }}" class="mt-1 block w-full border rounded p-2" />
+    </div>
+    <div>
+        <label class="block text-sm font-medium">Image</label>
+        <input type="file" name="image" class="mt-1 block w-full border rounded p-2" />
+        {% if product and product.image_path %}
+            <img src="{{ url_for('static', filename=product.image_path) }}" alt="Current image" class="mt-2 h-24" />
+        {% endif %}
+    </div>
+    <div class="pt-4">
+        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Submit</button>
+    </div>
+</form>
+{% endblock %}
+
+
+
+

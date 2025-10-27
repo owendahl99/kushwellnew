@@ -1,0 +1,24 @@
+﻿{% extends "base.html" %}
+{% block title %}Product Submissions{% endblock %}
+{% block content %}
+<h1 class="text-2xl font-bold mb-4">Product Submissions</h1>
+{% if submissions %}
+    <ul class="space-y-2">
+        {% for submission in submissions %}
+            <li class="border p-3 rounded bg-white flex justify-between">
+                <div>
+                    <strong>{{ submission.name }}</strong> ({{ submission.type }})
+                </div>
+                <div>
+                    <a href="{{ url_for('admin.view_product_submission', submission_id=submission.id) }}" class="text-blue-600 hover:underline">View</a>
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No submissions at this time.</p>
+{% endif %}
+{% endblock %}
+
+
+

@@ -1,0 +1,23 @@
+﻿<script>
+/**
+ * Animate half-moon gauge
+ * @param {string} arcId - SVG path ID
+ * @param {number} value - Value 0-100
+ */
+function updateGauge(arcId, value) {
+  const arc = document.getElementById(arcId);
+  if (!arc) return;
+  const circumference = 283; // half circle length (90*PI*2 / 2)
+  const offset = (value / 100) * circumference;
+  arc.setAttribute("stroke-dasharray", `${offset} ${circumference - offset}`);
+}
+
+// Example initial values
+updateGauge("currentArc", {{ current_score or 0 }});
+document.getElementById("currentValue").innerText = "{{ current_score or 0 }}";
+
+updateGauge("lastArc", {{ last_score or 0 }});
+document.getElementById("lastValue").innerText = "{{ last_score or 0 }}";
+</script>
+
+

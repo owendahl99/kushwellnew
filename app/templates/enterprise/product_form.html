@@ -1,0 +1,59 @@
+﻿{% extends "base.html" %}
+
+{% from "_partials/forms.html" import open as form_open, close as form_close %}
+
+{% block title %}{% if product %}Edit Product{% else %}Submit Product{% endif %}{% endblock %}
+
+{% block content %}
+<h1 class="text-2xl font-semibold mb-4">{% if product %}Edit Product{% else %}Submit Product{% endif %}</h1>
+{{ form_open(request.path) }}
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div>
+      <label for="name" class="block font-medium mb-1">Name</label>
+      <input type="text" id="name" name="name" value="{{ product.name if product else '' }}" required class="border rounded px-2 py-1 w-full" />
+    </div>
+    <div>
+      <label for="description" class="block font-medium mb-1">Description</label>
+      <textarea id="description" name="description" rows="3" class="border rounded p-2 w-full">{{ product.description if product else '' }}</textarea>
+    </div>
+    <div>
+      <label for="application_method" class="block font-medium mb-1">Application Method</label>
+      <select id="application_method" name="application_method" class="border rounded px-2 py-1 w-full">
+        {% for method in APPLICATION_METHODS %}
+          <option value="{{ method }}" {% if product and product.application_method == method %}selected{% endif %}>{{ method }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div>
+      <label for="suggested_treatment" class="block font-medium mb-1">Suggested Treatment</label>
+      <input type="text" id="suggested_treatment" name="suggested_treatment" value="{{ product.suggested_treatment if product else '' }}" class="border rounded px-2 py-1 w-full" />
+    </div>
+    <div>
+      <label for="retail_price" class="block font-medium mb-1">Retail Price</label>
+      <input type="number" step="0.01" id="retail_price" name="retail_price" value="{{ product.retail_price if product else '' }}" class="border rounded px-2 py-1 w-full" />
+    </div>
+    <div>
+      <label for="thc_content" class="block font-medium mb-1">THC Content (%)</label>
+      <input type="number" step="0.01" id="thc_content" name="thc_content" value="{{ product.thc_content if product else '' }}" class="border rounded px-2 py-1 w-full" />
+    </div>
+    <div>
+      <label for="cbd_content" class="block font-medium mb-1">CBD Content (%)</label>
+      <input type="number" step="0.01" id="cbd_content" name="cbd_content" value="{{ product.cbd_content if product else '' }}" class="border rounded px-2 py-1 w-full" />
+    </div>
+    <div class="md:col-span-2">
+      <label for="manufacturer_claim" class="block font-medium mb-1">Manufacturer Claim</label>
+      <textarea id="manufacturer_claim" name="manufacturer_claim" rows="3" class="border rounded p-2 w-full">{{ product.manufacturer_claim if product else '' }}</textarea>
+    </div>
+    <div>
+      <label for="image" class="block font-medium mb-1">Image</label>
+      <input type="file" id="image" name="image" accept="image/*" class="border rounded px-2 py-1 w-full" />
+    </div>
+  </div>
+  <div class="mt-6 flex justify-end">
+    <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">{% if product %}Update Product{% else %}Submit Product{% endif %}</button>
+  </div>
+{{ form_close() }}
+{% endblock %}
+
+
+

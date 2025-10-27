@@ -1,0 +1,164 @@
+﻿{# FILE: templates/enterprise/onboarding.html #}
+{% extends "base.html" %}
+{% block title %}Enterprise Onboarding â€” Kushwell{% endblock %}
+
+{% block content %}
+<div class="kw-container">
+  <div class="kw-card">
+    <h1 class="kw-card__title">Enterprise Onboarding</h1>
+    <p class="kw-muted">Tell us who you are and set up your public profile. You can edit this later.</p>
+
+    {# Flash messages #}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          {% if category in ['success'] %}
+            <div class="kw-alert kw-success">{{ message }}</div>
+          {% elif category in ['error','danger'] %}
+            <div class="kw-alert kw-error">{{ message }}</div>
+          {% else %}
+            <div class="kw-alert kw-info">{{ message }}</div>
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form id="enterprise-onboarding-form"
+          action="{{ url_for('enterprise.onboarding') }}"
+          method="post"
+          enctype="multipart/form-data">
+
+      {# If you use CSRF, include your token here, e.g. <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"> #}
+
+      <!-- TYPE SELECTOR -->
+      <fieldset>
+        <legend class="kw-card__title">I am registering as:</legend>
+
+        <label>
+          <input type="radio" name="role_type" value="supplier" required>
+          <strong>Product Supplier / Sponsor</strong>
+          <div class="kw-muted">Brands, product owners</div>
+        </label>
+
+        <label>
+          <input type="radio" name="role_type" value="provider">
+          <strong>Medical Advisors / Researchers</strong>
+          <div class="kw-muted">Clinicians &amp; research orgs</div>
+        </label>
+
+        <label>
+          <input type="radio" name="role_type" value="dispensary">
+          <strong>Dispensaries / Resellers</strong>
+          <div class="kw-muted">Retail &amp; ecommerce</div>
+        </label>
+
+        <label>
+          <input type="radio" name="role_type" value="research">
+          <strong>Research Organization</strong>
+          <div class="kw-muted">Maps to Provider model internally</div>
+        </label>
+      </fieldset>
+
+      <hr>
+
+      <!-- SHARED FIELDS -->
+      <label for="company_name">
+        <span>Organization / Display Name</span>
+        <input id="company_name" name="company_name" type="text" class="kw-input" required>
+      </label>
+
+      <label for="contact_email">
+        <span>Contact Email</span>
+        <input id="contact_email" name="contact_email" type="email" class="kw-input" required>
+      </label>
+
+      <label for="website">
+        <span>Website (optional)</span>
+        <input id="website" name="website" type="url" class="kw-input">
+      </label>
+
+      <label for="logo">
+        <span>Logo (PNG/JPG/SVG)</span>
+        <input id="logo" name="logo" type="file" accept=".png,.jpg,.jpeg,.svg" class="kw-input">
+        <p class="kw-muted">Weâ€™ll show this on your public card. Large, square images look best.</p>
+      </label>
+
+      <!-- DISPENSARY FIELDS -->
+      <div id="section-dispensary" hidden>
+        <h2 class="kw-card__title">Dispensary / Reseller Details</h2>
+
+        <label for="address">
+          <span>Address</span>
+          <input id="address" name="address" type="text" class="kw-input">
+        </label>
+
+        <label for="phone">
+          <span>Contact Phone</span>
+          <input id="phone" name="phone" type="tel" class="kw-input">
+        </label>
+      </div>
+
+      <!-- SUPPLIER FIELDS -->
+      <div id="section-supplier" hidden>
+        <h2 class="kw-card__title">Product Supplier / Sponsor Details</h2>
+
+        <label for="product_categories">
+          <span>Product Categories</span>
+          <input id="product_categories" name="product_categories" type="text" class="kw-input"
+                 placeholder="e.g., Oils, Gummies, Topicals">
+        </label>
+      </div>
+
+      <!-- PROVIDER / RESEARCH FIELDS (Provider model) -->
+      <div id="section-provider" hidden>
+        <h2 class="kw-card__title">Medical Advisors / Researchers</h2>
+
+        <label for="clinic_name">
+          <span>Clinic / Organization Name</span>
+          <input id="clinic_name" name="clinic_name" type="text" class="kw-input">
+        </label>
+
+        <label for="education">
+          <span>Education</span>
+          <input id="education" name="education" type="text" class="kw-input">
+        </label>
+
+        <label for="years_experience">
+          <span>Years of Experience</span>
+          <input id="years_experience" name="years_experience" type="number" min="0" step="1" class="kw-input">
+        </label>
+
+        <p class="kw-muted">â€œResearch Organizationâ€ selection maps here internally.</p>
+      </div>
+
+      <p>
+        <a href="/" class="kw-btn secondary">Cancel</a>
+        <button type="submit" class="kw-btn primary">Complete Onboarding</button>
+      </p>
+    </form>
+  </div>
+</div>
+
+<script>
+  // Show/hide subtype sections by toggling the native [hidden] attribute.
+  (function () {
+    const map = {
+      dispensary: document.getElementById('section-dispensary'),
+      supplier: document.getElementById('section-supplier'),
+      provider: document.getElementById('section-provider'),
+      research: document.getElementById('section-provider') // research maps to provider UI
+    };
+    function update() {
+      const checked = document.querySelector('input[name="role_type"]:checked');
+      const val = checked ? checked.value : null;
+      for (const k in map) { if (map[k]) map[k].setAttribute('hidden', ''); }
+      if (val && map[val]) map[val].removeAttribute('hidden');
+    }
+    document.querySelectorAll('input[name="role_type"]').forEach(r => r.addEventListener('change', update));
+    update();
+  })();
+</script>
+{% endblock %}
+
+
+

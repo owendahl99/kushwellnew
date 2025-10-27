@@ -1,0 +1,126 @@
+﻿{% extends "base.html" %}
+{% block title %}{{ group.name }}{% endblock %}
+{% block content %}
+<style>
+  .w { max-width: 1040px; margin: 0 auto; }
+  .h1 { font-size:1.9rem; font-weight:900; margin:.5rem 0 1rem; }
+  .meta{ font-size:1.05rem; color:#111; opacity:.9; }
+  .row{ display:flex; gap:14px; flex-wrap:wrap; align-items:center; }
+  .card{ border:2px solid #111; border-radius:14px; padding:14px; background:#fafafa; }
+  .btn{ padding:.6rem 1rem; border-radius:.65rem; border:2px solid #111; background:#000; color:#fff; font-weight:800; text-decoration:none; }
+  .btn-ghost{ background:#f7f7f7; color:#000; }
+  .btn[disabled]{ opacity:.6; cursor:not-allowed; }
+  .input, .textarea { width:100%; padding:.7rem .8rem; border:2px solid #111; border-radius:.6rem; font-size:1.05rem; background:#fff; color:#000; }
+  .grid { display:grid; gap:14px; grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); }
+  .post{ border:2px solid #111; border-radius:12px; padding:12px; background:#fff; }
+  .post h3{ margin:.1rem 0 .25rem; font-weight:800; font-size:1.05rem; }
+  .list{ list-style:none; padding:0; margin:0; display:grid; gap:10px; }
+  .item{ border:2px solid #111; border-radius:10px; padding:10px; background:#fff; }
+  .topbar{ display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:.5rem; }
+</style>
+
+<div class="w">
+  <div class="topbar">
+    <h1 class="h1">{{ group.name }}</h1>
+    <div class="row">
+      <form method="POST" action="{{ url_for('patient.group_join') }}">
+        {% if csrf_token is defined %}<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">{% endif %}
+        <input type="hidden" name="group_key" value="{{ group.key }}">
+        <input type="hidden" name="next" value="{{ request.full_path }}">
+        <button class="btn" type="submit" {% if joined %}disabled{% endif %}>Join</button>
+      </form>
+      <form method="POST" action="{{ url_for('patient.group_leave') }}">
+        {% if csrf_token is defined %}<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">{% endif %}
+        <input type="hidden" name="group_key" value="{{ group.key }}">
+        <input type="hidden" name="next" value="{{ request.full_path }}">
+        <button class="btn-ghost btn" type="submit" {% if not joined %}disabled{% endif %}>Leave</button>
+      </form>
+      <a class="btn-ghost btn" href="{{ url_for('patient.groups') }}">All Groups</a>
+    </div>
+  </div>
+
+  <p class="meta">Support for {{ group.name }}.</p>
+
+  <!-- Bulletin Board -->
+  <section class="card" style="margin-top:10px;">
+    <h2 style="margin:.2rem 0 .6rem; font-weight:800;">Bulletin Board</h2>
+
+    {% if joined %}
+      <form class="card" method="POST" action="{{ url_for('patient.group_post') }}" style="margin-bottom:12px;">
+        {% if csrf_token is defined %}<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">{% endif %}
+        <input type="hidden" name="group_key" value="{{ group.key }}">
+        <input type="hidden" name="next" value="{{ request.full_path }}">
+        <label class="meta">New post</label>
+        <textarea class="textarea" name="content" rows="3" placeholder="Share an update, tip, or questionâ€¦" required></textarea>
+        <div class="row" style="justify-content:flex-end;">
+          <button class="btn" type="submit">Post</button>
+        </div>
+      </form>
+    {% else %}
+      <p class="meta">Join this group to post.</p>
+    {% endif %}
+
+    {% if posts and posts|length %}
+      <div class="grid">
+        {% for p in posts %}
+          <article class="post">
+            <h3>{{ p.title or 'Post' }} <span class="meta" style="font-weight:400;">â€” {{ p.created_at or p.created or p.timestamp }}</span></h3>
+            <div>{{ p.content or p.body or p.text }}</div>
+          </article>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="meta">No posts yet.</p>
+    {% endif %}
+  </section>
+
+  <!-- Resources -->
+  <section class="card" style="margin-top:12px;">
+    <h2 style="margin:.2rem 0 .6rem; font-weight:800;">Resources</h2>
+
+    {% if joined %}
+      <form class="card" method="POST" action="{{ url_for('patient.group_add_link') }}" style="margin-bottom:12px;">
+        {% if csrf_token is defined %}<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">{% endif %}
+        <input type="hidden" name="group_key" value="{{ group.key }}">
+        <input type="hidden" name="next" value="{{ request.full_path }}">
+        <div class="row">
+          <label style="flex:1;">
+            <span class="meta">URL</span>
+            <input class="input" type="url" name="url" required placeholder="https://example.com/article">
+          </label>
+          <label style="flex:1;">
+            <span class="meta">Title (optional)</span>
+            <input class="input" type="text" name="title" placeholder="Article title">
+          </label>
+        </div>
+        <label>
+          <span class="meta">Notes (optional)</span>
+          <textarea class="textarea" name="notes" rows="2" placeholder="Why this is helpfulâ€¦"></textarea>
+        </label>
+        <div class="row" style="justify-content:flex-end;">
+          <button class="btn" type="submit">Add Link</button>
+        </div>
+      </form>
+    {% else %}
+      <p class="meta">Join this group to add resources.</p>
+    {% endif %}
+
+    <h3 style="margin:.6rem 0 .4rem; font-weight:800;">Links</h3>
+    {% if links and links|length %}
+      <ul class="list">
+        {% for r in links %}
+          <li class="item">
+            <div><strong><a href="{{ r.url }}" target="_blank" rel="noopener">{{ r.title or r.url }}</a></strong></div>
+            {% if r.notes %}<div class="meta">{{ r.notes }}</div>{% endif %}
+            <div class="meta">Added {{ r.created_at or r.created or r.timestamp }}</div>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="meta">No links yet.</p>
+    {% endif %}
+  </section>
+</div>
+{% endblock %}
+
+

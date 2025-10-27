@@ -1,0 +1,16 @@
+﻿{# templates/partials/search_button.html #}
+{% include "_card/_head.html" %}
+<a href="{{ url_for('search.enterprise_search') }}"
+   class="kw-btn kw-btn--primary"
+   aria-label="Search enterprises by name or location"
+   style="display:inline-flex; align-items:center; gap:.4rem;">
+  <!-- decorative icon -->
+  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <path d="M10 2a8 8 0 105.293 14.293l4.707 4.707 1.414-1.414-4.707-4.707A8 8 0 0010 2zm0 2a6 6 0 110 12A6 6 0 0110 4z"/>
+  </svg>
+  Search Enterprises
+</a>
+
+
+
+

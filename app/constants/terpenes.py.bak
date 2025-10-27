@@ -1,0 +1,46 @@
+# app/constants/terpenes.py
+
+from typing import Dict
+
+# === MASTER LIST: COMMON TERPENES WITH TRAITS ===
+# One source of truth: each terpene has a description
+TERPENES: Dict[str, str] = {
+    "Myrcene": "Often described as relaxing/sedating; commonly found in 'couch-lock' strains.",
+    "Limonene": "Citrusy aroma; frequently associated with elevated mood and focus.",
+    "Beta-Caryophyllene": "Peppery/spicy; interacts with CB2, often cited for soothing qualities.",
+    "Alpha-Pinene": "Piney aroma; may support alertness and counteract grogginess.",
+    "Pinene": "Piney aroma; may support alertness and counteract grogginess.",
+    "Beta-Pinene": "Piney aroma; may support alertness and counteract grogginess.",
+    "Linalool": "Floral, lavender; commonly linked with calm and stress relief.",
+    "Humulene": "Earthy/woodsy; historically associated with balance and appetite control.",
+    "Terpinolene": "Fresh/herbal; some users report uplifting, creative effects.",
+    "Ocimene": "Sweet/herbal; sometimes noted for bright or energizing qualities.",
+    "Bisabolol": "Woody/floral; often mentioned in the context of relaxation and sleep.",
+    "Nerolidol": "Woody/floral; often mentioned in the context of relaxation and sleep.",
+    "Eucalyptol": "Sagey; antibacterial and antifungal; potential benefits in Alzheimer's.",
+    "Camphene": "Sagey; may provide calming effects.",
+    "Borneol": "Minty; used to reduce pain and inflammation and treat respiratory issues.",
+    "Terpineol": "Shown to act as a depressant on the central nervous system; potential for anxiety treatment.",
+    "Valencene": "Fruity; associated with positive mood and alertness.",
+    "Geraniol": "Floral; often associated with relaxation and sleep.",
+    "Fenchol": "Sagey; may provide calming effects.",
+    "Sabinene": "Piney aroma; offers antioxidant properties.",
+    "Caryophyllene": "Aromatic; may provide calming or soothing effects.",
+    # Optional extended ones you had in utils/terpene.py
+    "Delta-3-Caryophyllene": "Aids in healing broken bones; may benefit Alzheimer's.",
+    "Delta-8-Caryophyllene": "Aromatic; may provide calming effects.",
+    "Pulegol": "May provide pain relief and reduce temperature; insect repellent.",
+    "Transnerol": "Provides antiparasitic properties.",
+    "Phellandrene": "Sagey; may provide calming effects.",
+}
+
+# Convenience: list form (for typeahead, dropdowns, etc.)
+COMMON_TERPENES = list(TERPENES.keys())
+
+def get_terpenes() -> Dict[str, str]:
+    """Return canonical terpene ? trait mapping."""
+    return TERPENES
+
+def get_common_terpenes() -> list[str]:
+    """Return list of canonical terpene names."""
+    return COMMON_TERPENES

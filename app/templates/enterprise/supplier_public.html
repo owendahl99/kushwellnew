@@ -1,0 +1,16 @@
+﻿    {% extends "base.html" %}
+
+{% block title %}Supplier Profile{% endblock %}
+
+{% block content %}
+<h1 class="text-2xl font-semibold mb-2">{{ supplier.company_name }}</h1>
+<p class="mb-2">Categories: {{ supplier.product_categories or 'N/A' }}</p>
+<p class="mb-2">Contact: {{ supplier.contact_email }}</p>
+<p class="mb-2">Website: <a href="{{ supplier.website }}" class="text-blue-600 hover:underline" target="_blank">{{ supplier.website }}</a></p>
+<p class="mb-2">Upvotes: {{ votes.get('upvotes', 0) }}, Downvotes: {{ votes.get('downvotes', 0) }}</p>
+<a href="{{ url_for('enterprise.enterprise_dashboard') }}" class="text-blue-600 hover:underline">Back</a>
+% include "partials/follow_button.html" %}
+{% endblock %}
+
+
+

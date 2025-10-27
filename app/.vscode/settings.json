@@ -1,0 +1,36 @@
+﻿{
+  // âœ… Interpreter (Windows users: change to venv\\Scripts\\python.exe)
+  "python.defaultInterpreterPath": "venv\\Scripts\\python.exe"
+
+  // âœ… Type checking
+  "python.analysis.typeCheckingMode": "basic",
+
+  // âœ… Linting with flake8
+  "python.linting.enabled": true,
+  "python.linting.flake8Enabled": true,
+  "python.linting.flake8Args": ["--max-line-length=88"],
+
+  // âœ… Auto-format & organize imports on save
+  "editor.formatOnSave": true,      
+  "editor.defaultFormatter": "ms-python.black-formatter",
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": true
+  },
+
+  // âœ… Auto-activate venv in terminals VS Code opens
+  "python.terminal.activateEnvironment": true,
+
+  // âœ… Spell checker (add project words here)
+  "cSpell.words": ["Kushwell", "SQLAlchemy", "WTForms", "Blueprint", "PyJWT"],
+
+  // âœ… Environment file (if you use one)
+  "python.envFile": "${workspaceFolder}/.flaskenv",
+
+  // âœ… Hide junk in the explorer
+  "files.exclude": {
+    "**/__pycache__": true,
+    "**/*.pyc": true,
+    ".env": true
+  }
+}
+

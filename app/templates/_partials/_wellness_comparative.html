@@ -1,0 +1,47 @@
+﻿{# FILE: app/templates/patient/partials/_wellness_comparative.html #}
+<article id="wellnessComparativeCard" class="kw-card" aria-label="Wellness Comparative"
+         style="background: linear-gradient(to right, #0e221b, #f5d547); padding:16px; min-height:400px;">
+
+  <h2 style="margin-top:0;">Wellness Comparative</h2>
+
+  <!-- Overall score -->
+  <div id="wcOverallScore" style="font-size:1.25rem; font-weight:700; margin-bottom:12px;">
+    Overall Score: â€”
+  </div>
+
+  <!-- Slider-by-slider comparison list -->
+  <ul id="wcComparativeList" style="list-style:none; padding-left:0; margin-bottom:12px;">
+    <!-- Populated dynamically by wellness_comparative.js -->
+  </ul>
+
+  <!-- Encouragement / affirmation -->
+  <div id="wcEncouragement" style="font-style:italic; line-height:1.4; margin-bottom:12px;">
+    <!-- Populated dynamically by wellness_comparative.js -->
+  </div>
+
+  <!-- Optional CTA: recommended products -->
+  {% if recommended_products %}
+  <div id="wcRecommendedProducts" style="margin-top:12px;">
+    <h3 style="margin-bottom:6px;">Recommended Products</h3>
+    <ul style="list-style:none; padding-left:0;">
+      {% for p in recommended_products %}
+        <li style="margin-bottom:4px;">
+          <a href="{{ url_for('products.product_detail', product_id=p.product_id) }}"
+             style="color:#12412f; font-weight:600;">{{ p.product_name }}</a>
+          â€“ {{ p.dosage_mg }}mg, {{ p.times_per_day }}x/day
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  <!-- Optional: submit button to lock in today's check-in -->
+  <div style="margin-top:16px; text-align:right;">
+    <button id="wcSubmitBtn" class="menu-panel-btn"
+            style="background:#12412f; color:#fff; padding:.5rem 1rem; border-radius:8px; font-weight:800;">
+      Submit Check-in
+    </button>
+  </div>
+</article>
+
+

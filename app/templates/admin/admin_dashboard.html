@@ -1,0 +1,75 @@
+﻿{# app/templates/admin/dashboard.html #}
+{% extends "base.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<section class="kw-shell">
+
+  {# --- Page header --- #}
+  <header class="kw-card" style="display:flex;align-items:center;justify-content:space-between;">
+    <h1 class="kw-tight" style="font-size:1.6rem;margin:0;">Admin Dashboard</h1>
+    <div class="kw-meta">Moderation • Catalog • Messaging</div>
+  </header>
+
+  {# --- Unified Search (full-width card) --- #}
+  <div class="kw-grid" style="grid-template-columns:1fr;">
+    {% include "_card/search_unified.html" %}
+  </div>
+
+  {# --- KPI cards --- #}
+  <div class="kw-grid" style="margin-top:.6rem;">
+    <section class="kw-card">
+      <h3 class="kw-card__title">Total Products</h3>
+      <p style="font-size:1.8rem;font-weight:800;margin:.25rem 0 0 0;">{{ total_products }}</p>
+    </section>
+
+    <section class="kw-card">
+      <h3 class="kw-card__title">Pending</h3>
+      <p style="font-size:1.8rem;font-weight:800;margin:.25rem 0 0 0;">{{ pending_count }}</p>
+    </section>
+
+    <section class="kw-card">
+      <h3 class="kw-card__title">Approved</h3>
+      <p style="font-size:1.8rem;font-weight:800;margin:.25rem 0 0 0;">{{ approved_count }}</p>
+    </section>
+
+    <section class="kw-card">
+      <h3 class="kw-card__title">Rejected</h3>
+      <p style="font-size:1.8rem;font-weight:800;margin:.25rem 0 0 0;">{{ rejected_count }}</p>
+    </section>
+  </div>
+
+  {# --- Queues --- #}
+  <div class="kw-grid" style="margin-top:.6rem;">
+    <section class="kw-card">
+      <h3 class="kw-card__title">Disputes</h3>  
+      <p class="kw-meta">Open disputes</p>
+      <p style="font-size:1.4rem;font-weight:800;margin:.25rem 0 0 0;">{{ dispute_count }}</p>
+      {% if has_endpoint('admin.disputes') %}
+        <a class="kw-btn" href="{{ url_for('admin.disputes') }}" style="margin-top:.6rem;">
+          Review disputes
+        </a>
+      {% endif %}
+    </section>
+
+    <section class="kw-card">
+      <h3 class="kw-card__title">Moderation Queue</h3>
+      <p class="kw-meta">Items awaiting review</p>
+      <p style="font-size:1.4rem;font-weight:800;margin:.25rem 0 0 0;">{{ pending_count }}</p>
+      {% if has_endpoint('admin.pending_products') %}
+        <a class="kw-btn" href="{{ url_for('admin.pending_products') }}" style="margin-top:.6rem;">
+          Review pending products
+        </a>
+      {% endif %}
+    </section>
+  </div>
+
+    <div class="kw-grid" style="grid-template-columns:1fr; margin-top:.6rem;">
+      {% include "_card/communications.html" with context %}
+  </div>
+
+
+</section>
+{% endblock %}
+
+

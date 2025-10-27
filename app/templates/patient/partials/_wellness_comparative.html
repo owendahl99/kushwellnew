@@ -1,0 +1,42 @@
+﻿<section class="kw-card" aria-label="Wellness Comparative Analytics">
+  <div class="kw-card__head">
+    <h3 class="kw-card__title">Comparative Analytics</h3>
+    <div class="kw-meta">How todayâ€™s check-in compares with your last one.</div>
+  </div>
+
+  <div class="kw-card__body">
+    <table class="kw-table kw-compare">
+      <thead>
+        <tr>
+          <th>Metric</th>
+          <th>Last</th>
+          <th>Now</th>
+          <th>Î” Change</th>
+          <th>% Change</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for m in ["pain", "sleep", "mood", "energy", "clarity", "appetite"] %}
+          {% set last_val = last_levels.get(m, 0) %}
+          {# current_val is dynamic, starts same as last but updates as sliders move #}
+          {% set current_val = sliders_comparison[m]['current'] if sliders_comparison and m in sliders_comparison else last_val %}
+          {% set delta = current_val - last_val %}
+          {% set pct = (delta / (last_val or 1)) * 100 %}
+          <tr>
+            <td class="kw-subhead">{{ m|capitalize }}</td>
+            <td>{{ last_val }}</td>
+            <td class="current-val" data-metric="{{ m }}">{{ current_val }}</td>
+            <td class="{{ 'pos' if delta > 0 else 'neg' if delta < 0 else 'neutral' }}">
+              {{ "+" if delta > 0 else "" }}{{ delta }}
+            </td>
+            <td class="{{ 'pos' if pct > 0 else 'neg' if pct < 0 else 'neutral' }}">
+              {{ pct|round(1) }}%
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+

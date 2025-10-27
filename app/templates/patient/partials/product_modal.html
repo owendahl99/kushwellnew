@@ -1,0 +1,97 @@
+﻿{# patient/partials/product_modal.html — production-ready modal with status border #}
+
+{% include "_card/_head.html" %}
+{# ---- Status borders (0.5 inch) ---- #}
+<style id="product-status-borders">
+  .kw-approved-border   { border: 0.5in solid #0b6b2f; border-radius: 16px; }
+  .kw-grassroots-border { border: 0.5in solid #98ff98; border-radius: 16px; }
+</style>
+
+{# ---- status ? class (Enum-safe) ---- #}
+{% set _status = (product.status.value if product.status is not string and product.status is defined and product.status.value is defined else product.status)|string|lower %}
+{% set _is_approved   = _status in ["enterprise_approved","approved","grassroots_approved"] %}
+{% set _is_gr_pending = _status in ["grassroots_pending","gr_pending"] %}
+{% set _border_cls = "kw-approved-border" if _is_approved else ("kw-grassroots-border" if _is_gr_pending else "") %}
+
+{# ---- basic field helpers ---- #}
+{% macro name_of(p, default='Unnamed Product') -%}
+  {%- if p.name is defined and p.name -%}{{ p.name }}
+  {%- elif p.title is defined and p.title -%}{{ p.title }}
+  {%- else -%}{{ default }}{%- endif -%}
+{%- endmacro %}
+
+{% macro img_of(p) -%}
+  {%- if p.image_path is defined and p.image_path -%}{{ p.image_path }}
+  {%- elif p.image_url is defined and p.image_url -%}{{ p.image_url }}
+  {%- elif p.image is defined and p.image -%}{{ p.image }}{% endif -%}
+{%- endmacro %}
+
+{% set _name = name_of(product) %}
+{% set _img  = img_of(product) %}
+
+<div class="product-modal {{ _border_cls }}" style="padding:16px;">
+  <header class="kw-row kw-gap" style="justify-content:space-between; align-items:center;">
+    <h3 class="kw-card__title" style="margin:0;">{{ _name }}</h3>
+    <div class="kw-row kw-gap">
+      <span class="kw-chip">{{ _status }}</span>
+      <a class="kw-btn kw-btn--ghost" href="{{ url_for('patient.product_modal', product_id=product.id) }}">Refresh</a>
+    </div>
+  </header>
+
+  {% if _img %}
+    <div class="kw-media" style="margin-top:10px;">
+      {% if _img.startswith('/') %}
+        <img src="{{ _img }}" alt="{{ _name }}" style="max-height:240px; object-fit:cover; border-radius:8px;">
+      {% else %}
+        <img src="{{ url_for('static', filename=_img) }}" alt="{{ _name }}" style="max-height:240px; object-fit:cover; border-radius:8px;">
+      {% endif %}
+    </div>
+  {% endif %}
+
+  <section style="margin-top:12px;">
+    <dl class="kw-grid" style="grid-template-columns:auto 1fr; gap:8px 14px; margin:0;">
+      {% if product.category %}<dt>Category</dt><dd>{{ product.category }}</dd>{% endif %}
+      {% if product.description %}<dt>Description</dt><dd>{{ product.description }}</dd>{% endif %}
+      {% if product.provider_id %}<dt>Provider</dt><dd>#{{ product.provider_id }}</dd>{% endif %}
+      {% if product.dispensary_id %}<dt>Dispensary</dt><dd>#{{ product.dispensary_id }}</dd>{% endif %}
+    </dl>
+  </section>
+
+  {# Optional blocks, only if provided by the view #}
+  {% if avg_qol is defined %}
+    <section class="kw-row kw-gap" style="margin-top:12px;">
+      <div class="kw-chip">Avg QOL: {{ avg_qol }}</div>
+      {% if votes is defined %}<div class="kw-chip">Votes: {{ votes }}</div>{% endif %}
+    </section>
+  {% endif %}
+
+  {# Chem profile and terpenes if relationships are present #}
+  {% if product.profile is defined and product.profile %}
+    <section style="margin-top:12px;">
+      <h4 style="margin:0 0 6px;">Chem Profile</h4>
+      <dl class="kw-grid" style="grid-template-columns:auto 1fr; gap:6px 12px; margin:0;">
+        {% if product.profile.chem_type %}<dt>Type</dt><dd>{{ product.profile.chem_type }}</dd>{% endif %}
+        {% if product.profile.thc_percent is not none %}<dt>THC</dt><dd>{{ '%.1f'|format(product.profile.thc_percent|float) }}%</dd>{% endif %}
+        {% if product.profile.cbd_percent is not none %}<dt>CBD</dt><dd>{{ '%.1f'|format(product.profile.cbd_percent|float) }}%</dd>{% endif %}
+      </dl>
+    </section>
+  {% endif %}
+
+  {% if product.terpenes is defined and product.terpenes %}
+    <section style="margin-top:10px;">
+      <h4 style="margin:0 0 6px;">Terpenes</h4>
+      <ul class="kw-list">
+        {% for t in product.terpenes %}
+          <li>{{ t.name }}{% if t.percent is not none %} — {{ '%.2f'|format(t.percent|float) }}%{% endif %}</li>
+        {% endfor %}
+      </ul>
+    </section>
+  {% endif %}
+
+  <footer class="kw-row kw-gap" style="justify-content:flex-end; margin-top:14px;">
+    <a class="kw-btn kw-btn--ghost" href="{{ url_for('patient.my_submissions') }}">My Submissions</a>
+  </footer>
+</div>
+
+
+

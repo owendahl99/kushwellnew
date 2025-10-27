@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kushwell Onboarding with Icons</title>
+    <!--
+      This prototype demonstrates a mobile‑friendly onboarding flow that uses
+      vertical sliders with expressive endpoints.  Each slider has clear
+      visual cues to indicate the direction of improvement (good vs bad).
+      A step‑by‑step form asks for a user’s name and email before gathering
+      qualitative data about their mood and mental clarity.  Sliders are
+      augmented with emoji icons at the top and bottom to reinforce the
+      meaning of each extreme.  Colours follow the Kushwell palette.
+    -->
+    <style>
+        /* Base styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 420px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 1rem;
+            color: #14532d; /* dark green */
+        }
+        h2 {
+            color: #14532d;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+            text-align: center;
+        }
+        .step {
+            display: none;
+        }
+        .step.active {
+            display: block;
+        }
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+        }
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            background-color: #10b981; /* bright green */
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            flex: 1;
+            margin: 0 2px;
+        }
+        .btn:disabled {
+            background-color: #a7f3d0;
+            cursor: not-allowed;
+        }
+        .progress {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+        .progress span {
+            flex: 1;
+            height: 4px;
+            margin: 0 2px;
+            background-color: #d1fae5;
+            border-radius: 2px;
+        }
+        .progress span.active {
+            background-color: #10b981;
+        }
+        /* Slider wrapper for vertical sliders */
+        .slider-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            height: 210px;
+            margin: 0.5rem 0;
+        }
+        .slider-icon {
+            font-size: 32px;
+            line-height: 1;
+        }
+        /* Container for the range input */
+        .slider-container {
+            height: 140px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .slider-container input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 8px;
+            height: 140px;
+            margin: 0;
+            background: linear-gradient(to top, #dc2626 0%, #16a34a 100%); /* red to green gradient */
+            border-radius: 4px;
+            outline: none;
+            position: relative;
+        }
+        /* Custom thumb */
+        .slider-container input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background-color: #14532d;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid #fff;
+        }
+        .slider-container input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background-color: #14532d;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid #fff;
+        }
+        .slider-value {
+            text-align: center;
+            font-weight: bold;
+            color: #14532d;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Welcome to Kushwell</h1>
+    <div class="progress">
+        <span id="prog-1" class="active"></span>
+        <span id="prog-2"></span>
+        <span id="prog-3"></span>
+    </div>
+    <form id="form">
+        <!-- Step 1 -->
+        <div id="step1" class="step active">
+            <label for="name">What's your name?</label>
+            <input type="text" id="name" name="name" placeholder="Enter your name" required
+                   style="width:100%;padding:0.5rem;margin-top:0.5rem;border:1px solid #ccc;border-radius:4px;">
+            <div class="buttons">
+                <button type="button" id="next1" class="btn">Next</button>
+            </div>
+        </div>
+        <!-- Step 2 -->
+        <div id="step2" class="step">
+            <label for="email">What's your email?</label>
+            <input type="email" id="email" name="email" placeholder="Enter your email" required
+                   style="width:100%;padding:0.5rem;margin-top:0.5rem;border:1px solid #ccc;border-radius:4px;">
+            <div class="buttons">
+                <button type="button" id="prev2" class="btn">Back</button>
+                <button type="button" id="next2" class="btn">Next</button>
+            </div>
+        </div>
+        <!-- Step 3 -->
+        <div id="step3" class="step">
+            <p style="text-align:center;margin-bottom:1rem;">Adjust the sliders below to reflect how you feel today. 0 is the lowest and 10 is the highest.</p>
+
+            <!-- Happiness slider -->
+            <h2>Happiness</h2>
+            <div class="slider-wrapper">
+                <span class="slider-icon" style="color:#16a34a;">🕺</span>
+                <div class="slider-container">
+                    <input type="range" id="happiness" name="happiness" min="0" max="10" value="5">
+                </div>
+                <span class="slider-icon" style="color:#dc2626;">😠</span>
+            </div>
+            <div id="happiness-value" class="slider-value">5</div>
+
+            <!-- Clarity slider -->
+            <h2>Clarity</h2>
+            <div class="slider-wrapper">
+                <span class="slider-icon" style="color:#16a34a;">🎯</span>
+                <div class="slider-container">
+                    <input type="range" id="clarity" name="clarity" min="0" max="10" value="5">
+                </div>
+                <span class="slider-icon" style="color:#dc2626;">😵</span>
+            </div>
+            <div id="clarity-value" class="slider-value">5</div>
+
+            <div class="buttons">
+                <button type="button" id="prev3" class="btn">Back</button>
+                <button type="submit" class="btn">Finish</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Handle step navigation
+    document.addEventListener('DOMContentLoaded', () => {
+        const steps = [document.getElementById('step1'), document.getElementById('step2'), document.getElementById('step3')];
+        const progs = [document.getElementById('prog-1'), document.getElementById('prog-2'), document.getElementById('prog-3')];
+        let idx = 0;
+        function show(idxToShow) {
+            steps.forEach((step, i) => {
+                step.classList.toggle('active', i === idxToShow);
+                progs[i].classList.toggle('active', i <= idxToShow);
+            });
+            idx = idxToShow;
+        }
+        document.getElementById('next1').addEventListener('click', () => show(1));
+        document.getElementById('prev2').addEventListener('click', () => show(0));
+        document.getElementById('next2').addEventListener('click', () => show(2));
+        document.getElementById('prev3').addEventListener('click', () => show(1));
+
+        // Slider value updates
+        const happiness = document.getElementById('happiness');
+        const happinessValue = document.getElementById('happiness-value');
+        happiness.addEventListener('input', () => {
+            happinessValue.textContent = happiness.value;
+        });
+        const clarity = document.getElementById('clarity');
+        const clarityValue = document.getElementById('clarity-value');
+        clarity.addEventListener('input', () => {
+            clarityValue.textContent = clarity.value;
+        });
+    });
+</script>
+</body>
+</html>

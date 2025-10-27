@@ -1,0 +1,22 @@
+{# FILE: templates/patient/partials/_product_research_card.html #}
+{% include "_card/_head.html" %}
+<section class="card card-medium" tabindex="0" data-target-url="{{ url_for('patient.product_research') }}">
+  <div class="card-front">
+    <h3>Product Research</h3>
+    <p class="kw-muted">Explore top products by QoL, usage, and upvotes.</p>
+
+    <div class="kush-card">
+      <canvas
+        id="topProductsChart"
+        aria-label="Top products overview"
+        data-labels='{{ (top_product_labels or []) | tojson }}'
+        data-scores='{{ (top_product_scores or []) | tojson }}'>
+      </canvas>
+    </div>
+  </div>
+
+  <div class="card-back">
+    <a class="kw-btn primary" href="{{ url_for('patient.product_research') }}">View Full Table</a>
+  </div>
+</section>
+

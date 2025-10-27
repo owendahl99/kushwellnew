@@ -1,0 +1,51 @@
+﻿{# FILE: app/templates/patient/partials/_afflictions_question.html #}
+<section class="kw-card" aria-labelledby="afflictions-section">
+  <div class="kw-card__head">
+    <h2 id="afflictions-section" class="kw-card__title">Afflictions</h2>
+    <div class="kw-meta">Select your current afflictions and indicate the level (Iâ€“IV)</div>
+  </div>
+  <div class="kw-card__body">
+    <div id="afflictions-container">
+      {% for aff in afflictions %}
+      <div class="kw-affliction-row">
+        <label for="afflict-{{ aff.id }}">{{ aff.name }}</label>
+        <select name="afflictions[{{ aff.id }}]" id="afflict-{{ aff.id }}" class="kw-select">
+          {% for level in ['I','II','III','IV'] %}
+          <option value="{{ level }}"
+            {% if last_row and last_row.afflictions[aff.id]|default('') == level %} selected {% endif %}>
+            {{ level }}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<script>
+(function(){
+  // Optional: attach type-ahead / searchable behavior if using a library like Choices.js or similar
+  // Example using a simple JS filter (no external lib)
+  const container = document.getElementById('afflictions-container');
+  if(container){
+    const rows = container.querySelectorAll('.kw-affliction-row');
+    // If you want to add a search box
+    const searchBox = document.createElement('input');
+    searchBox.type = 'text';
+    searchBox.placeholder = 'Search afflictions...';
+    searchBox.className = 'kw-input kw-input--search';
+    container.prepend(searchBox);
+
+    searchBox.addEventListener('input', function(){
+      const term = this.value.toLowerCase();
+      rows.forEach(r => {
+        const label = r.querySelector('label').textContent.toLowerCase();
+        r.style.display = label.includes(term) ? '' : 'none';
+      });
+    });
+  }
+})();
+</script>
+
+

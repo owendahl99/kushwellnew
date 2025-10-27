@@ -1,0 +1,21 @@
+﻿{# FILE: app/templates/patient/partials/_recommended_products.html #}
+<div class="recommended-products">
+  <h2>Recommended Products</h2>
+
+  {% if recommended_products %}
+  <ul class="product-list">
+    {% for p in recommended_products %}
+      <li class="product-item">
+        <a href="{{ p.url }}">{{ p.name }}</a>
+        {% if p.allocation %}
+        <span class="allocation">Impact: {{ p.allocation }}%</span>
+        {% endif %}
+      </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p>No recommendations at this time.</p>
+  {% endif %}
+</div>
+
+

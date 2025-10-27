@@ -1,0 +1,141 @@
+﻿{# FILE: app/templates/_card/_head.html #}
+{# Include this once near where you render cards (e.g., patient/dashboard.html). #}
+
+{# ---- Shared lists to JS (guarded) ---- #}
+<script id="kw-lists">
+  window.KW_LISTS = window.KW_LISTS || {};
+  if (!window.KW_LISTS.AFFLICTIONS)     window.KW_LISTS.AFFLICTIONS     = {{ (AFFLICTIONS or AFFLICTION_LIST)|tojson }};
+  if (!window.KW_LISTS.SUPPORT_GROUPS)  window.KW_LISTS.SUPPORT_GROUPS  = {{ (SUPPORT_GROUPS or [])|tojson }};
+</script>
+
+{# ---- Card base styles (chalkboard-friendly) ---- #}
+<style id="kw-cards-base">
+  .kw-wrap{max-width:1200px;margin:0 auto;padding:16px;}
+  .kw-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .kw-full{grid-column:1/-1}
+  .kw-card{
+    background:rgba(15,39,31,.76);
+    color:#e7f3ec;
+    border:1px solid rgba(12,50,39,.9);
+    border-radius:14px;
+    padding:14px 16px;
+    box-shadow:0 1px 0 rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.02);
+    -webkit-backdrop-filter: blur(1px);
+    backdrop-filter: blur(1px);
+    background-clip: padding-box;
+  }
+  .kw-card__head,.kw-card-header.chalkboard {
+  background: #1e293b; /* dark chalkboard color */
+  color: #f1f5f9;      /* light chalk text */
+  font-weight: 600;
+  font-size: 1.1rem;
+  padding: 8px 12px;
+  border-radius: 6px 6px 0 0;
+  text-align: center;
+  margin-bottom: 6px;
+  letter-spacing: 0.5px;
+  font-family: "Patrick Hand", cursive; /* chalk-style font if available */
+  }
+  .kw-cta,.kw-btn{
+    display:inline-block;text-decoration:none;background:#14532d;color:#fff;
+    border:1px solid #0e3c22;border-radius:10px;padding:.5rem .8rem;font-weight:800;
+  }
+  .kw-cta:focus-visible,.kw-btn:focus-visible{outline:3px solid #fdf7b3;outline-offset:2px;border-radius:10px;}
+
+  .kw-input{
+    width:100%;padding:12px 14px;border-radius:10px;
+    border:1px solid rgba(255,255,255,.22);background:rgba(0,0,0,.18);color:#e7f3ec;font-size:1rem;
+  }
+
+  /* Descriptors / subheads */
+  .kw-desc{font:700 clamp(1.05rem,2.2vw,1.2rem)/1.25 "Kalam", system-ui, Segoe UI, Roboto, Arial, sans-serif;color:#eaeaea;letter-spacing:.2px;opacity:.95;margin:.2em 0 .8em;}
+
+  /* Chips & list */
+  .kw-list{list-style:none;margin:0;padding:0;}
+  .kw-list__row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid rgba(255,255,255,.06);}
+  .kw-list__row:first-child{border-top:0;}
+  .kw-chip{display:inline-block}
+  .kw-chip__a{display:inline-block;padding:.42rem .64rem;border-radius:999px;background:#14532d;border:1px solid #0e3c22;color:#fff;text-decoration:none;font-weight:800;}
+  .kw-chip__a:hover{text-decoration:underline;}
+</style>
+
+{# ---- Autocomplete styles + script (guarded) ---- #}
+<style id="kw-autocomplete-css">
+  .kw-ac{position:relative;display:block}
+  .kw-ac-input{width:100%;padding:12px 14px;font-size:18px;border-radius:10px;border:1px solid rgba(255,255,255,.28);background:rgba(0,0,0,.18);color:inherit}
+  .kw-ac-chips{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+  .kw-chip{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;font-size:16px;border:1px solid rgba(255,255,255,.25);border-radius:999px;background:rgba(255,255,255,.08)}
+  .kw-chip-x{background:none;border:none;color:inherit;font-size:18px;line-height:1;cursor:pointer}
+  .kw-ac-list{position:absolute;z-index:30;left:0;right:0;max-height:260px;overflow:auto;margin-top:4px;padding:6px 0;list-style:none;border-radius:10px;border:1px solid rgba(255,255,255,.25);background:rgba(0,0,0,.9);box-shadow:0 8px 28px rgba(0,0,0,.35)}
+  .kw-ac-item{padding:10px 14px;font-size:18px;cursor:pointer}
+  .kw-ac-item[aria-selected="true"],.kw-ac-item:hover{background:rgba(152,255,152,.25)}
+</style>
+
+<script>
+(function(){
+  if (window.KW_AUTOCOMP_INIT) return; window.KW_AUTOCOMP_INIT = true;
+  const norm=s=>(s||'').toString().trim().toLowerCase(); const uniq=a=>Array.from(new Set(a));
+  function attachAutocomplete(root){
+    const listName=root.dataset.list, multiple=root.dataset.multiple==="1";
+    const values=(window.KW_LISTS&&window.KW_LISTS[listName])||[];
+    const input=root.querySelector('.kw-ac-input'), chips=root.querySelector('.kw-ac-chips');
+    let menu=root.querySelector('.kw-ac-list'); if(!menu){menu=document.createElement('ul');menu.className='kw-ac-list';root.appendChild(menu);}
+    input.setAttribute('aria-autocomplete','list'); input.setAttribute('role','combobox'); input.setAttribute('aria-expanded','false');
+    const current=()=>Array.from(root.querySelectorAll('input[type="hidden"][data-ac="1"]')).map(h=>h.value);
+    function addToken(val){val=val.trim();if(!val)return; if(!multiple&&current().length){replaceTokens([val]);return;}
+      if(current().includes(val))return;
+      const chip=document.createElement('span');chip.className='kw-chip';chip.dataset.value=val;
+      chip.innerHTML=`${val} <button type="button" class="kw-chip-x" aria-label="Remove">Ã—</button>`;chips.appendChild(chip);
+      const hidden=document.createElement('input');hidden.type='hidden';hidden.dataset.ac='1';
+      hidden.name=multiple?(root.dataset.name||'values')+'[]':(root.dataset.name||'value'); hidden.value=val; chips.appendChild(hidden);
+    }
+    function replaceTokens(vals){chips.querySelectorAll('.kw-chip,input[type="hidden"][data-ac="1"]').forEach(n=>n.remove()); vals.forEach(addToken);}
+    chips.addEventListener('click',e=>{if(e.target.classList.contains('kw-chip-x')){const c=e.target.closest('.kw-chip');const v=c?.dataset.value;c?.remove();chips.querySelector(`input[type="hidden"][data-ac="1"][value="${CSS.escape(v)}"]`)?.remove();input.focus();}});
+    function close(){menu.hidden=true;input.setAttribute('aria-expanded','false');active=-1}
+    function open(){menu.hidden=false;input.setAttribute('aria-expanded','true')}
+    function render(items){menu.innerHTML='';items.forEach((txt,i)=>{const li=document.createElement('li');li.className='kw-ac-item';li.textContent=txt;li.setAttribute('role','option');li.id=`${input.id||'ac'}-opt-${i}`;
+      li.addEventListener('mousedown',ev=>ev.preventDefault()); li.addEventListener('click',()=>{addToken(txt);close();input.value='';input.focus();}); menu.appendChild(li);});
+      menu.hidden=!items.length; input.setAttribute('aria-expanded',String(!menu.hidden)); active=items.length?0:-1; mark();
+    }
+    function mark(){Array.from(menu.children).forEach((el,idx)=>el.setAttribute('aria-selected',idx===active?'true':'false'))}
+    const clamp=(n,lo,hi)=>Math.max(lo,Math.min(hi,n));
+    function filter(q){const taken=new Set(current().map(norm)); const needle=norm(q), out=[];
+      for(const v of values){const n=norm(v); if(taken.has(n))continue; if(!needle||n.includes(needle)) out.push(v); if(out.length>=50)break;}
+      return out;
+    }
+    input.addEventListener('input',()=>{const m=filter(input.value); if(m.length){render(m);open();}else close();});
+    let active=-1;
+    input.addEventListener('keydown',e=>{
+      const items=Array.from(menu.children);
+      if(e.key==='ArrowDown'){ if(!menu.hidden&&items.length){active=clamp(active+1,0,items.length-1);mark(); e.preventDefault();}}
+      else if(e.key==='ArrowUp'){ if(!menu.hidden&&items.length){active=clamp(active-1,0,items.length-1);mark(); e.preventDefault();}}
+      else if(e.key==='Enter'){ if(!menu.hidden&&active>=0&&items[active]){items[active].click(); e.preventDefault();}
+        else if(input.value.trim()){ const val=input.value.trim(); if(values.includes(val)){addToken(val); input.value=''; close(); e.preventDefault();}}}
+      else if(e.key==='Escape'){ close(); }
+      else if(e.key==='Backspace'&&!input.value){ const last=chips.querySelector('.kw-chip:last-of-type'); if(last){const v=last.dataset.value; last.remove(); chips.querySelector(`input[type="hidden"][data-ac="1"][value="${CSS.escape(v)}"]`)?.remove();}}
+    });
+    document.addEventListener('click',e=>{ if(!root.contains(e.target)) close(); });
+    const pre=root.dataset.selected?JSON.parse(root.dataset.selected):[]; if(pre?.length) replaceTokens(uniq(pre));
+  }
+  document.querySelectorAll('.kw-ac[data-list]').forEach(attachAutocomplete);
+})();
+</script>
+
+{# ---- Gauge script (guarded) ---- #}
+<script>
+(function(){
+  if (window.KW_GAUGE_INIT) return; window.KW_GAUGE_INIT = true;
+  window.drawGauge = function(cv, pct){
+    const ctx=cv.getContext('2d'); const W=cv.width,H=cv.height,cx=W/2,cy=H/2;
+    const rO=Math.min(W,H)/2-8, rI=rO*0.68, r=(rO+rI)/2, lw=rO-rI;
+    ctx.clearRect(0,0,W,H); ctx.lineWidth=lw; ctx.lineCap='round';
+    ctx.strokeStyle='rgba(255,255,255,.18)'; ctx.beginPath(); ctx.arc(cx,cy,r,-Math.PI/2,1.5*Math.PI); ctx.stroke();
+    const start=-Math.PI/2, end=start+(Math.max(0,Math.min(100,pct))/100)*2*Math.PI;
+    const grad=ctx.createLinearGradient(cx-r,cy-r,cx+r,cy+r); grad.addColorStop(0,'#98ff98'); grad.addColorStop(1,'#0b6b2f');
+    ctx.strokeStyle=grad; ctx.beginPath(); ctx.arc(cx,cy,r,start,end); ctx.stroke();
+    ctx.fillStyle='#fff'; ctx.font='700 40px system-ui, Segoe UI, Roboto, Helvetica, Arial'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(String(Math.round(pct))+'%',cx,cy);
+  }
+})();
+</script>
+
+

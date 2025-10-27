@@ -1,0 +1,83 @@
+﻿      <p id="kw-careai-placeholder" style="margin-bottom:10px; font-style:italic; color:#475569;">
+        ðŸ¤– Complete a check-in to unlock personalized insights and recommendations.
+      </p>
+      <ul id="kw-careai-products" style="margin-top:6px; display:none;"></ul>
+    </div>
+  </div>
+</div>
+
+<!-- JavaScript for rendering AI data and controlling card colors -->
+<script>
+(function(){
+  const card = document.querySelector('#kw-careai-card .kw-card');
+  const cardBody = card.querySelector('.kw-card__body');
+  const placeholder = document.getElementById('kw-careai-placeholder');
+  const productList = document.getElementById('kw-careai-products');
+
+  // Render AI data
+  window.renderKWCareAI = function(data){
+    if(!cardBody) return;
+
+    if(data && (data.ai_paragraph || (data.recommended_products && data.recommended_products.length))){
+      if(placeholder) placeholder.style.display = 'none';
+
+      if(data.ai_paragraph){
+        const para = document.createElement('p');
+        para.textContent = data.ai_paragraph;
+        para.style.marginBottom = '10px';
+        cardBody.appendChild(para);
+      }
+
+      if(data.recommended_products && data.recommended_products.length){
+        productList.innerHTML = '';
+        productList.style.display = '';
+        data.recommended_products.forEach(p=>{
+          const li = document.createElement('li');
+          li.innerHTML = `âœ… <strong>${p.name}</strong> â€” allocation ${p.allocation || 0}%`;
+          productList.appendChild(li);
+        });
+      }
+    } else {
+      if(placeholder) placeholder.style.display = '';
+      productList.style.display = 'none';
+    }
+  };
+
+  // Optional color control panel
+  window.initCardColorControl = function(cardSelector){
+    const cardEl = document.querySelector(cardSelector);
+    if(!cardEl) return;
+
+    const controlPanel = document.createElement('div');
+    controlPanel.style.marginTop = '10px';
+    controlPanel.style.padding = '8px';
+    controlPanel.style.background = '#f3f4f6';
+    controlPanel.style.borderRadius = '6px';
+
+    controlPanel.innerHTML = `
+      <strong>Adjust Card Colors:</strong><br/>
+      Outer: <input type="color" id="outer-color" value="#064e3b"><br/>
+      Middle: <input type="color" id="middle-color" value="#10b981"><br/>
+      Inner: <input type="color" id="inner-color" value="#fef9c3"><br/>
+    `;
+
+    cardEl.appendChild(controlPanel);
+
+    function updateGradient(){
+      const outer = document.getElementById('outer-color').value;
+      const middle = document.getElementById('middle-color').value;
+      const inner = document.getElementById('inner-color').value;
+      cardEl.style.background = `linear-gradient(135deg, ${outer}, ${middle}, ${inner})`;
+    }
+
+    ['outer-color','middle-color','inner-color'].forEach(id=>{
+      document.getElementById(id).addEventListener('input', updateGradient);
+    });
+  };
+
+  // Initialize for this card
+  window.initCardColorControl('#kw-careai-card .kw-card');
+})();
+</script>
+
+

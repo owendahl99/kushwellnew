@@ -1,0 +1,411 @@
+﻿{# FILE: app/templates/patient/product_detail.html #}
+{% extends "base.html" %}
+
+{% block title %}{{ product.product_name }}{% endblock %}
+{% block body_class %}kw-body theme-chalk{% endblock %}
+
+{% block extra_head %}
+<style>
+  /* === Product Wrapper (chalkboard + conditional border) === */
+  .unverified-border {
+  border: 60px solid #43e5bfff; /* mint green border */
+  border-radius: 8px;
+  position: relative;
+  padding: 16px;
+  margin-top: 12px;
+  width: 100%;          /* make sure it stretches full card width */
+  box-sizing: border-box;
+}
+  .unverified-label {
+  position: absolute;
+  top: -46px;
+  left: 405px;
+  background: #43e5bfff; /* mint green background */
+  padding: none;
+  font-size: 23px;
+  font-weight: 600;
+  color: #021c04ff;
+  border: none;
+  border-radius: none;
+  box-shadow: none;
+  z-index: 10;
+}
+   /* === Product Card Inner === */
+  .product-card-inner {
+    background: linear-gradient(to bottom, #0a2e0d, #113d15, #1b5b25);
+    border-radius: 8px;
+    padding: 12px;
+    color: white;
+    font-family: 'Chalkboard', sans-serif;
+  }
+
+  .product-banner {
+    background-color: rgba(36, 137, 46, 0.9);
+    padding: 12px;
+    border-radius: 4px;
+    margin-top: 20px;
+  }
+
+  .two-column {
+    display: flex;
+    gap: 16px;
+    margin-top: 16px;
+  }
+
+  .left-column {
+    flex: 1 1 33%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .right-column {
+    flex: 1 1 67%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  table {
+    width: 100%;
+    color: white;
+    border-collapse: collapse;
+  }
+
+  table th,
+  table td {
+    text-align: left;
+    padding: 4px 0;
+    border-bottom: 1px solid white;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="unverified-border">   {# Outer page border wrapper #}
+  
+  {% if product.approval_status and product.approval_status.strip().lower() != 'approved' %}
+  <span class="unverified-label">Grassroots Product – Unverified</span>
+  {% endif %}
+
+  <div class="product-wrapper">
+  
+      <!-- QoL Medal Badge -->
+  <div id="qolBadge" style="
+      position:absolute;
+      top:-50px;
+      right:-50px;  
+      width:300px;
+      height:300px;
+      z-index:10;
+      font-family:'Chalkboard', sans-serif;
+      text-align:center;
+      box-sizing:border-box;
+  ">
+    <div id="qolBadgeCircle" style="
+        width:100%;
+        height:100%;
+        border-radius:50%;
+        border:10px solid #8B5E3C; /* thick bronze border */
+        background: radial-gradient(circle at 30% 30%, #8e6d40ff 35%, #d7c483ff 100%);
+        box-shadow:
+            inset 0 6px 12px rgba(0,0,0,0.5),
+            0 6px 8px rgba(0,0,0,0.4);
+        display:flex;
+        flex-direction:column;
+        justify-content:center;
+        align-items:center;
+        font-weight:bold;
+        color: #8af38fff;
+        text-shadow:1px 1px 2px rgba(0,0,0,0.7),
+                    0 0 6px rgba(255,255,255,0.4);
+        box-sizing:border-box;
+        position:relative;
+    ">
+      <!-- Header -->
+      <div style="
+          font-size:18px;
+          font-weight:bold;
+          color: #ccdd0fff;
+          text-shadow:1px 1px 2px rgba(0,0,0,0.7);
+          margin-bottom:2px;
+      ">
+        Kushwell QoL Score
+      </div>
+
+      <!-- Score -->
+      <span id="qolBadgeScore" style="font-size:28px;">
+        {{ avg_qol|default(7) }}%
+      </span>
+
+      <!-- Stars -->
+      <div id="qolBadgeStars" style="
+          position:absolute;
+          bottom:28px;
+          width:100%;
+          text-align:center;
+          font-size:27px;
+          color:gold;
+          text-shadow:0 0 4px rgba(0,0,0,0.6);
+      ">
+        {% set starCount = agg.relative_score|default(4) %}
+        {{ '?' * starCount }}{{ '?' * (5 - starCount) }}
+      </div>
+    </div>
+  </div>
+</div>
+
+  {# Top banner #}
+<div class="product-banner" style="text-align:left;">
+  <h1 style="margin:0;">{{ product.product_name }}</h1>
+  <p style="margin:0;">{{ product.manufacturer }}</p>
+  <p style="margin:0;">Category: {{ product.category }}</p>
+</div>
+
+  {# Two-column layout #}
+  <div class="two-column">
+
+    {# Left Column: Image + Description, Voting, Inventory #}
+    <div class="left-column">
+
+      {# Product Image + Description #}
+      <div class="product-card-inner">
+        <img src="{% if product.image_path %}{{ url_for('static', filename=product.image_path) }}{% else %}{{ url_for('static', filename='img/leaf-embossed.png') }}{% endif %}" 
+             alt="{{ product.product_name }}" 
+             style="width:100%; border-radius:8px; margin-bottom:12px;">
+        <p>{{ product.description if product.description else "Description not provided." }}</p>
+      </div>
+
+    {# QOL Voting Card #}  
+      <div class="product-card-inner" style="padding:16px; border-radius:12px; background: linear-gradient(to bottom, #0a2e0d, #113d15, #1b5b25); color:white; font-family:'Chalkboard', sans-serif;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <div><strong>QoL Score</strong></div>
+          <div id="qolVotes" style="font-size:12px; color:gold;">Votes: 0</div>
+        </div>
+
+        <!-- Inline SVG Chart -->
+        <svg id="qolChart" viewBox="0 0 600 100" style="width:100%; height:100px;">
+          <!-- Main line -->
+          <line id="qolLine" x1="50" y1="50" x2="550" y2="50" stroke-width="14" stroke-linecap="round"/>
+          
+          <!-- Min/Avg/Max markers -->
+          <circle id="qolMin" cx="50" cy="50" r="10"/>
+          <circle id="qolMax" cx="550" cy="50" r="10"/>
+          <circle id="qolAvg" cx="300" cy="50" r="14" stroke="black" stroke-width="2"/>
+
+          <!-- Labels -->
+          <text id="qolMinLabel" x="50" y="80" text-anchor="middle" font-size="14">Min</text>
+          <text id="qolMaxLabel" x="550" y="80" text-anchor="middle" font-size="14">Max</text>
+          <text id="qolAvgLabel" x="300" y="30" text-anchor="middle" font-size="14">Avg</text>
+        </svg>
+      </div>
+
+      <script>
+      (function(){
+        // --- Values from Flask/Jinja ---
+        const minVal = {{ agg.min_qol|default(2) }};
+        const avgVal = {{ agg.avg_qol|default(7) }};
+        const maxVal = {{ agg.max_qol|default(20) }};
+        const totalVotes = {{ agg.total_votes|default(15) }};
+
+        // --- Color controls ---
+        const lineColor = 'limegreen';      // Main line
+        const minColor  = 'firebrick';
+        const maxColor  = 'royalblue';
+        const avgColor  = 'gold';
+        const bgColor   = 'transparent';    // SVG background
+        const labelColor = 'white';
+
+        // --- Scaling ---
+        const minX = 50, maxX = 550;
+        const span = maxVal - minVal || 1;
+        const scale = val => minX + ((val - minVal) / span) * (maxX - minX);
+
+        // --- Set line ---
+        const line = document.getElementById('qolLine');
+        line.setAttribute('x1', scale(minVal));
+        line.setAttribute('x2', scale(maxVal));
+        line.setAttribute('y1', 50);
+        line.setAttribute('y2', 50);
+        line.setAttribute('stroke', lineColor);
+
+        // --- Set markers ---
+        const minC = document.getElementById('qolMin');
+        const maxC = document.getElementById('qolMax');
+        const avgC = document.getElementById('qolAvg');
+
+        minC.setAttribute('cx', scale(minVal));
+        minC.setAttribute('cy', 50);
+        minC.setAttribute('fill', minColor);
+
+        maxC.setAttribute('cx', scale(maxVal));
+        maxC.setAttribute('cy', 50);
+        maxC.setAttribute('fill', maxColor);
+
+        avgC.setAttribute('cx', scale(avgVal));
+        avgC.setAttribute('cy', 50);
+        avgC.setAttribute('fill', avgColor);
+
+        // --- Set labels ---
+        const minLabel = document.getElementById('qolMinLabel');
+        const maxLabel = document.getElementById('qolMaxLabel');
+        const avgLabel = document.getElementById('qolAvgLabel');
+
+        minLabel.setAttribute('x', scale(minVal));
+        maxLabel.setAttribute('x', scale(maxVal));
+        avgLabel.setAttribute('x', scale(avgVal));
+
+        minLabel.setAttribute('fill', labelColor);
+        maxLabel.setAttribute('fill', labelColor);
+        avgLabel.setAttribute('fill', labelColor);
+
+        // --- Vote count ---
+        document.getElementById('qolVotes').textContent = `Votes: ${totalVotes}`;
+      })();
+      </script>
+
+
+
+      {# Inventory + Dispensary Card #}
+      <div class="product-card-inner">
+        <div style="font-weight:bold; margin-bottom:8px;">Product Availability</div>
+        <p>Total Inventory: {{ inventory_total }}</p>
+        <p>Reports: {{ inventory_reports|length }}</p>
+        <p>Preferred Dispensary: {{ preferred_dispensary.name if preferred_dispensary else 'N/A' }}</p>
+        {% if nearby_dispensaries %}
+        <ul>
+          {% for d in nearby_dispensaries %}
+          <li>{{ d.name }} – Inventory: {{ d.inventory_total }} – Price: {{ d.price if d.price else 'N/A' }}</li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+        <p>Average Price: {{ avg_price }} | Min: {{ min_price }} | Max: {{ max_price }}</p>
+      </div>
+
+    </div>
+
+    {# Right Column: Chemistry, THC, Terpenes #}
+    <div class="right-column">
+
+      {# Chemistry Profile Card #}
+      <div class="product-card-inner">
+        <div style="font-weight:bold; margin-bottom:8px;">Profile</div>
+        <p>Type: {{ chem_type }} | THC: {{ thc_percent }}% | CBD: {{ cbd_percent }}% | CBN: {{ cbn_peercent }}%</p>
+      </div>
+
+    <!-- Potency Gauge Card -->
+      <div style="background:#0a2e0d; padding:16px; border-radius:12px; text-align:center; color:white; font-family:'Chalkboard',sans-serif;">
+        <h3 style="margin-bottom:12px;">THC Potency</h3>
+        
+        <!-- SVG Gauge -->
+        <svg id="thcGauge" viewBox="0 0 200 120" width="100%" height="160">
+          <!-- Background arc -->
+          <path d="M10 110 A90 90 0 0 1 190 110"
+                stroke="#333"
+                stroke-width="20"
+                fill="none"/>
+          <!-- Filled arc -->
+          <path id="thcArc"
+                d="M10 110 A90 90 0 0 1 190 110"
+                stroke="pink"
+                stroke-width="20"
+                stroke-linecap="round"
+                fill="none"
+                stroke-dasharray="0 283"/>  
+          <!-- Tick marks -->
+          <text x="30" y="115" font-size="12" fill="white">0%</text>
+          <text x="80" y="45" font-size="12" fill="white">30%</text>
+          <text x="150" y="115" font-size="12" fill="white">60%</text>
+        </svg>
+
+        <!-- THC % Label -->
+        <div id="thcValue" style="font-size:28px; font-weight:bold; margin-top:-20px;">
+          {{ thc_percent }}%
+        </div>
+
+        <!-- Dosage Category -->
+        <div id="thcCategory" style="margin-top:4px; font-size:16px;"></div>
+
+        <!-- Learn more link -->
+        <div style="margin-top:10px;">
+          <a href="/learn/dosing" style="color:#ffcccc; text-decoration:underline;">
+            Learn more about dosing
+          </a>
+        </div>
+      </div>
+
+    <div
+  
+</div>
+
+</div>
+
+<script>
+(function(){
+    const thc = {{ thc_percent|default(0) }}; 
+    const arc = document.getElementById('thcArc');
+    const cat = document.getElementById('thcCategory');
+
+    const radius = 90; // half-circle radius
+    const maxGauge = 60; // gauge max is 60%
+    const circumference = Math.PI * radius;  
+    const filled = Math.min(thc, maxGauge) / maxGauge * circumference;
+
+    arc.setAttribute('stroke-dasharray', `${filled} ${circumference}`);
+
+    // --- Color logic (bottom-heavy) ---
+    let color = "lightpink";
+    let category = "Very low (0-10%)";
+
+    if(thc <= 10) { color="lightpink"; category="Very low (0-10%)"; }
+    else if(thc <= 15) { color="pink"; category="Low (10-15%)"; }
+    else if(thc <= 20) { color="mediumpink"; category="Moderate (15-20%)"; }
+    else if(thc <= 25) { color="redpink"; category="High (20-25%)"; }
+    else if(thc <= 30) { color="darkred"; category="Very high (25-30%)"; }
+    else if(thc <= 35) { color="crimson"; category="Extreme (30-35%)"; }
+    else if(thc <= 45) { color="purple"; category="Ultra (35-45%)"; }
+    else if(thc <= 60) { color="deeppurple"; category="Maximum (45-60%)"; }
+
+    arc.setAttribute('stroke', color);
+    cat.textContent = category;
+})();
+</script>
+
+
+
+      {# Terpenes Card #}
+      <div class="product-card-inner">
+        <div style="font-weight:bold; margin-bottom:8px;">Terpenes</div>
+        {% if product_terpenes %}
+        <table>
+          <tr>
+            <th>Terpene</th>
+            <th>Percent</th>
+            <th>Traits</th>
+          </tr>
+          {% for terpene in product_terpenes %}
+          <tr>
+            <td>{{ terpene.name }}</td>
+            <td>{{ terpene.percent }}%</td>
+            <td>{{ TERPENE_TRAITS.get(terpene.name, 'N/A') }}</td>
+          </tr>
+          {% endfor %}
+        </table>
+        {% else %}
+        <p>No terpene data available.</p>
+                {% endif %}
+      </div>
+
+    </div>
+
+  </div> {# End Two-column #}
+
+</div> {# End product-wrapper #}
+
+{% if product.approval_status and product.approval_status.strip().lower() != 'approved' %}
+</div> {# End unverified-border #}
+{% endif %}
+
+{% endblock %}
+
+

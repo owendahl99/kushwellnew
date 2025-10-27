@@ -1,0 +1,17 @@
+﻿    {% extends "base.html" %}
+
+{% block title %}Provider Profile{% endblock %}
+
+{% block content %}
+<h1 class="text-2xl font-semibold mb-2">{{ provider.name }}</h1>
+<p class="mb-2">Clinic: {{ provider.clinic_name or 'N/A' }}</p>
+<p class="mb-2">Email: {{ provider.email }}</p>
+<p class="mb-2">Education: {{ provider.education or 'N/A' }}</p>
+<p class="mb-2">Experience: {{ provider.years_experience or 'N/A' }} years</p>
+<p class="mb-2">Upvotes: {{ votes.get('upvotes', 0) }}, Downvotes: {{ votes.get('downvotes', 0) }}</p>
+<a href="{{ url_for('enterprise.enterprise_dashboard') }}" class="text-blue-600 hover:underline">Back</a>
+{% include "partials/follow_button.html" %}
+{% endblock %}
+
+
+

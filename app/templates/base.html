@@ -1,0 +1,35 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Cannabis Wellness Platform{% endblock %}</title>
+
+    <!-- system font stack for performance -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    {% block head_extra %}{% endblock %}
+  </head>
+  <body>
+    <header class="site-header">
+      <a href="/" class="logo">🌿 Wellness</a>
+      <nav>
+        <button id="menu-toggle" aria-label="Toggle menu">☰</button>
+        <ul id="nav-links">
+          <li><a href="/patient/dashboard">Dashboard</a></li>
+          <li><a href="/auth/logout">Logout</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main class="container">
+      {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+      <small>&copy; {{ current_year }} Wellness Research Platform</small>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/base.js') }}"></script>
+    {% block scripts %}{% endblock %}
+  </body>
+</html>

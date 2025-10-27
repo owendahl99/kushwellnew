@@ -1,0 +1,86 @@
+﻿{# FILE: app/templates/patient/partials/_current_products.html #}
+<div class="kw-card" aria-label="Current Products">
+  <h2 style="margin-bottom:8px;">Current Products</h2>
+
+  {% if last_products and last_products|length %}
+    <ul id="currentProductsList" style="list-style:none; padding-left:0; margin:0;">
+      {% for p in last_products %}
+        <li style="margin-bottom:6px; display:flex; justify-content:space-between; align-items:center;">
+          <a href="{{ url_for('products.detail', product_id=p.product.id) }}"
+             style="color:#f5d547; font-weight:700; text-decoration:none;">
+            {{ p.product.name }}
+          </a>
+          <span style="color:#e8f5ef;">
+            {{ p.dosage_mg }}mg Ã— {{ p.times_per_day }}x/day
+          </span>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <div style="opacity:.8;">No products recorded from your last check-in.</div>
+  {% endif %}
+
+  <!-- Product add/edit form -->
+  <div class="kw-card update-products" style="margin-top:12px;">
+    <h4>Add / Update Products</h4>
+    <div class="product-form">
+      <label for="productName">Product</label>
+      <input type="text" id="productName" placeholder="Type to search products..." style="width:100%;" />
+
+      <label for="dosageMg">Dosage (mg)</label>
+      <input type="number" id="dosageMg" min="0" />
+
+      <label for="timesPerDay">Times per day</label>
+      <input type="number" id="timesPerDay" min="0" />
+
+      <button type="button" id="addProductBtn" class="kw-btn" style="margin-top:8px;">Add Product</button>
+    </div>
+
+    <ul id="activeProducts" style="list-style:none; padding-left:0; margin-top:8px;">
+      {% if last_products %}
+        {% for p in last_products %}
+          <li>{{ p.product.name }} â€“ {{ p.dosage_mg }}mg Ã— {{ p.times_per_day }}x/day</li>
+        {% endfor %}
+      {% endif %}
+    </ul>
+  </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  // Typeahead for products
+  const productInput = document.getElementById("productName");
+  let productsCache = [];
+
+  productInput.addEventListener("input", async () => {
+    const q = productInput.value.trim();
+    if(!q) return;
+    try{
+      const resp = await fetch(`/products/search?q=${encodeURIComponent(q)}`);
+      const data = await resp.json();
+      productsCache = data;
+      // Optional: Show dropdown / autocomplete here if desired
+    }catch(e){ console.error(e); }
+  });
+
+  // Add product to active list
+  const btn = document.getElementById("addProductBtn");
+  btn?.addEventListener("click", () => {
+    const name = productInput.value.trim();
+    const dosage = document.getElementById("dosageMg").value;
+    const times = document.getElementById("timesPerDay").value;
+    if(!name || !dosage || !times) return;
+
+    const li = document.createElement("li");
+    li.textContent = `${name} â€“ ${dosage}mg Ã— ${times}x/day`;
+    document.getElementById("activeProducts").appendChild(li);
+
+    // Reset inputs
+    productInput.value = '';
+    document.getElementById("dosageMg").value = '';
+    document.getElementById("timesPerDay").value = '';
+  });
+});
+</script>
+
+

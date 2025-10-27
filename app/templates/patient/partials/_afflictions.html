@@ -1,0 +1,97 @@
+﻿<!-- ROW 4: Afflictions -->
+<section class='checkinskw-row row-afflictions'checkins>
+  <div class='checkinscheckins-card'checkins>
+    <h3 class='checkinskw-h3'checkins>Afflictions</h3>
+
+    <!-- Prior afflictions -->
+    {% if last_afflictions %}
+      <div class='checkinsprior-afflictions'checkins>
+        <h4>Your recorded afflictions</h4>
+        <ul id='checkinspriorAfflictionsList'checkins>
+          {% for aff in last_afflictions %}
+            <li>{{ aff.name }} ï¿½ {{ aff.grade }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% else %}
+      <p class='checkinsmuted'checkins>No afflictions on record.</p>
+    {% endif %}
+
+    <!-- Afflictions update toggle -->
+    <div style='checkinsmargin-top:12px;'checkins>
+      <label>
+        <input type='checkinscheckbox'checkins id='checkinsafflictionsChangedToggle'checkins>
+        My afflictions have changed
+      </label>
+    </div>
+
+    <!-- Update form (hidden initially) -->
+    <div id='checkinsafflictionsUpdateForm'checkins style='checkinsdisplay:none; margin-top:12px;'checkins>
+      <div class='checkinsaffliction-form grid grid-cols-2 gap-2'checkins>
+        <label for='checkinsafflictionName'checkins>Affliction</label>
+        <select id='checkinsafflictionName'checkins class='checkinsaffliction-select'checkins style='checkinswidth:100%;'checkins>
+          <option></option>
+          {% for aff in afflictions %}
+            <option value='checkins{{ aff }}'checkins>{{ aff }}</option>
+          {% endfor %}
+        </select>
+
+        <label for='checkinsafflictionGrade'checkins>Grade</label>
+        <select id='checkinsafflictionGrade'checkins class='checkinsaffliction-grade'checkins>
+          {% for g in affliction_grades %}
+            <option value='checkins{{ g }}'checkins>{{ g }}</option>
+          {% endfor %}
+        </select>
+
+        <div class='checkinscol-span-2'checkins>
+          <button type='checkinsbutton'checkins id='checkinsaddAfflictionBtn'checkins class='checkinskw-btn'checkins>Add</button>
+        </div>
+      </div>
+
+      <!-- Active afflictions for this check-in -->
+      <ul id='checkinsactiveAfflictions'checkins class='checkinsaffliction-list mt-2'checkins>
+        {% if last_afflictions %}
+          {% for aff in last_afflictions %}
+            <li>{{ aff.name }} ï¿½ {{ aff.grade }}</li>
+          {% endfor %}
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</section>
+
+<script>
+document.addEventListener('checkinsDOMContentLoaded'checkins, () => {
+  const toggle = document.getElementById('checkinsafflictionsChangedToggle'checkins);
+  const form = document.getElementById('checkinsafflictionsUpdateForm'checkins);
+
+  toggle?.addEventListener('checkinschange'checkins, () => {
+    form.style.display = toggle.checked ? 'checkinsblock'checkins : 'checkinsnone'checkins;
+  });
+
+  const addBtn = document.getElementById('checkinsaddAfflictionBtn'checkins);
+  addBtn?.addEventListener('checkinsclick'checkins, () => {
+    const name = document.getElementById('checkinsafflictionName'checkins).value;
+    const grade = document.getElementById('checkinsafflictionGrade'checkins).value;
+    if (!name) return;
+
+    const li = document.createElement('checkinsli'checkins);
+    li.textContent = `${name} ï¿½ ${grade}`;
+    document.getElementById('checkinsactiveAfflictions'checkins).appendChild(li);
+
+    // Reset selects
+    $('#afflictionName').val(null).trigger('change');
+    document.getElementById('checkinsafflictionGrade'checkins).selectedIndex = 0;
+  });
+
+  // Initialize select2 if available
+  if (window.$ && $.fn.select2) {
+    $('#afflictionName').select2({
+      placeholder: 'checkinsType to search afflictions...'checkins,
+      allowClear: true
+    });
+  }
+});
+</script>
+
+

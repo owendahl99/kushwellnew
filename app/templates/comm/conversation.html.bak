@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Conversation — Kushwell{% endblock %}
+
+{% block content %}
+<section class="mx-auto max-w-5xl p-4 md:p-6">
+  <div class="flex items-center justify-between mb-4">
+    <h1 class="text-2xl md:text-3xl font-bold">
+      {{ conversation.title or ('Broadcast' if conversation.is_broadcast else ('Group' if conversation.is_group else 'Direct')) }}
+    </h1>
+    <a class="kw-link" href="{{ url_for('comm_bp.inbox') }}">Back to inbox</a>
+  </div>
+
+  <ul class="rounded-2xl overflow-hidden border border-white/10 divide-y divide-white/10 bg-white/5">
+    {% for m in messages %}
+      <li class="p-4">
+        <div class="text-sm opacity-75">
+          <b>User {{ m.sender_id }}</b> • {{ m.created_at }}
+        </div>
+        <div class="mt-1 whitespace-pre-wrap">{{ m.body }}</div>
+      </li>
+    {% else %}
+      <li class="p-4 opacity-80">No messages yet.</li>
+    {% endfor %}
+  </ul>
+
+  {# Post box (only if participant can post) #}
+  {% set me = current_user.id %}
+  {% set my_part = conversation.participants.filter_by(user_id=me).first() %}
+  {% if my_part and my_part.can_post %}
+    <form method="post" action="{{ url_for('comm_bp.send_message', conversation_id=conversation.id) }}"
+          class="grid gap-3 mt-6">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <label class="block text-sm opacity-80">Message</label>
+      <textarea name="body" rows="3" required class="w-full rounded-xl px-3 py-2 bg-white/5 border border-white/15"></textarea>
+      <div class="flex justify-end">
+        <button class="kw-btn kw-btn--primary" type="submit">Send</button>
+      </div>
+    </form>
+  {% else %}
+    <p class="mt-6 opacity-80"><em>Posting disabled for you in this conversation.</em></p>
+  {% endif %}
+</section>
+{% endblock %}
+

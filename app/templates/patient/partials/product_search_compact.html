@@ -1,0 +1,234 @@
+﻿{# FILE: app/templates/_card/product_research.html #}
+{% include "_card/_head.html" %}
+
+<section class="kw-card pr3-card" aria-labelledby="research-title">
+  <div class="kw-card__head pr3-head">
+    <h2 id="research-title" class="kw-card__title pr3-title">RESEARCH</h2>
+  </div>
+
+  <div class="kw-card__body">
+    <form id="pr3" class="kw-form" method="GET"
+          action="{{ url_for('patient.product_list') if has_endpoint('patient.product_list') else '#' }}"
+          style="margin:0;">
+      <div class="pr3-row">
+        <!-- Search by (smaller) -->
+        <div class="kw-field pr3-field pr3-narrow">
+          <label class="kw-label" for="pr3-by">Search by</label>
+          <select id="pr3-by" name="by" class="kw-select" aria-label="Search by">
+            <option value="name" selected>Product</option>
+            <option value="brand">Brand</option>
+            <option value="classification">Classification</option>
+            <option value="affliction">Affliction</option>
+            <option value="terpene">Terpene</option>
+            <option value="method">Method</option>
+            <option value="thc">THC range</option>
+            <option value="cbd">CBD range</option>
+          </select>
+        </div>
+
+        <!-- Lookup term (bigger) -->
+        <div class="kw-field pr3-field pr3-wide" id="pr3-slot">
+          <label class="kw-label" for="pr3-term">Lookup term</label>
+          <div class="kw-typeahead">
+            <input id="pr3-term" name="q" class="kw-input" placeholder="Start typingâ€¦"
+                   autocomplete="off" aria-autocomplete="list" aria-expanded="false" aria-owns="pr3-list">
+            <ul id="pr3-list" class="kw-typeahead__list" role="listbox"></ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Centered Search button -->
+      <div class="pr3-actions">
+        <button class="kw-btn kw-btn--primary" type="submit">Search</button>
+      </div>
+    </form>
+  </div>
+</section>
+
+<style>
+  /* Title: bold, consistent with card font */
+  .pr3-title{
+    font-weight: 900;
+    letter-spacing: .02em;
+  }
+
+  /* Row layout: centered, aligned baseline */
+  .pr3-row{
+    display: grid;
+    grid-template-columns: minmax(160px, 260px) minmax(240px, 1fr);
+    gap: 14px;                      /* keeps it tight, not staggered */
+    align-items: end;
+    justify-content: center;
+  }
+  .pr3-field .kw-label{
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+
+  /* Smaller controls overall per your ask; bigger input on right */
+  .pr3-card .kw-input,
+  .pr3-card .kw-select,
+  .pr3-card .kw-btn{
+    font-size: .98rem;              /* a touch smaller */
+  }
+  .pr3-narrow .kw-select{ min-width: 160px; }
+  .pr3-wide   .kw-input,
+  .pr3-wide   select{ min-width: 320px; }
+
+  /* Center the bottom button */
+  .pr3-actions{
+    display: flex;
+    justify-content: center;
+    margin-top: 12px;
+  }
+
+  /* Typeahead menu stays crisp */
+  .kw-typeahead{ position: relative; }
+  .kw-typeahead__list{
+    position: absolute; left:0; right:0; top:100%; z-index: 15;
+    list-style: none; margin: 4px 0 0; padding: 4px;
+    background: #fff; border: 1px solid rgba(0,0,0,.18); border-radius: 12px;
+    max-height: 220px; overflow: auto; box-shadow: 0 14px 34px rgba(0,0,0,.22);
+  }
+  .kw-typeahead__item{ padding:8px; cursor:pointer; }
+  .kw-typeahead__item:hover, .kw-typeahead__item:focus{ background:#f1fbf6; outline:0; }
+
+  /* Mobile stacks cleanly */
+  @media (max-width: 720px){
+    .pr3-row{
+      grid-template-columns: 1fr;
+      justify-content: stretch;
+    }
+    .pr3-wide .kw-input{ min-width: 100%; }
+  }
+</style>
+
+<script>
+(function(){
+  const form = document.getElementById('pr3');
+  const by   = document.getElementById('pr3-by');
+  const slot = document.getElementById('pr3-slot');
+
+  const AFF_URL  = "{{ url_for('patient.api_master_afflictions') if has_endpoint('patient.api_master_afflictions') else '' }}";
+  const TERP_URL = "{{ url_for('patient.api_master_terpenes')     if has_endpoint('patient.api_master_terpenes')     else '' }}";
+  const METH_URL = "{{ url_for('patient.api_master_methods')      if has_endpoint('patient.api_master_methods')      else '' }}";
+  const TA_URL   = "{{ url_for('patient.product_search')          if has_endpoint('patient.product_search')          else '' }}";
+
+  const lists = { afflictions: [], terpenes: [], methods: [], classifs: ['Indica','Sativa','Hybrid','N/A','Unknown'] };
+
+  function fetchList(url, key){
+    if(!url) return Promise.resolve();
+    return fetch(url, {credentials:'same-origin'})
+      .then(r=>r.ok?r.json():[])
+      .then(arr=>{ lists[key] = Array.isArray(arr) ? arr : []; })
+      .catch(()=>{});
+  }
+
+  // Preload datalists (non-blocking)
+  Promise.all([
+    fetchList(AFF_URL,'afflictions'),
+    fetchList(TERP_URL,'terpenes'),
+    fetchList(METH_URL,'methods'),
+  ]);
+
+  function html(strings,...vals){ return strings.reduce((s,p,i)=>s+p+(vals[i]??''),''); }
+
+  function render(kind){
+    if(kind==='name' || kind==='brand'){
+      slot.innerHTML = html`
+        <label class="kw-label" for="pr3-term">Lookup term</label>
+        <div class="kw-typeahead">
+          <input id="pr3-term" name="q" class="kw-input" placeholder="Start typingâ€¦" autocomplete="off"
+                 aria-autocomplete="list" aria-expanded="false" aria-owns="pr3-list">
+          <ul id="pr3-list" class="kw-typeahead__list" role="listbox"></ul>
+        </div>`;
+      initTypeahead();
+    } else if(kind==='classification'){
+      slot.innerHTML = html`
+        <label class="kw-label" for="pr3-class">Lookup term</label>
+        <select id="pr3-class" name="classification" class="kw-select">
+          <option value="">All</option>
+          ${lists.classifs.map(v=>`<option value="${v}">${v}</option>`).join('')}
+        </select>`;
+    } else if(kind==='affliction'){
+      slot.innerHTML = html`
+        <label class="kw-label" for="pr3-aff">Lookup term</label>
+        <input id="pr3-aff" name="affliction" class="kw-input" list="pr3-aff-list" placeholder="e.g., Pain">
+        <datalist id="pr3-aff-list">${(lists.afflictions||[]).map(v=>`<option value="${v}">`).join('')}</datalist>`;
+    } else if(kind==='terpene'){
+      slot.innerHTML = html`
+        <label class="kw-label" for="pr3-terp">Lookup term</label>
+        <input id="pr3-terp" name="terpene" class="kw-input" list="pr3-terp-list" placeholder="e.g., Myrcene">
+        <datalist id="pr3-terp-list">${(lists.terpenes||[]).map(v=>`<option value="${v}">`).join('')}</datalist>`;
+    } else if(kind==='method'){
+      slot.innerHTML = html`
+        <label class="kw-label" for="pr3-method">Lookup term</label>
+        <select id="pr3-method" name="application_method" class="kw-select">
+          <option value="">Any</option>
+          ${(lists.methods||[]).map(v=>`<option value="${v}">${v}</option>`).join('')}
+        </select>`;
+    } else if(kind==='thc' || kind==='cbd'){
+      const pre = kind.toUpperCase();
+      slot.innerHTML = html`
+        <label class="kw-label">Lookup term</label>
+        <div class="pr3-range" style="display:flex; gap:12px;">
+          <label style="flex:1"> ${pre} min %
+            <input type="number" step="0.1" min="0" name="${kind}_min" class="kw-input" inputmode="decimal">
+          </label>
+          <label style="flex:1"> ${pre} max %
+            <input type="number" step="0.1" min="0" name="${kind}_max" class="kw-input" inputmode="decimal">
+          </label>
+        </div>`;
+    } else {
+      render('name');
+    }
+  }
+
+  function initTypeahead(){
+    const q    = document.getElementById('pr3-term');
+    const list = document.getElementById('pr3-list');
+    if(!q || !list || !TA_URL) return;
+
+    let token = 0;
+    function clear(){ list.innerHTML=''; q.setAttribute('aria-expanded','false'); }
+
+    q.addEventListener('input', ()=>{
+      const val = (q.value || '').trim();
+      clear();
+      if(val.length < 2) return;
+      const t = ++token;
+      fetch(TA_URL + '?q=' + encodeURIComponent(val), {credentials:'same-origin'})
+        .then(r=>r.ok?r.json():[])
+        .then(items=>{
+          if(t !== token) return;
+          (items||[]).forEach(it=>{
+            const li = document.createElement('li');
+            li.className = 'kw-typeahead__item'; li.role='option'; li.tabIndex = 0;
+            li.textContent = (it.name||'Product') + (it.brand?(' Â· '+it.brand):'') + (it.form?(' Â· '+it.form):'');
+            li.onclick = ()=>{ q.value = it.name || ''; clear(); };
+            li.onkeydown = e=>{ if(e.key==='Enter'){ li.click(); } };
+            list.appendChild(li);
+          });
+          if(list.children.length){ q.setAttribute('aria-expanded','true'); }
+        })
+        .catch(()=>{});
+    });
+  }
+
+  // Keep layout clean and centered
+  by.addEventListener('change', ()=> render(by.value));
+  render(by.value);
+
+  // Submit normalization: map brand/name â†’ q (text query)
+  form.addEventListener('submit', ()=>{
+    const kind = by.value;
+    if(kind==='brand'){
+      // Use the same 'q' param; backend matches brand in text columns
+      const q = slot.querySelector('input[name="q"]');
+      if(q) q.name = 'q';
+    }
+  });
+})();
+</script>
+
+

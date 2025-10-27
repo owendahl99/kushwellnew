@@ -1,0 +1,129 @@
+﻿{% extends "base.html" %}
+{% block title %}Sign out | Kushwell{% endblock %}
+
+{% block extra_head %}
+<style>
+  body.kw-body { background:#0b1c14; color:#e7f3ec; }
+
+  .door-wrap{
+    min-height:calc(100vh - 120px);
+    display:flex; align-items:center; justify-content:center;
+    padding:24px;
+  }
+  .door-scene{
+    position:relative; width:min(92vw, 520px); height:min(80vh, 640px);
+    display:flex; align-items:center; justify-content:center;
+    perspective:1400px;
+  }
+  .door-frame{
+    position:absolute; inset:0;
+    border:10px solid #223a2f; border-radius:14px;
+    background:
+      radial-gradient(120% 120% at 50% -10%, rgba(255,255,255,0.08), rgba(0,0,0,0) 60%),
+      linear-gradient(180deg, #0e241c 0%, #0b1c14 35%, #07140f 100%);
+    box-shadow:
+      inset 0 0 0 1px #2a6c50,
+      0 20px 60px rgba(0,0,0,.55),
+      0 2px 0 rgba(255,255,255,.04);
+  }
+  .door-panel{
+    position:absolute; inset:18px;
+    background:linear-gradient(180deg, #113126, #0f2a21 30%, #0d251d 100%);
+    border:6px solid #1f3b31; border-radius:10px;
+    transform-origin:left center;
+    transform:rotateY(0deg);               /* initially closed */
+    transition:transform .45s ease-in-out;
+    box-shadow:inset 0 0 0 1px #2a6c50, inset 0 12px 24px rgba(0,0,0,.35);
+  }
+  .door-knob{
+    position:absolute; right:28px; top:50%; transform:translateY(-50%);
+    width:16px; height:16px; border-radius:50%;
+    background:radial-gradient(circle at 30% 30%, #f5d547, #b3911b 70%, #6e5c10);
+    box-shadow:0 0 0 2px #2d2810, 0 3px 6px rgba(0,0,0,.5);
+  }
+  .hinge{ position:absolute; left:-6px; width:6px; height:46px; background:#274b3c;
+    border-right:1px solid #183529; border-radius:2px; top:22%;
+    box-shadow: inset -1px 0 0 rgba(0,0,0,.35); }
+  .hinge.h2{ top:64%; }
+
+  /* Hanging CLOSED sign (the confirm card) */
+  .sign{
+    position:relative; z-index:3;
+    width:min(92vw, 420px);
+    padding:18px 18px 16px;
+    border-radius:14px;
+    background:
+      radial-gradient(140% 110% at 50% 35%, #ffb3b3 0%, #e98787 45%, #c85f5f 100%);
+    border:2px solid #4a1717;
+    box-shadow:0 14px 40px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.25), inset 0 -1px 0 rgba(0,0,0,.2);
+    color:#2a0d0d;
+    transform-origin:top center;
+    transition:transform .25s ease;
+  }
+  .twine{
+    position:absolute; top:-34px; left:50%; transform:translateX(-50%);
+    width:2px; height:34px; background:linear-gradient(#cfa96b, #8b6a3b);
+    box-shadow:0 0 0 1px rgba(0,0,0,.2);
+  }
+  .sign h1{
+    margin:0 0 6px 0; text-align:center;
+    font-weight:900; letter-spacing:.5px; color:#2a0d0d;
+    text-shadow:0 1px 0 rgba(255,255,255,.5);
+    font-size:clamp(1.25rem, 3.5vw, 1.6rem);
+  }
+  .sign .sub{
+    text-align:center; margin-bottom:10px; color:#3b1212; font-weight:700; letter-spacing:.35px;
+  }
+
+  .actions{ display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:8px; }
+  .btn{
+    display:inline-block; text-align:center; cursor:pointer; user-select:none;
+    border-radius:10px; padding:.7rem 1rem; font-weight:800; font-size:1.05rem; text-decoration:none;
+  }
+  .btn-primary{ background:#103f31; color:#e7f3ec; border:2px solid #0e3c22; }
+  .btn-secondary{ background:#e7f3ec; color:#0f2a21; border:2px solid #0e3c22; }
+
+  .door-scene.closing .sign{ transform:rotateX(-10deg); }
+  .door-scene.closing .door-panel{ transform:rotateY(0deg); }  /* stays closed look */
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="door-wrap">
+  <div id="doorScene" class="door-scene" aria-live="polite">
+    <div class="door-frame" aria-hidden="true"></div>
+    <div class="door-panel" aria-hidden="true">
+      <span class="door-knob" aria-hidden="true"></span>
+      <span class="hinge h1" aria-hidden="true"></span>
+      <span class="hinge h2" aria-hidden="true"></span>
+    </div>
+
+    <form id="logoutForm" method="POST" action="{{ url_for('auth.logout') }}" class="sign">
+      <span class="twine" aria-hidden="true"></span>
+      <h1>CLOSED</h1>
+      <div class="sub">Ready to sign out?</div>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="actions">
+        <button type="submit" class="btn btn-primary" aria-label="Sign out">Sign out</button>
+        <a href="{{ safe_url_for('patient.dashboard', fallback='public.landing') }}" class="btn btn-secondary">Stay signed in</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  (function(){
+    const scene = document.getElementById('doorScene');
+    const form  = document.getElementById('logoutForm');
+    form.addEventListener('submit', function(e){
+      scene.classList.add('closing');
+      setTimeout(() => form.submit(), 180);
+      e.preventDefault();
+    });
+  })();
+</script>
+{% endblock %}
+
+
