@@ -1,2 +1,2 @@
-# kushwellnew
-1027205
+# Kushwell
+Skeleton for the Kushwell Flask app.
