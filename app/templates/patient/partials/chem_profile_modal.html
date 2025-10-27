@@ -1,0 +1,197 @@
+﻿{# FILE: app/templates/patient/partials/chem_profile_modal.html #}
+{% include "_card/_head.html" %}
+<div id="chemModal" class="kw-modal" role="dialog" aria-modal="true" aria-labelledby="chemModalTitle"
+     style="position:fixed; inset:0; display:none; background:rgba(0,0,0,.65); z-index:1000;">
+  <div class="kw-card" style="max-width:960px; margin:6vh auto; padding:18px; border-radius:16px;">
+    <header class="kw-row" style="justify-content:space-between; align-items:center;">
+      <h2 id="chemModalTitle" class="kw-card__title">Chem Profile</h2>
+      <button type="button" class="kw-btn kw-btn--ghost" aria-label="Close" data-chem-close>?</button>
+    </header>
+
+    {# ---------- Potency Snapshot (Gradient Donuts) ---------- #}
+    {% set thc_val = (thc_pct_display|string|replace('%','')|trim)|float if thc_pct_display is defined else 0.0 %}
+    {% set cbd_val = (cbd_pct_display|string|replace('%','')|trim)|float if cbd_pct_display is defined else 0.0 %}
+
+    <section aria-labelledby="chemDonutLabel" style="margin-top:12px;">
+      <h3 id="chemDonutLabel" class="kw-meta">Potency Snapshot</h3>
+
+      <div class="kw-row" style="gap:18px; flex-wrap:wrap; align-items:center;">
+        <div role="img" aria-label="THC donut {{ '%.1f'|format(thc_val) }} percent" class="kw-row" style="gap:12px; align-items:center;">
+          <canvas class="kw-donut-thc" width="140" height="140"
+                  data-thc="{{ '%.1f'|format(thc_val) }}"
+                  style="display:block"></canvas>
+          <div class="kw-meta">THC</div>
+        </div>
+
+        <div role="img" aria-label="CBD donut {{ '%.1f'|format(cbd_val) }} percent" class="kw-row" style="gap:12px; align-items:center;">
+          <canvas class="kw-donut-cbd" width="140" height="140"
+                  data-cbd="{{ '%.1f'|format(cbd_val) }}"
+                  style="display:block"></canvas>
+          <div class="kw-meta">CBD</div>
+        </div>
+      </div>
+    </section>
+
+    {# ---------- Terpenes (Aligned Rows + Blurbs + Bars) ---------- #}
+    <section aria-labelledby="chemTerpLabel" style="margin-top:16px;">
+      <h3 id="chemTerpLabel" class="kw-meta">Terpenes</h3>
+
+      <div class="kw-row" style="gap:8px; align-items:center; margin-bottom:10px;">
+        <label class="kw-meta" for="terpSearch" style="min-width:120px;">Filter terpenes</label>
+        <input id="terpSearch" type="search" class="kw-input" placeholder="Type to filter…"
+               aria-controls="terpTable">
+      </div>
+
+      {% set traits = terpene_traits or {} %}
+
+      <div id="terpTable" class="kw-grid"
+           style="grid-template-columns: 180px 90px 1fr; gap:8px 12px; align-items:center;">
+        <div class="kw-meta" style="font-weight:600;">Terpene</div>
+        <div class="kw-meta" style="font-weight:600;">Percent</div>
+        <div class="kw-meta" style="font-weight:600;">Notes</div>
+
+        {% for t in (terpenes or [])|sort(attribute='pct', reverse=True) %}
+          {% set nm = t.name %}
+          {% set pctf = (t.pct|string|replace('%','')|trim)|float if t.pct is not none else 0.0 %}
+          {% set blurb = traits.get(nm|string|lower) or traits.get(nm|string) %}
+          <div data-terp-item data-name="{{ nm|lower }}">{{ nm }}</div>
+          <div data-terp-item data-name="{{ nm|lower }}">{{ '%.2f'|format(pctf) }}%</div>
+          <div data-terp-item data-name="{{ nm|lower }}">
+            <div class="kw-meta" style="margin-bottom:6px;">{{ blurb or '' }}</div>
+            <div style="height:10px; border-radius:6px; background:rgba(255,255,255,0.12); overflow:hidden;">
+              <div style="height:10px; width: {{ pctf if pctf<=100 else 100 }}%;
+                          background: linear-gradient(90deg, #98ff98, #0b6b2f); border-radius:6px;"></div>
+            </div>
+          </div>
+        {% else %}
+          <div class="kw-meta" style="grid-column: 1 / -1;">No terpene data on this product yet.</div>
+        {% endfor %}
+      </div>
+    </section>
+
+    <footer class="kw-row" style="justify-content:flex-end; margin-top:16px;">
+      <button type="button" class="kw-btn" data-chem-close>Close</button>
+    </footer>
+  </div>
+</div>
+
+<script>
+(function(){
+  // Guard so we don’t add listeners twice if the template is re-rendered
+  if (window.KW_CHEM_MODAL_INIT) return;
+  window.KW_CHEM_MODAL_INIT = true;
+
+  const modal = document.getElementById('chemModal');
+  if (!modal) return;
+
+  function openModal(){
+    modal.style.display = 'block';
+    modal.setAttribute('aria-hidden', 'false');
+    (modal.querySelector('[data-chem-close]')||modal).focus();
+    drawAllDonuts();
+  }
+  function closeModal(){
+    modal.style.display = 'none';
+    modal.setAttribute('aria-hidden', 'true');
+  }
+  document.querySelectorAll('[data-chem-open]').forEach(btn=>btn.addEventListener('click', openModal));
+  modal.querySelectorAll('[data-chem-close]').forEach(btn=>btn.addEventListener('click', closeModal));
+  modal.addEventListener('click', (e)=>{ if (e.target === modal) closeModal(); });
+  document.addEventListener('keydown', (e)=>{ if (e.key === 'Escape' && modal.style.display === 'block') closeModal(); });
+
+  // Filter
+  const search = modal.querySelector('#terpSearch');
+  const items  = modal.querySelectorAll('[data-terp-item]');
+  if (search){
+    search.addEventListener('input', ()=>{
+      const q = search.value.trim().toLowerCase();
+      items.forEach(el=>{
+        const name = el.dataset.name || '';
+        el.style.display = (!q || name.includes(q)) ? '' : 'none';
+      });
+    });
+  }
+
+  // ------- Gradient Donut Drawers (THC & CBD) -------
+  const clamp = (n, lo, hi) => Math.max(lo, Math.min(hi, n));
+  const toRGB = (hex) => {
+    hex = (hex||'#000').replace('#','');
+    if (hex.length===3) hex = hex.split('').map(h=>h+h).join('');
+    const n = parseInt(hex,16); return [(n>>16)&255, (n>>8)&255, n&255];
+  };
+  const mix = (a,b,t)=>[0,1,2].map(i=>Math.round(a[i]+(b[i]-a[i])*t));
+  const rgb = (r,g,b)=>`rgb(${r},${g},${b})`;
+
+  // THC stops: 0?white, ~22%?mint, 30%+?forest/dark
+  const THC_STOPS = [
+    {t:0.00, c:toRGB('#ffffff')},
+    {t:0.22, c:toRGB('#98ff98')},
+    {t:0.30, c:toRGB('#0b6b2f')},
+    {t:1.00, c:toRGB('#022c22')}
+  ];
+  // CBD stops: neutral gray ? slate
+  const CBD_STOPS = [
+    {t:0.00, c:toRGB('#f0f3f5')},
+    {t:0.40, c:toRGB('#cfd8e3')},
+    {t:1.00, c:toRGB('#64748b')}
+  ];
+  function colorAt(u, stops){
+    u = clamp(u,0,1);
+    for (let i=0;i<stops.length-1;i++){
+      const a=stops[i], b=stops[i+1];
+      if (u<=b.t){
+        const t=(u-a.t)/Math.max(1e-6,(b.t-a.t));
+        const [r,g,bb]=mix(a.c,b.c,t); return rgb(r,g,bb);
+      }
+    }
+    const [r,g,bb]=stops[stops.length-1].c; return rgb(r,g,bb);
+  }
+  function drawDonut(cv, pct, centerColor, stops){
+    const ctx = cv.getContext('2d');
+    const W=cv.width, H=cv.height, cx=W/2, cy=H/2;
+    const rO = Math.min(W,H)/2 - 2, rI = rO*0.58, lineW = rO - rI;
+
+    ctx.clearRect(0,0,W,H);
+    ctx.lineWidth=lineW; ctx.lineCap='round';
+
+    // Track
+    ctx.strokeStyle='rgba(255,255,255,0.18)';
+    ctx.beginPath(); ctx.arc(cx,cy,(rI+rO)/2, -Math.PI/2, 1.5*Math.PI); ctx.stroke();
+
+    // Arc (segmented for gradient along path)
+    const frac = clamp((+pct||0)/100, 0, 1);
+    const start = -Math.PI/2, end = start + frac*2*Math.PI;
+    const SEG = Math.max(6, Math.floor(96*frac));
+    let a0 = start;
+    for (let i=1;i<=SEG;i++){
+      const t=i/SEG, a1 = start + t*(end-start);
+      ctx.beginPath();
+      ctx.strokeStyle = colorAt(t, stops);
+      ctx.arc(cx,cy,(rI+rO)/2, a0, a1);
+      ctx.stroke();
+      a0 = a1;
+    }
+
+    // Center label
+    ctx.fillStyle = centerColor;
+    ctx.font = '700 18px system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial';
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText((+pct||0).toFixed(1)+'%', cx, cy);
+  }
+  function drawAllDonuts(){
+    modal.querySelectorAll('canvas.kw-donut-thc').forEach(cv=>{
+      const v = parseFloat(cv.dataset.thc || '0');
+      drawDonut(cv, v, '#0b6b2f', THC_STOPS);
+    });
+    modal.querySelectorAll('canvas.kw-donut-cbd').forEach(cv=>{
+      const v = parseFloat(cv.dataset.cbd || '0');
+      drawDonut(cv, v, '#1f2937', CBD_STOPS);
+    });
+  }
+  // If modal is already visible (SSR navigation), draw immediately
+  if (modal.style.display !== 'none') drawAllDonuts();
+})();
+</script>
+
+
+

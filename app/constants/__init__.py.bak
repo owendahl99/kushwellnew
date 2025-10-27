@@ -1,0 +1,31 @@
+"""
+Constants used across the application.
+
+This package defines enumerations, lists, and other static data for form
+options, application methods, afflictions, and moderation. Keeping
+constants in one place simplifies updates and ensures consistency.
+"""
+
+from .enums import (
+    ModerationReason as ModerationReason,
+    ProductStatus as ProductStatus,
+    SubmissionType as SubmissionType,
+    UserRoleEnum as UserRoleEnum,
+)
+from .afflictions import (
+    AFFLICTION_LIST as AFFLICTION_LIST,
+    AFFLICTION_LEVELS as AFFLICTION_LEVELS,
+)
+from .application_methods import (
+    APPLICATION_METHODS as APPLICATION_METHODS,
+)
+
+__all__ = [
+    "ModerationReason",
+    "ProductStatus",
+    "SubmissionType",
+    "UserRoleEnum",
+    "AFFLICTION_LIST",
+    "AFFLICTION_LEVELS",
+    "APPLICATION_METHODS",
+]

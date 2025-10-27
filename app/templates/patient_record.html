@@ -1,0 +1,58 @@
+
+{% extends "base.html" %}
+{% block title %}Patient Record{% endblock %}
+{% block content %}
+<section class="kw-shell" style="max-width:900px;margin:auto;">
+  <h1 class="kw-title">Patient Record</h1>
+  <p class="kw-meta">This is a fallback template because patient_record.html was not present.</p>
+
+  <form method="post" action="{{ url_for('patient.update_account') }}" class="kw-form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <h2>Account</h2>
+    <label>Name <input class="kw-input" name="name"></label>
+    <label>Email <input class="kw-input" name="email" type="email"></label>
+    <label>Alias <input class="kw-input" name="alias"></label>
+    <label>Zip Code <input class="kw-input" name="zip_code"></label>
+    <label>Password <input class="kw-input" name="password" type="password"></label>
+    <button class="kw-btn" type="submit">Save</button>
+  </form>
+
+  <hr style="margin:16px 0;opacity:.4;"/>
+
+  <form method="post" action="{{ url_for('patient.update_demographics') }}" class="kw-form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <h2>Demographics</h2>
+    <label>Sex
+      <select class="kw-input" name="sex"><option>Male</option><option>Female</option><option>Other</option></select>
+    </label>
+    <label>Address <input class="kw-input" name="address"></label>
+    <label>City <input class="kw-input" name="city"></label>
+    <label>State <input class="kw-input" name="state"></label>
+    <label>Country <input class="kw-input" name="country"></label>
+    <div style="display:flex;gap:8px;">
+      <input class="kw-input" name="height_feet" placeholder="ft">
+      <input class="kw-input" name="height_inches" placeholder="in">
+      <input class="kw-input" name="weight_lbs" placeholder="lbs">
+    </div>
+    <button class="kw-btn" type="submit">Save</button>
+  </form>
+
+  <hr style="margin:16px 0;opacity:.4;"/>
+
+  <form method="post" action="{{ url_for('patient.update_cannabis') }}" class="kw-form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <h2>Cannabis Use</h2>
+    <label>Start Age <input class="kw-input" name="cannabis_use_start_age" type="number"></label>
+    <label>Frequency
+      <select class="kw-input" name="cannabis_use_frequency">
+        <option value="">Select</option>
+        <option value="daily">Daily</option>
+        <option value="weekly">Weekly</option>
+        <option value="monthly">Monthly</option>
+      </select>
+    </label>
+    <label>Characterization <textarea class="kw-input" name="cannabis_use_characterization"></textarea></label>
+    <button class="kw-btn" type="submit">Save</button>
+  </form>
+</section>
+{% endblock %}

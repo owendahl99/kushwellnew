@@ -1,0 +1,135 @@
+﻿{# app/templates/_partials/_navbar.html #}
+<div class="navbar-wrapper" style="position: relative;">
+  <div class="navbar-container"
+       style="
+         display:flex;
+         align-items:center;
+         justify-content:space-between;
+         padding:8px 16px;
+         background:#0f1511;
+         color:#c5f907;
+         position:relative;
+         min-height:56px;
+         min-width:600px;
+       ">
+
+    <!-- Left: Brand (logo) -->
+    <div class="navbar-brand" style="display:flex;align-items:center;gap:8px;">
+      <a href="{{ url_for('public.patient') }}" style="display:flex;align-items:center;text-decoration:none;">
+        <img src="{{ url_for('static', filename='images/kushwell_logo.png') }}"
+             alt="Kushwell Logo"
+             style="height:158px;width:auto;object-fit:contain;display:block;">
+      </a>
+    </div>
+
+    <!-- Right: Auth and Actions -->
+    <div class="navbar-actions" style="display:flex;align-items:center;gap:10px;position:relative;">
+      {% if current_user.is_authenticated %}
+        <!-- NAVBAR DROPDOWN -->
+        <div class="nav-dropdown" style="position:relative;">
+          <button id="navbarDropdownBtn" 
+                  style="
+                    background:#0f1511;
+                    color:#c5f907;
+                    border:1px solid #0e3c22;
+                    padding:.45rem .7rem;
+                    border-radius:10px;
+                    font-weight:700;
+                    font-size:.95rem;
+                    cursor:pointer;
+                  ">
+            Settings & Medical Tabs ▾
+          </button>
+          <div id="navbarDropdownMenu"
+               style="
+                 display:none;
+                 position:absolute;
+                 top:100%;
+                 right:0;
+                 background:#112a1a;
+                 border:1px solid #0e3c22;
+                 border-radius:8px;
+                 min-width:180px;
+                 z-index:1000;
+                 box-shadow:0 4px 6px rgba(0,0,0,0.2);
+               ">
+            <a href="#" onclick="openTab('account')" style="display:block;padding:8px 12px;color:#e5ffd6;text-decoration:none;font-weight:600;">Account Info</a>
+            <a href="#" onclick="openTab('preferences')" style="display:block;padding:8px 12px;color:#e5ffd6;text-decoration:none;font-weight:600;">Preferences</a>
+            <a href="#" onclick="openTab('demographics')" style="display:block;padding:8px 12px;color:#e5ffd6;text-decoration:none;font-weight:600;">Medical Details</a>
+            <a href="#" onclick="openTab('security')" style="display:block;padding:8px 12px;color:#e5ffd6;text-decoration:none;font-weight:600;">Security & Sharing</a>
+          </div>
+        </div>
+
+        <!-- DASHBOARD BUTTON -->
+        <a href="{{ url_for('patient.patient_dashboard') }}" 
+           style="background:#107123;color:#e5ffd6;border:none;border-radius:10px;padding:.45rem .7rem;font-weight:700;font-size:.95rem;text-decoration:none;">
+          Dashboard
+        </a>
+
+        <!-- LOGOUT BUTTON -->
+        <a href="{{ url_for('auth.logout') }}" 
+           style="background:#b22222;color:#fff;border:none;border-radius:10px;padding:.45rem .7rem;font-weight:700;font-size:.95rem;text-decoration:none;">
+          Log Out
+        </a>
+
+      {% else %}
+        <!-- WELCOME MESSAGE -->
+        <div style="font-weight:900;font-size:1.6rem;letter-spacing:.075rem;color:#c5f907;text-transform:uppercase;">
+          Welcome to Kushwell Care
+        </div>
+
+        <!-- SIGN UP BUTTON -->
+        <a href="{{ url_for('auth.register') }}" 
+           style="background:#107123;color:#e5ffd6;border:none;border-radius:10px;padding:.45rem .7rem;font-weight:700;font-size:.95rem;text-decoration:none;">
+          Sign Up
+        </a>
+
+        <!-- LOGIN BUTTON -->
+        <a href="{{ url_for('auth.login') }}" 
+           style="background:#1b2d19;color:#e5ffd6;border:1px solid #68870cff;border-radius:10px;padding:.45rem .7rem;font-weight:700;font-size:.95rem;text-decoration:none;">
+          Login
+        </a>
+      {% endif %}
+    </div>
+  </div>
+
+  {# ----------------------------- #}
+  {# Factoid Banner below navbar #}
+  {# ----------------------------- #}
+  {% if FACTOID %}
+  <div style="
+      background: #ffffff;
+      color: #000000;
+      font-size: 1rem;
+      padding: 8px 12px;
+      border-bottom: 1px solid rgba(0,0,0,.1);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 6px;
+  ">
+      <span style="font-weight:600;">💡 Did you know?</span>
+      <span>{{ FACTOID.text }}</span>
+      {% if FACTOID.source %}
+      <a href="{{ FACTOID.source }}" target="_blank" rel="noopener" style="text-decoration:underline; color:#107123ff; font-weight:500;">
+          Learn more →
+      </a>
+      {% endif %}
+  </div>
+  {% endif %}
+</div>
+
+<script>
+  const dropdownBtn = document.getElementById('navbarDropdownBtn');
+  const dropdownMenu = document.getElementById('navbarDropdownMenu');
+
+  if (dropdownBtn && dropdownMenu) {
+    dropdownBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      dropdownMenu.style.display = (dropdownMenu.style.display === 'block') ? 'none' : 'block';
+    });
+    document.addEventListener('click', () => dropdownMenu.style.display = 'none');
+    dropdownMenu.addEventListener('click', (e) => e.stopPropagation());
+  }
+</script>

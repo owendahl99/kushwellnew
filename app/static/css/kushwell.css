@@ -1,0 +1,868 @@
+﻿/* FILE: app/static/css/kushwell.css */
+/* Global site styles shared across pages (chalkboard-first palette) */
+
+:root{
+  --kw-bg:#0b1c14; --kw-bg-2:#0f271f; --kw-ink:#e7f3ec; --kw-ink-dim:#cfe0d7;
+  --kw-accent:#f5d547; --kw-border:#2a6c50; --kw-line:#355f4c;
+}
+
+html,body{height:100%;}
+body{margin:0; font-family: system-ui, Segoe UI, Roboto, Helvetica, Arial, sans-serif; line-height:1.55; color:var(--kw-ink);}
+
+a{color:#fdf7b3;text-decoration:underline;text-underline-offset:2px;}
+a:hover{filter:brightness(1.08);}
+label{color:var(--kw-ink);}
+small,.muted{color:var(--kw-ink-dim);}
+
+/* Buttons */
+.kw-btn,.kw-cta{
+  display:inline-block; text-decoration:none; background:#14532d; color:#fff;
+  border:1px solid #0e3c22; border-radius:10px; padding:.5rem .8rem; font-weight:800; cursor:pointer;
+}
+.kw-btn--ghost{ background:transparent; color:var(--kw-ink); border:1px solid var(--kw-border); }
+.kw-btn:focus-visible,.kw-cta:focus-visible{ outline:3px solid #fdf7b3; outline-offset:2px; border-radius:10px; }
+
+/* Cards (baseline) */
+.kw-card{
+  background:var(--kw-bg-2);
+  border:1px solid var(--kw-border);
+  border-radius:14px;
+  padding:12px;
+  box-shadow:0 1px 0 rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.02);
+}
+.kw-card__header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.kw-card__title{margin:0;font-size:1.15rem;font-weight:700;color:var(--kw-ink);}
+.kw-card__body{margin-top:6px;}
+
+/* Lists & chips */
+.kw-list{list-style:none;margin:0;padding:0;}
+.kw-list__row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid rgba(255,255,255,.06);}
+.kw-list__row:first-child{border-top:0;}
+.kw-chip{display:inline-block;}
+.kw-chip__a{display:inline-block;padding:.42rem .64rem;border-radius:999px;background:#14532d;border:1px solid #0e3c22;color:#fff;text-decoration:none;font-weight:800;}
+.kw-chip__a:hover{text-decoration:underline;}
+
+/* Footer + Navbar */
+.kw-nav,.kw-footer{ background: var(--kw-bg); border-color: var(--kw-line); }
+.kw-values{ color: var(--kw-accent); }
+
+/* Chalk-forward headings (used by dashboard header) */
+.kw-h1{
+  font-family: "Cabin Sketch", system-ui, Segoe UI, Roboto, Arial, sans-serif;
+  font-weight:700; font-size: clamp(2rem, 4.5vw, 3rem); line-height:1.06;
+  color:#f8f8f8; letter-spacing:.5px;
+  text-shadow:0 1px 0 rgba(0,0,0,.35), 0 0 24px rgba(255,255,255,.06);
+}
+.kw-hero__desc{
+  font-family:"Kalam", system-ui, Segoe UI, Roboto, Arial, sans-serif;
+  font-weight:700; font-size: clamp(1.05rem,2.2vw,1.2rem); color:#eaeaea; letter-spacing:.2px; margin:.2em 0 .8em;
+}
+
+/* Accessibility */
+*:focus-visible{ outline:3px solid #fdf7b3; outline-offset:2px; }
+
+/* Utilities */
+.kw-container{max-width:1200px;margin:0 auto;}
+.kw-row{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;}
+.kw-right{margin-left:auto;}
+/* === Wellness Sliders === */
+.wellness-sliders {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin: 16px 0;
+}
+
+.wellness-sliders h2 {
+  font-family: 'Chalkboard', sans-serif;
+  font-size: 1.8rem;
+  color: #fff;
+  margin-bottom: 12px;
+}
+.slider-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background-color: rgba(255, 255, 255, 0.05);
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+}
+
+.slider-group label {
+  font-weight: bold;
+  color: #f5f5f5;
+  font-size: 1rem;
+}
+
+.slider-value {
+  font-size: 0.9rem;
+  color: #ffd700;
+  text-align: right;
+}
+
+.encouragement {
+  font-size: 0.85rem;
+  color: #90ee90;
+  margin-top: 2px;
+}
+input[type="range"] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 14px;
+  border-radius: 10px;
+  background: linear-gradient(90deg, #ff6f61 0%, #6b5b95 100%);
+  outline: none;
+  transition: background 0.3s ease-in-out;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #ffd700;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  transition: transform 0.2s ease-in-out;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #ffd700;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+.wellness-sliders button {
+  margin-top: 12px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 10px;
+  background-color: #6b5b95;
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s ease-in-out;
+}
+
+.wellness-sliders button:hover:not(:disabled) {
+  background-color: #ff6f61;
+}
+
+.wellness-sliders button:disabled {
+  background-color: #888;
+  cursor: not-allowed;
+}
+@media (max-width: 768px) {
+  .wellness-sliders {
+    gap: 16px;
+  }
+
+  .slider-group {
+    padding: 12px;
+  }
+
+  .slider-group label {
+    font-size: 0.95rem;
+  }
+
+  input[type="range"]::-webkit-slider-thumb,
+  input[type="range"]::-moz-range-thumb {
+    width: 28px;
+    height: 28px;
+  }
+}
+/* Card wrapper and header */
+.dashboard-card-wrapper {
+  position: relative;
+  margin-bottom: 40px; /* space for header above card */
+}
+
+.card-header-chalkboard {
+  position: absolute;
+  top: -24px; /* lifts header above card */
+  left: 16px;
+  font-family: 'Chalkboard', sans-serif;
+  font-size: 1.5rem;
+  color: #fff;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+  background: rgba(0,0,0,0.25); /* optional chalkboard glow */
+  padding: 4px 8px;
+  border-radius: 4px;
+  pointer-events: none; /* prevent interfering with card clicks */
+  z-index: 2;
+}
+
+/* The actual card */
+.dashboard-card {
+  background-color: #2e2e2e;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.25);
+  position: relative;
+  z-index: 1;
+}
+.kw-card-header.chalkboard {
+  background: #1e293b; /* dark chalkboard color */
+  color: #f1f5f9;      /* light chalk text */
+  font-weight: 600;
+  font-size: 1.1rem;
+  padding: 8px 12px;
+  border-radius: 6px 6px 0 0;
+  text-align: center;
+  margin-bottom: 6px;
+  letter-spacing: 0.5px;
+  font-family: "Patrick Hand", cursive; /* chalk-style font if available */
+}
+/* Grid columns */
+.kw-grid-three {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr 0.9fr; /* left column slightly narrower, center wider, right smaller */
+  gap: 18px;
+  align-items: start;
+}
+
+/* Individual columns (flex for masonry stacking) */
+.kw-col {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Specific card heights for masonry effect */
+.kw-col:nth-child(1) .kw-card { height: 520px; } /* Wellness, longer, narrower */
+.kw-col:nth-child(2) .kw-card { height: auto; }   /* AI + Product Research stacked, wider but shorter */
+.kw-col:nth-child(3) .kw-card:first-child { height: 100px; }  /* Avatar small */
+.kw-col:nth-child(3) .kw-card:nth-child(2) { height: auto; }  /* Current Products table */
+
+.kw-card-header.chalkboard {
+  background: #1e293b; 
+  color: #f1f5f9;
+  font-weight: 600;
+  font-size: 1.1rem;
+  padding: 8px 12px;
+  border-radius: 6px 6px 0 0;
+  text-align: center;
+  margin-bottom: 6px;
+  letter-spacing: 0.5px;
+  font-family: "Patrick Hand", cursive;
+}
+
+/* Buttons inside preferences card */
+.kw-card .kw-btn {
+  padding: 6px 10px;
+  border-radius: 4px;
+  text-align: center;
+  display: inline-block;
+  text-decoration: none;.kw-card__title {
+  font-family: "Chalkduster", "Comic Sans MS", cursive;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #f5f5f5; /* bright chalk white */
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.3),
+               -1px -1px 2px rgba(0,0,0,0.2);
+  background: transparent !important; /* no backing */
+  margin: 0 0 8px 0;
+}
+
+  font-size: 0.95rem;
+}
+.kw-btn--primary { background: #0d9488; color:white; }
+.kw-btn--secondary { background: #94a3b8; color:white; }
+.kw-card__title {
+  font-family: "Chalkduster", "Comic Sans MS", cursive;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #f5f5f5; /* bright chalk white */
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.3),
+               -1px -1px 2px rgba(0,0,0,0.2);
+  background: transparent !important; /* no backing */
+  margin: 0 0 8px 0;
+}
+.kw-favorite-dispensary {
+  background-color: #fef9c3; /* light yellow highlight */
+  font-weight: bold;
+}
+.kw-badge {
+  background: #2563eb; /* blue */
+  color: #fff;
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  margin-left: 6px;
+}
+
+.product-card {
+  position: relative;
+  border: 2px solid #ccc;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.badge-corner {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: #fff; /* white square backing */
+  width: 90px;
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.badge-stamp {
+  position: relative;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: radial-gradient(circle at top left, gold, green);
+  box-shadow: inset 0 0 6px rgba(0,0,0,0.3), 0 2px 6px rgba(0,0,0,0.2);
+  overflow: hidden;
+}
+
+/* Embossed marijuana leaf (placeholder as faint background) */
+.badge-leaf {
+  position: absolute;
+  inset: 0;
+  background: url('/static/img/leaf-embossed.png') center/80% no-repeat;
+  opacity: 0.1;
+  filter: grayscale(100%) contrast(120%);
+  pointer-events: none;
+}
+
+.badge-content {
+  position: relative;
+  text-align: center;
+  color: #fff;
+  font-family: sans-serif;
+  padding: 6px;
+}
+
+.badge-content .qol-score {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.badge-content .votes {
+  font-size: 0.7rem;
+  opacity: 0.9;
+}
+
+.badge-content .stars {
+  font-size: 0.9rem;
+  margin-top: 2px;
+}
+/* FILE: static/css/product_detail.css */
+.kw-container { max-width: 1100px; margin: 24px auto; padding: 0 16px; font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; }
+
+/* big product card wrapper */
+.product-card {
+  position: relative;
+  margin: 16px 0;
+  background: #fff;
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+  border: 6px solid var(--border-color, #d0d0d0);
+  overflow: visible;
+}
+
+/* border colors for statuses */
+.product-approved { --border-color: #1b5e20; }      /* dark green (approved) */
+.product-grassroots { --border-color: #8ed3a9; }    /* mint (grassroots) */
+.product-default { --border-color: #7b7b7b; }       /* neutral */
+
+
+/* Header with big product name + logo */
+.product-header { display:flex; gap: 18px; align-items: center; justify-content: space-between; }
+.product-title-wrap { flex: 1 1 auto; }
+.product-name { margin: 0; font-size: 28px; }
+.product-brand { color: #666; margin-top: 6px; font-size: 14px; }
+.product-logo img { width: 84px; height: 84px; object-fit: cover; border-radius: 8px; }
+
+/* Cards inside product */
+.card { background: #fff; border-radius: 10px; padding: 14px; margin-top: 12px; border: 1px solid rgba(0,0,0,0.04); }
+.card h2 { margin: 0 0 8px 0; font-size: 18px; }
+
+/* terpene table */
+.terpene-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.terpene-table thead th { text-align: left; padding: 8px 6px; color: #333; border-bottom: 1px solid rgba(0,0,0,0.06); }
+.terpene-table tbody td { padding: 10px 6px; border-bottom: 1px dashed rgba(0,0,0,0.04); vertical-align: top; }
+.t-name { font-weight: 600; }
+.t-desc { color: #444; }
+.t-percent { width: 70px; text-align: right; }
+
+/* price stats */
+.price-stats { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+.price-block { background: #091709; border-radius: 8px; padding: 10px 12px; min-width: 110px; text-align: center; border: 1px solid rgba(0,0,0,0.03); }
+.price-label { font-size: 12px; color: #d4d4cad7; }
+.price-value { font-size: 18px; font-weight: 700; color: #1b5e20; }
+
+/* dispensary table */
+.dispensary-table { width: 100%; border-collapse: collapse; }
+.dispensary-table th, .dispensary-table td { padding: 8px 10px; text-align: left; border-bottom: 1px solid rgba(0,0,0,0.04); }
+
+/* voting box */
+.card-voting .vote-box { padding: 12px; border-radius: 8px; display:flex; justify-content: space-between; align-items:center; }
+.card-voting .vote-box.voted { background: linear-gradient(90deg, rgba(29,97,40,0.06), rgba(29,97,40,0.01)); border: 1px solid rgba(29,97,40,0.12); }
+.card-voting .vote-box.not-voted { background: #fff6f6; border: 1px solid rgba(150, 20, 20, 0.06); }
+.vote-count { color: #666; font-size: 13px; }
+
+/* small helpers */
+.muted { color: #888; font-size: 14px; padding: 8px 0; }
+.logo-placeholder { width: 84px; height: 84px; display:flex; align-items:center; justify-content:center; background:#f3f3f3; border-radius:8px; color:#888; font-weight:700; }
+
+@media (max-width: 800px) {
+  .product-header { flex-direction: column; align-items:flex-start; gap: 12px; }
+  .price-stats { justify-content: space-between; }
+}
+.circular-chart {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  transform: rotate(-90deg);
+}
+
+.circle-bg {
+  fill: none;
+  stroke: #eee;
+  stroke-width: 3.8;
+}
+
+.circle {
+  fill: none;
+  stroke-width: 3.8;
+  stroke: #00a000; /* green for THC gauge */
+  stroke-linecap: round;
+  transition: stroke-dasharray 0.6s ease 0s;
+}
+
+.percentage {
+  font-size: 0.5em;
+  dominant-baseline: central;
+  transform: rotate(90deg);
+}
+/* Main page header */
+.product-page-header {
+    width: 100%;
+    padding: 24px;
+    color: #fff;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.8rem;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.6); /* chalk effect */
+    background: var(--page-header-gradient, linear-gradient(135deg, #004d00 0%, #ffff66 50%, #004d00 100%));
+    border-radius: 12px;
+    margin-bottom: 32px;
+}
+
+/* Dashboard / chalkboard */
+.kw-dashboard {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    padding: 24px;
+}
+
+/* Individual card */
+.kw-card {
+    background: #fdf8f0; /* sticky note / cardstock */
+    border-radius: 12px;
+    padding: 16px;
+    position: relative;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    border: 4px solid #004d00; /* default card border */
+    width: 300px; /* adjustable */
+}
+
+/* Card title "written on the chalkboard" */
+.kw-card-title {
+    position: relative;
+    top: -16px;
+    left: 0;
+    color: #004d00; /* chalk color */
+    font-weight: bold;
+    font-size: 1.2rem;
+    text-shadow: 1px 1px 1px rgba(255,255,255,0.4); /* subtle chalk effect */
+    margin-bottom: 8px;
+}
+.qol-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
+  background: #1e1e1e; /* chalkboard background */
+  color: #fff;
+}
+
+.qol-table th, .qol-table td {
+  border: 1px solid #444;
+  padding: 6px 10px;
+  text-align: center;
+}
+
+.qol-table th {
+  background: #2a2a2a;
+  font-weight: bold;
+}
+
+.qol-banner {
+  padding: 10px 20px;
+  border-radius: 20px;
+  color: #000;
+  font-weight: bold;
+  font-size: 1.2em;
+  text-align: center;
+  position: absolute;
+  top: 45%;
+  left: 10%;
+  width: 80%;
+}
+
+/* GLOBAL: all card containers */
+.cards-container, .dashboard-cards {
+    display: grid !important; /* or flex if you prefer */
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* responsive 2+ columns */
+    gap: 1rem;
+    justify-items: stretch; /* ensures cards fill the column */
+    align-items: start;
+}
+
+/* Default card styles */
+.kw-card {
+    display: flex;
+    flex-direction: column; /* content stacks vertically inside card */
+    position: relative;     /* allows absolute positioning of badges inside */
+    padding: 1rem;
+    border-radius: 12px;
+    background: linear-gradient(180deg,#013220,#025f36,#038c3e);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+}
+.kw-card {
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+}
+.product-main table {
+  width: 100%;
+  border: 1px solid #355f4c;
+}
+.product-main th, .product-main td {
+  padding: 6px 12px;
+  border: 1px solid #355f4c;
+}
+.product-banner {
+  position: relative;
+  padding: 10px 16px;
+  font-weight: bold;
+  font-size: 1.1em;
+  text-align: center;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+  overflow: hidden;
+  background: transparent; /* gradient applied with ::before */
+}
+
+/* Gradient layers */
+.product-banner::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-top-left-radius: inherit;
+  border-top-right-radius: inherit;
+
+  background: 
+    radial-gradient(circle at center,
+      rgba(255, 255, 255, 0.25) 0%,     /* center glow */
+      rgba(255, 255, 255, 0.05) 25%,
+      transparent 40%
+    ),
+    linear-gradient(90deg,
+      rgba(200, 0, 255, 0.35) 0%,       /* left/outside */
+      rgba(0, 180, 255, 0.25) 50%,      /* middle band */
+      rgba(0, 255, 120, 0.35) 100%      /* right/outside */
+    ),
+    linear-gradient(180deg,
+      rgba(255, 255, 255, 0.05),
+      rgba(0, 0, 0, 0.15)
+    );
+}
+
+/* Banner text stays visible */
+.product-banner span {
+  position: relative;
+  z-index: 1;
+  color: #fff;          /* readable over gradients */
+  text-shadow: 0 1px 2px rgba(0,0,0,0.6);
+}
+.unverified-border {
+  border: 2px solid #0c3f0c; /* dark green border */
+  border-radius: 8px;
+  position: relative;
+  padding: 16px;
+  margin-top: 12px;
+  width: 100%;          /* make sure it stretches full card width */
+  box-sizing: border-box;
+}
+.unverified-label {
+  position: absolute;
+  top: -12px;
+  left: 16px;
+  background: #fff;
+  padding: 0 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #2e7d32;
+  border: 1px solid #98ff98;
+  border-radius: 6px;
+  box-shadow: inset 0 1px 1px rgba(255,255,255,0.8), 0 1px 2px rgba(0,0,0,0.15);
+  z-index: 10;
+}
+body {
+  font-family: system-ui, "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
+}
+.kw-gauge-value {
+  font-size: 28px;
+  font-weight: bold;
+  margin-top: -20px;
+  color: white;
+  font-family: 'Chalkboard', sans-serif;
+}
+.kw-card {
+  background: #0a2e0d;
+  padding: 16px;
+  border-radius: 12px;
+  color: white;
+}
+.kw-comparison {
+  font-size: 20px;
+  font-weight: bold;
+  color: #ffeb3b;
+}
+/* Base slider */
+.kw-slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 16px;
+  border-radius: 8px;
+  background: linear-gradient(to right, #4caf50, #81c784);
+  outline: none;
+  transition: background 0.3s;
+}
+
+.kw-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #fff;
+  border: 3px solid #4caf50;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.kw-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+.kw-slider::-moz-range-thumb {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #fff;
+  border: 3px solid #4caf50;
+  cursor: pointer;
+}
+
+/* Inverse metric (like Pain â†’ less is better) */
+.kw-slider.inverse {
+  background: linear-gradient(to right, #f44336, #e57373);
+}
+.kw-slider.inverse::-webkit-slider-thumb {
+  border-color: #f44336;
+}
+.kw-slider.inverse::-moz-range-thumb {
+  border-color: #f44336;
+}
+
+/* Emoji anchors */
+.kw-slider-emoji {
+  font-size: 1.6rem;
+  min-width: 32px;
+  text-align: center;
+}
+
+/* Value display */
+.kw-slider-value {
+  min-width: 32px;
+  text-align: center;
+}
+/* Comparative analytics table */
+.kw-table.kw-compare {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 1rem;
+}
+
+.kw-table.kw-compare th,
+.kw-table.kw-compare td {
+  padding: 10px;
+  text-align: center;
+  border-bottom: 1px solid #444;
+}
+
+.kw-table.kw-compare td:first-child {
+  text-align: left;
+  font-weight: bold;
+}
+
+.kw-table.kw-compare td.pos {
+  color: #4caf50;
+  font-weight: 600;
+}
+.kw-table.kw-compare td.neg {
+  color: #f44336;
+  font-weight: 600;
+}
+.kw-table.kw-compare td.neutral {
+  color: #999;
+}
+.checkins-hub-row {
+  display: flex;
+  gap: 24px; /* space between columns */
+}
+
+.checkins-left {
+  flex: 1 1 60%; /* sliders can take 60% */
+}
+
+.checkins-right {
+  flex: 1 1 40%; /* analytics can take 40% */
+}
+
+.kw-card {
+  padding: 16px;
+  border-radius: 12px;
+  background: linear-gradient(to bottom, #f8f9fa, #ffffff);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+.checkins-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;  /* 2 columns side by side */
+  gap: 2rem;
+  max-width: 1200px; /* ensures wide scaling on desktop */
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.checkin-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  font-size: 1.1rem; /* bump up text size */
+}
+
+.checkin-card p {
+  font-size: 1.15rem;
+  white-space: nowrap; /* force sentences onto one line if possible */
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.banner {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.checkins-grid {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+/* === Base Card Style === */
+.qol-row {
+  display: grid;
+  grid-template-columns: 48% 4% 48%;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  border-radius: 18px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+  position: relative;
+  color: #f5f5f5;
+}
+
+/* === Gradient Backings Per Metric === */
+.qol-row.pain    { background: linear-gradient(135deg, #330000 0%, #661111 40%, #992222 100%); }
+.qol-row.mood    { background: linear-gradient(135deg, #001933 0%, #003366 40%, #004c99 100%); }
+.qol-row.energy  { background: linear-gradient(135deg, #332b00 0%, #665500 40%, #998000 100%); }
+.qol-row.clarity { background: linear-gradient(135deg, #002b2b 0%, #006666 40%, #00aaaa 100%); }
+.qol-row.appetite{ background: linear-gradient(135deg, #1a3300 0%, #336600 40%, #4c9900 100%); }
+
+/* === Emojis Section === */
+.qol-emojis span {
+  filter: drop-shadow(0 1px 1px rgba(0,0,0,0.5));
+}
+
+/* === Headings & Text === */
+.qol-index {
+  margin-bottom: 6px;
+  font-size: 1.75rem;
+  font-weight: 600;
+}
+
+.qol-question {
+  margin-top: 4px;
+  font-size: 1rem;
+  color: #cfc;
+}
+
+.onboard-form {
+  width: 100%;
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 24px;
+  background: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-control {
+  width: 100%;
+  font-size: 1.1em;
+  padding: 10px 14px;
+}
+
+.kw-row-product {
+  grid-column: 1 / -1;        /* spans both columns */
+  width: 100%;
+  min-height: 380px;          /* deeper card */
+  margin-top: var(--gap);
+}
+.kw-card.kw-product-research {
+  width: 95%;
+  height: 100%;
+  border-radius: var(--card-radius);
+  background: linear-gradient(180deg,#080909,#727e1d,#035e2a);
+  color: #111;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+}
+
+
+
+

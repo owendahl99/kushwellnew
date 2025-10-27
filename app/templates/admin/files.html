@@ -1,0 +1,36 @@
+﻿{% extends "base.html" %}
+{% block title %}File Management{% endblock %}
+{% block content %}
+<h1 class="text-2xl font-bold mb-4">File Management</h1>
+{% if files %}
+    <table class="min-w-full bg-white">
+        <thead>
+            <tr>
+                <th class="px-4 py-2">Filename</th>
+                <th class="px-4 py-2">Uploaded At</th>
+                <th class="px-4 py-2">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for file in files %}
+                <tr class="border-t">
+                    <td class="px-4 py-2">{{ file.filename }}</td>
+                    <td class="px-4 py-2">{{ file.uploaded_at }}</td>
+                    <td class="px-4 py-2">
+                        <form action="{{ url_for('admin.delete_file', file_id=file.id) }}" method="post">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="text-red-600 hover:underline">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>No files uploaded.</p>
+{% endif %}
+{% endblock %}
+
+
+
+

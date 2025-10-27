@@ -1,0 +1,100 @@
+<div class="kw-card kw-product-research">
+  <div class="kw-card__head">
+    <h3>Product Research Center</h3>
+  </div>
+
+  <div class="kw-card__body">
+    <table class="kw-product-table">
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Category</th>
+          <th>Rating</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if current_products %}
+          {% for product in current_products %}
+          <tr>
+            <td>{{ product.name }}</td>
+            <td>{{ product.category or "—" }}</td>
+            <td>{{ product.score or "—" }}</td>
+            <td>{{ "Active" if product.active else "Stopped" }}</td>
+          </tr>
+          {% endfor %}
+        {% else %}
+          <tr><td colspan="4" class="kw-empty">No products to display.</td></tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<style>
+/* ======================================
+   PRODUCT RESEARCH CARD (FULL WIDTH)
+====================================== */
+.kw-product-research {
+  grid-column: 1 / -1;                         /* span both columns */
+  background: radial-gradient(
+    circle at 50% 40%,
+    rgba(220,216,112,0.25) 0%,
+    rgba(20,30,20,0.95) 90%
+  );
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 18px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  padding: 20px 24px 24px 24px;
+  font-family: "Segoe UI", "Inter", sans-serif;
+  color: #fff;
+  width: 100%;
+  min-height: 360px;                            /* taller and dominant */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+/* Header */
+.kw-product-research .kw-card__head {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #1fb542ff;                               /* Kushwell yellow */
+  text-shadow: 1px 1px 4px rgba(0,0,0,0.6);
+  margin-bottom: 10px;
+}
+
+/* Table */
+.kw-product-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  font-size: 0.95rem;
+}
+.kw-product-table th,
+.kw-product-table td {
+  border: 1px solid rgba(255,255,255,0.12);
+  padding: 10px 12px;
+  text-align: left;
+}
+.kw-product-table th {
+  background: rgba(255,255,255,0.08);
+  font-weight: 600;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.kw-product-table td {
+  color: #f3f3f3;
+}
+.kw-product-table tbody tr:hover {
+  background: rgba(255,255,255,0.05);
+  transition: background 0.2s ease;
+}
+.kw-empty {
+  text-align: center;
+  padding: 18px;
+  color: #bbb;
+  font-style: italic;
+}
+</style>

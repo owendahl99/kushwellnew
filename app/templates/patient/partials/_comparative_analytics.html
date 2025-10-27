@@ -1,0 +1,42 @@
+﻿{# FILE: app/templates/patient/partials/_wellness_comparative_analytics.html #}
+<section class="kw-card" aria-label="Wellness Comparative Analytics">
+  <div class="kw-card__head">
+    <h3 class="kw-card__title">Comparative Wellness Analytics</h3>
+    <div class="kw-meta">Comparing todayâ€™s check-in against your last recorded levels.</div>
+  </div>
+
+  <div class="kw-card__body overflow-x-auto">
+    <table class="kw-table w-full text-center">
+      <thead>
+        <tr>
+          <th class="text-left">Metric</th>
+          <th>Last</th>
+          <th>Current</th>
+          <th>Î” (Change)</th>
+          <th>% Change</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for m in ["pain", "sleep", "mood", "energy"] %}
+          {% set last_val = last_levels.get(m, 0) %}
+          {% set curr_val = current_levels.get(m, 0) %}
+          {% set diff = curr_val - last_val %}
+          {% set pct = (diff / last_val * 100) if last_val else 0 %}
+          <tr>
+            <td class="font-semibold">{{ m|capitalize }}</td>
+            <td>{{ last_val }}</td>
+            <td>{{ curr_val }}</td>
+            <td class="{{ 'text-green-500' if diff > 0 else 'text-red-500' if diff < 0 else '' }}">
+              {{ "+" if diff > 0 else "" }}{{ diff }}
+            </td>
+            <td class="{{ 'text-green-500' if pct > 0 else 'text-red-500' if pct < 0 else '' }}">
+              {{ pct|round(1) }}%
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+

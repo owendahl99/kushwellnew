@@ -1,0 +1,78 @@
+
+{% extends "base.html" %}
+{% block title %}Patient Profile{% endblock %}
+{% block content %}
+<section class="mx-auto max-w-4xl p-4 md:p-6">
+  {% if error %}
+    <div class="kw-card" style="background:#3b0d0d;color:#fff;padding:12px;border-radius:10px;">{{ error }}</div>
+  {% else %}
+  <header class="flex items-center gap-4 mb-4">
+    <div class="rounded-full h-12 w-12 flex items-center justify-center text-xl font-bold bg-emerald-700 text-white">
+      {{ payload.avatar_initial }}
+    </div>
+    <div>
+      <h1 class="text-2xl font-bold">{{ payload.display_name }}</h1>
+      <div class="text-sm opacity-75">alias: {{ payload.alias_slug }}</div>
+    </div>
+  </header>
+
+  <div class="grid md:grid-cols-2 gap-4">
+    {% if payload.sections.alias or payload.sections.real_name %}
+    <div class="kw-card p-3 rounded-xl bg-white/5 border border-white/10">
+      <h2 class="font-semibold mb-2">Identity</h2>
+      <div class="text-sm">Alias: {{ payload.sections.alias or '—' }}</div>
+      <div class="text-sm">Real name: {{ payload.sections.real_name or '—' }}</div>
+      <div class="text-sm">DOB: {{ payload.sections.date_of_birth or '—' }}</div>
+    </div>
+    {% endif %}
+
+    {% if payload.sections.afflictions %}
+    <div class="kw-card p-3 rounded-xl bg-white/5 border border-white/10">
+      <h2 class="font-semibold mb-2">Afflictions</h2>
+      <ul class="list-disc ml-5">
+        {% for a in payload.sections.afflictions %}
+          <li>{{ a.name }}{% if a.severity %} — <em>{{ a.severity }}</em>{% endif %}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+
+    {% if payload.sections.qol_summary %}
+    <div class="kw-card p-3 rounded-xl bg-white/5 border border-white/10">
+      <h2 class="font-semibold mb-2">Quality of Life</h2>
+      <div class="text-sm">Latest Overall QoL: {{ payload.sections.qol_summary.latest_overall_qol if payload.sections.qol_summary.latest_overall_qol is not none else '—' }}</div>
+    </div>
+    {% endif %}
+
+    {% if payload.sections.preferences %}
+    <div class="kw-card p-3 rounded-xl bg-white/5 border border-white/10">
+      <h2 class="font-semibold mb-2">Preferences</h2>
+      <div class="text-sm">Strain Type: {{ payload.sections.preferences.strain_type or '—' }}</div>
+      <div class="text-sm">Application: {{ payload.sections.preferences.application_method or '—' }}</div>
+    </div>
+    {% endif %}
+
+    {% if payload.sections.top_products %}
+    <div class="kw-card p-3 rounded-xl bg-white/5 border border-white/10 md:col-span-2">
+      <h2 class="font-semibold mb-2">Top Products</h2>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        {% for p in payload.sections.top_products %}
+          <div class="p-3 rounded-xl bg-white/5 border border-white/10">
+            <div class="font-semibold">{{ p.name }}</div>
+            <div class="text-sm opacity-75">Avg QoL: {{ "%.2f"|format(p.avg_qol) }} ({{ p.votes }} votes)</div>
+            <a class="kw-link" href="{{ url_for('products.detail', product_id=p.id) }}">View</a>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+  <footer class="mt-6 text-sm opacity-70">
+    {% if payload.meta.friends_count is not none %}
+      Friends: {{ payload.meta.friends_count }}
+    {% endif %}
+  </footer>
+  {% endif %}
+</section>
+{% endblock %}

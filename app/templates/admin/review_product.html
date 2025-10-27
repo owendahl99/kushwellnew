@@ -1,0 +1,27 @@
+﻿{% extends "base.html" %}
+{% block title %}Review Product{% endblock %}
+{% block content %}
+<h1 class="text-2xl font-bold mb-4">Review Product</h1>
+<p>Approve or reject the product below:</p>
+<div class="border p-4 rounded bg-white">
+    <h2 class="text-xl font-semibold">{{ product.name }}</h2>
+    <p>{{ product.description }}</p>
+    <form action="{{ url_for('admin.approve_product_route', product_id=product.id) }}" method="post" class="inline-block mr-2">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded">Approve</button>
+    </form>
+    <form action="{{ url_for('admin.reject_product', product_id=product.id) }}" method="post" class="inline-block">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <select name="reason" class="mr-2">
+            {% for reason in moderation_reasons %}
+                <option value="{{ reason.value }}">{{ reason.value }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded">Reject</button>
+    </form>
+</div>
+{% endblock %}
+
+
+
+

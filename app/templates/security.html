@@ -1,0 +1,97 @@
+﻿{# app/templates/security.html #}
+{% extends "base.html" %}
+{% block title %}Security & Sharing{% endblock %}
+
+{% block content %}
+<section class="kw-shell">
+  <h1 style="margin:8px 0 12px 0;">Security &amp; Sharing</h1>
+  <p class="kw-meta" style="margin-bottom:12px;">
+    Control how your name/alias appears and who can see key parts of your profile.
+  </p>
+
+  <form method="post" action="{{ url_for('patient.security_save') }}"
+        style="display:grid;gap:16px;max-width:800px;">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+    {# ---- Identity / Display ---- #}
+    <section class="kw-card" aria-labelledby="sec-identity">
+      <h2 id="sec-identity" class="kw-card__title">Identity</h2>
+      <div class="kw-hr"></div>
+
+      <label style="display:block;margin:.5rem 0;">
+        <div class="kw-meta" style="margin-bottom:4px;">Alias</div>
+        <input name="alias"
+               class="kw-input"
+               placeholder="e.g., GreenGuardian"
+               value="{{ settings.alias or '' }}">
+      </label>
+
+      <fieldset style="border:0;padding:0;margin:.5rem 0;">
+        <legend class="kw-meta" style="margin-bottom:4px;">Preferred display</legend>
+        <label style="margin-right:16px;">
+          <input type="radio" name="preferred_display" value="alias"
+                 {% if settings.preferred_display == 'alias' %}checked{% endif %}>
+          Alias
+        </label>
+        <label>
+          <input type="radio" name="preferred_display" value="real"
+                 {% if settings.preferred_display == 'real' %}checked{% endif %}>
+          Real name
+        </label>
+      </fieldset>
+
+      <fieldset style="border:0;padding:0;margin:.5rem 0;">
+        <legend class="kw-meta" style="margin-bottom:4px;">Discoverable in people search</legend>
+        <label style="display:inline-flex;align-items:center;gap:8px;margin-right:20px;">
+          <input type="checkbox" name="discoverable_alias" value="1"
+                 {% if settings.discoverable and settings.discoverable.by_alias %}checked{% endif %}>
+          by alias
+        </label>
+        <label style="display:inline-flex;align-items:center;gap:8px;">
+          <input type="checkbox" name="discoverable_name" value="1"
+                 {% if settings.discoverable and settings.discoverable.by_name %}checked{% endif %}>
+          by real name
+        </label>
+      </fieldset>
+    </section>
+
+    {# ---- Visibility matrix ---- #}
+    <section class="kw-card" aria-labelledby="sec-visibility">
+      <h2 id="sec-visibility" class="kw-card__title">Visibility</h2>
+      <div class="kw-hr"></div>
+
+      {% set fields = [
+        ('alias', 'Alias'),
+        ('real_name', 'Real name'),
+        ('date_of_birth', 'Date of birth'),
+        ('recommendations', 'Recommendations'),
+        ('qol_scores', 'Quality of life score'),
+        ('afflictions', 'Afflictions'),
+        ('afflictions_over_time', 'Afflictions over time'),
+        ('favorite_dispensary', 'Favorite dispensary'),
+        ('favorites', 'Favorites'),
+        ('voting_history', 'Voting history'),
+      ] %}
+
+      <div style="display:grid;grid-template-columns:1fr 180px;gap:10px;align-items:center;">
+        {% for key, label in fields %}
+          <label class="kw-meta" for="vis_{{ key }}">{{ label }}</label>
+          {% set cur = (settings.visibility[key] if settings.visibility and key in settings.visibility else 'private') %}
+          <select class="kw-input" name="vis_{{ key }}" id="vis_{{ key }}">
+            <option value="private"   {{ 'selected' if cur=='private'   else '' }}>Private</option>
+            <option value="friends"   {{ 'selected' if cur=='friends'   else '' }}>Friends</option>
+            <option value="public"    {{ 'selected' if cur=='public'    else '' }}>Public</option>
+          </select>
+        {% endfor %}
+      </div>
+    </section>
+
+    <div style="display:flex;gap:10px;">
+      <button type="submit" class="kw-btn">Save settings</button>
+      <a href="{{ url_for('patient.dashboard') }}" class="kw-btn" style="background:#103f31;">Cancel</a>
+    </div>
+  </form>
+</section>
+{% endblock %}
+
+

@@ -1,0 +1,24 @@
+﻿{% extends "base.html" %}
+{% block title %}Search Results{% endblock %}
+{% block content %}
+<h1 class="text-2xl font-bold mb-4">Search Results</h1>
+<form action="{{ url_for('analytics.product_search') }}" method="get" class="mb-4">
+    <input type="text" name="q" value="{{ query }}" placeholder="Search products..." class="border rounded p-2 mr-2" />
+    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Search</button>
+</form>
+{% if products %}
+    <ul class="space-y-2">
+        {% for product in products %}
+            <li class="border p-3 rounded bg-white flex justify-between">
+                <div>{{ product.name }}</div>
+                <a href="{{ url_for('products.product_detail', product_id=product.id) }}" class="text-blue-600 hover:underline">View</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No products found.</p>
+{% endif %}
+{% endblock %}
+
+
+

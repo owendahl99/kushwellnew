@@ -1,0 +1,28 @@
+﻿{% extends "base.html" %}
+
+{% block title %}My Profile{% endblock %}
+
+{% block content %}
+<h1 class="text-2xl font-semibold mb-4">My Profile</h1>
+<p>Email: {{ user.email }}</p>
+{% if provider %}
+  <p class="mt-2"><strong>Provider Info</strong></p>
+  <p>Name: {{ provider.name }}</p>
+  <p>Clinic: {{ provider.clinic_name }}</p>
+  <p>Email: {{ provider.email }}</p>
+{% elif supplier %}
+  <p class="mt-2"><strong>Supplier Info</strong></p>
+  <p>Company: {{ supplier.company_name }}</p>
+  <p>Contact Email: {{ supplier.contact_email }}</p>
+{% elif dispensary %}
+  <p class="mt-2"><strong>Dispensary Info</strong></p>
+  <p>Name: {{ dispensary.name }}</p>
+  <p>Contact Email: {{ dispensary.contact_email }}</p>
+  <p>Address: {{ dispensary.address }}</p>
+{% else %}
+  <p>You haven't completed your enterprise profile yet.</p>
+{% endif %}
+{% endblock %}
+
+
+

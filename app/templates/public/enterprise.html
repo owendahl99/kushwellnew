@@ -1,0 +1,26 @@
+﻿{% extends "base.html" %}
+{% block title %}Kushwell Enterprise{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+  <h1>Welcome to Kushwell Enterprise</h1>
+  <p>
+    We welcome enterprises supporting the cannabis industry â€” providers,
+    dispensaries, medical professionals, and suppliers who care about the
+    end user and the quality of care that is received at the end of the day.
+  </p>
+  <p>
+    At Kushwell, we push for the best interests of our clients and patients.
+    By joining us, you become part of the Kushwell family â€” a network
+    committed to responsibility, quality, and compassion.
+  </p>
+  <a href="{{ url_for('enterprise.dashboard') }}" class="btn btn-accent">
+    Enter Enterprise Portal
+  </a>
+</section>
+
+{% include "_partials/_join_family_banner.html" %}
+{% endblock %}
+
+
+

@@ -1,0 +1,94 @@
+﻿{% extends "base.html" %}
+{% block title %}Support Groups{% endblock %}
+{% block content %}
+
+<h1 class="kw-tight">Support Groups</h1>
+
+{# Optional: show flashed messages #}
+{% with msgs = get_flashed_messages(with_categories=true) %}
+  {% if msgs %}
+    <div class="kw-card" role="status" aria-live="polite">
+      <ul class="kw-tight" style="margin:0;padding-left:1rem;">
+        {% for cat, msg in msgs %}
+          <li class="kw-meta">{{ msg }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+{% endwith %}
+
+<div class="kw-grid">
+  <!-- Join a group -->
+  <section class="kw-card" aria-labelledby="sg-join-title">
+    <div class="kw-card__head">
+      <h3 id="sg-join-title" class="kw-card__title">Join a Group</h3>
+    </div>
+
+    <div class="kw-card__body">
+      {% if support_group_choices and support_group_choices|length %}
+        <form method="POST"
+              action="{{ url_for('patient.support_groups_join') }}"
+              class="kw-row kw-gap"
+              aria-label="Join support group">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+          <label class="sr-only" for="sg-select">Select support group</label>
+          <select id="sg-select" name="group_id" required aria-required="true">
+            <option value="" disabled selected>Choose a support groupâ€¦</option>
+            {% for c in support_group_choices %}
+              <option value="{{ c.id }}">{{ c.name }}</option>
+            {% endfor %}
+          </select>
+
+          <button class="kw-btn" type="submit">Join</button>
+        </form>
+      {% else %}
+        <div class="kw-meta">No groups available to join right now.</div>
+      {% endif %}
+
+      <div class="kw-meta" style="margin-top:.5rem;">
+        Donâ€™t see the right one? Admins can add new groups.
+      </div>
+    </div>
+  </section>
+
+  <!-- Your groups -->
+  <section class="kw-card" aria-labelledby="sg-mine-title">
+    <div class="kw-card__head">
+      <h3 id="sg-mine-title" class="kw-card__title">Your Groups</h3>
+    </div>
+
+    <div class="kw-card__body">
+      {% if my_groups and my_groups|length %}
+        <ul class="kw-tight" style="list-style:none;padding:0;margin:0;">
+          {% for g in my_groups %}
+            <li style="padding:.4rem 0;border-bottom:1px solid var(--kw-line);display:flex;align-items:center;justify-content:space-between;gap:.5rem;">
+              <span class="kw-ellipsis">{{ g.name }}</span>
+
+              <form method="POST"
+                    action="{{ url_for('patient.support_groups_leave', group_id=g.id) }}"
+                    aria-label="Leave {{ g.name }}"
+                    style="margin:0;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button class="kw-btn kw-btn--ghost" type="submit">Leave</button>
+              </form>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <div class="kw-meta">You havenâ€™t joined any groups yet.</div>
+      {% endif %}
+
+      <div class="kw-hr"></div>
+      <div class="kw-row kw-gap-xs">
+        <a class="kw-btn kw-btn--ghost" href="{{ url_for('search.unified', scope='groups') }}">
+          Search Support Groups
+        </a>
+      </div>
+    </div>
+  </section>
+</div>
+
+{% endblock %}
+
+

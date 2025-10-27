@@ -1,0 +1,14 @@
+﻿    {% extends "base_enterprise.html" %}
+{% block content %}
+<h2>Compose Notification</h2>
+<form method="post">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <div><label>Title <input name="title" required></label></div>
+  <div><label>Message<br><textarea name="body" rows="6" required></textarea></label></div>
+  <button type="submit">Send to Followers</button>
+</form>
+{% endblock %}
+
+
+
+

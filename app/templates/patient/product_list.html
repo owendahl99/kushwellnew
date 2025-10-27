@@ -1,0 +1,145 @@
+﻿{# FILE: app/templates/patient/product_list.html #}
+{% extends "base.html" %}
+{% block title %}Products | Kushwell Care{% endblock %}
+
+{# --------- helpers (no attribute/attr usage) --------- #}
+{% macro status_of(p, default='approved') -%}
+  {%- if p.approval_status is defined and p.approval_status -%}{{ p.approval_status }}
+  {%- elif p.status is defined and p.status -%}{{ p.status }}
+  {%- elif p.state is defined and p.state -%}{{ p.state }}
+  {%- else -%}{{ default }}{%- endif -%}
+{%- endmacro %}
+
+{% macro name_of(p, default='Unnamed Product') -%}
+  {%- if p.name is defined and p.name -%}{{ p.name }}
+  {%- elif p.title is defined and p.title -%}{{ p.title }}
+  {%- else -%}{{ default }}{%- endif -%}
+{%- endmacro %}
+
+{% macro brand_of(p) -%}
+  {%- if p.brand is defined and p.brand -%}{{ p.brand }}
+  {%- elif p.brand_name is defined and p.brand_name -%}{{ p.brand_name }}
+  {%- elif p.company is defined and p.company -%}{{ p.company }}{% endif -%}
+{%- endmacro %}
+
+{% macro category_of(p) -%}
+  {%- if p.category is defined and p.category -%}{{ p.category }}
+  {%- elif p.type is defined and p.type -%}{{ p.type }}
+  {%- elif p.product_type is defined and p.product_type -%}{{ p.product_type }}{% endif -%}
+{%- endmacro %}
+
+{% macro strain_of(p) -%}
+  {%- if p.strain_type is defined and p.strain_type -%}{{ p.strain_type }}
+  {%- elif p.strain is defined and p.strain -%}{{ p.strain }}
+  {%- elif p.chemovar is defined and p.chemovar -%}{{ p.chemovar }}{% endif -%}
+{%- endmacro %}
+
+{% macro image_of(p) -%}
+  {%- if p.image_path is defined and p.image_path -%}{{ p.image_path }}
+  {%- elif p.image_url is defined and p.image_url -%}{{ p.image_url }}
+  {%- elif p.image is defined and p.image -%}{{ p.image }}{% endif -%}
+{%- endmacro %}
+
+{# explicit THC/CBD fallbacks (no attribute()) #}
+{% macro thc_of(p) -%}
+  {%- if p.thc_pct is defined and p.thc_pct is not none -%}{{ '%.1f' % p.thc_pct }}
+  {%- elif p.thc_percent is defined and p.thc_percent is not none -%}{{ '%.1f' % p.thc_percent }}
+  {%- elif p.thc is defined and p.thc is not none -%}{{ '%.1f' % p.thc }}
+  {%- else -%}0.0{%- endif -%}
+{%- endmacro %}
+
+{% macro cbd_of(p) -%}
+  {%- if p.cbd_pct is defined and p.cbd_pct is not none -%}{{ '%.1f' % p.cbd_pct }}
+  {%- elif p.cbd_percent is defined and p.cbd_percent is not none -%}{{ '%.1f' % p.cbd_percent }}
+  {%- elif p.cbd is defined and p.cbd is not none -%}{{ '%.1f' % p.cbd }}
+  {%- else -%}0.0{%- endif -%}
+{%- endmacro %}
+
+{% macro product_card(product) -%}
+  {% set _status = (status_of(product) | lower) %}
+  {% set state_ok = (_status == 'approved') %}
+
+  {% set name  = name_of(product) %}
+  {% set brand = brand_of(product) %}
+  {% set cat   = category_of(product) %}
+  {% set strain= strain_of(product) %}
+  {% set img   = image_of(product) %}
+
+  <article class="kw-card product-card" style="padding:12px;">
+    <header class="kw-row kw-gap" style="justify-content:space-between;align-items:center;">
+      <h3 class="kw-card__title" style="margin:0;">
+        <a class="kw-link" href="{{ url_for('patient.product_detail', product_id=product.id) }}">{{ name }}</a>
+      </h3>
+      {% if not state_ok %}
+        <span class="kw-chip" title="Pending review">{{ _status|replace('_',' ')|title }}</span>
+      {% endif %}
+    </header>
+
+    {% if img %}
+      <div class="kw-media" style="margin-top:8px;">
+        {% if img.startswith('/') %}
+          <img src="{{ img }}" alt="{{ name }}" style="max-height:140px; object-fit:cover; border-radius:8px;">
+        {% else %}
+          <img src="{{ url_for('static', filename=img) }}" alt="{{ name }}" style="max-height:140px; object-fit:cover; border-radius:8px;">
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <dl class="kw-grid" style="grid-template-columns:auto 1fr; gap:6px 12px; margin-top:10px;">
+      {% if brand %}<dt>Brand</dt><dd>{{ brand }}</dd>{% endif %}
+      {% if cat %}<dt>Category</dt><dd>{{ cat }}</dd>{% endif %}
+      {% if strain %}<dt>Strain</dt><dd>{{ strain }}</dd>{% endif %}
+      <dt>THC</dt><dd>{{ thc_of(product) }}%</dd>
+      <dt>CBD</dt><dd>{{ cbd_of(product) }}%</dd>
+    </dl>
+
+    <footer class="kw-row kw-gap" style="justify-content:space-between; align-items:center; margin-top:10px;">
+      <a class="kw-btn" href="{{ url_for('patient.product_detail', product_id=product.id) }}">Open</a>
+      {% if not state_ok %}
+        <span class="kw-muted">Grassroots (pending review)</span>
+      {% endif %}
+      {% set _status = (status_of(product) | lower) %}
+    {% if _status in ['pending','submitted','unverified','pending_review','draft',''] %}
+      <a class="kw-btn kw-btn--ghost" href="{{ url_for('patient.product_grassroots_new', product_id=product.id) }}">Edit</a>
+    {% endif %}
+    </footer>
+  </article>
+{%- endmacro %}
+
+{% block content %}
+  <div class="kw-container">
+    <div class="kw-card">
+      <div class="kw-row" style="justify-content:space-between; align-items:center;">
+        <h2 class="kw-card__title">Products</h2>
+        <div class="kw-row kw-gap">
+          <a class="kw-btn kw-btn--ghost" href="{{ url_for('patient.product_grassroots_new') }}">New Product</a><a class="kw-btn kw-btn--ghost" href="{{ url_for('patient.product_grassroots_new') }}">Submit Product</a>
+          <a class="kw-btn" href="{{ url_for('patient.product_mysubmissions') }}">My Submissions</a>
+        </div>
+      </div>
+
+      <form method="get" class="kw-grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; align-items:end;">
+        <label>
+          <span class="kw-meta">Search</span>
+          <input class="kw-input" type="search" name="search" value="{{ search or '' }}" placeholder="Search products…">
+        </label>
+        <label>
+          <span class="kw-meta">Affliction</span>
+          <input class="kw-input" type="text" name="affliction" value="{{ affliction_filter or '' }}" placeholder="Filter by affliction…">
+        </label>
+        <button class="kw-btn" type="submit">Filter</button>
+      </form>
+
+      <div class="kw-grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:14px; margin-top:12px;">
+        {% if products and products|length %}
+          {% for product in products %}
+            {{ product_card(product) }}
+          {% endfor %}
+        {% else %}
+          <div class="kw-alert kw-info">No products found. Try adjusting your search or affliction filter.</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+

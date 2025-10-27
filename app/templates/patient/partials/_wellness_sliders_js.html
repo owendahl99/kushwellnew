@@ -1,0 +1,15 @@
+﻿<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const sliders = document.querySelectorAll(".kw-slider");
+  sliders.forEach(slider => {
+    const valueEl = document.getElementById(`value-${slider.name}`);
+    if (valueEl) valueEl.textContent = slider.value;
+    slider.addEventListener("input", e => {
+      if (valueEl) valueEl.textContent = e.target.value;
+    });
+  });
+});
+</script>
+    
+
+

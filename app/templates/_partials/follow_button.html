@@ -1,0 +1,24 @@
+﻿{# templates/partials/follow_button.html #}
+{% include "_card/_head.html" %}
+{% if current_user.is_authenticated and current_user.role == 'patient' %}
+  <form action="{{ url_for('enterprise.unfollow_enterprise', enterprise_user_id=enterprise_user_id) if is_following else url_for('enterprise.follow_enterprise', enterprise_user_id=enterprise_user_id) }}"
+        method="post"
+        style="display:inline;">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    {% if is_following %}
+      <button type="submit" class="kw-btn kw-btn--soft">Following âœ“</button>
+    {% else %}
+      <button type="submit" class="kw-btn kw-btn--primary">Follow</button>
+    {% endif %}
+  </form>
+{% else %}
+  <a href="{{ url_for('auth.login', next=request.full_path) }}" class="kw-btn kw-btn--primary">Sign in to Follow</a>
+{% endif %}
+
+<span class="kw-muted" style="margin-left:.5rem; font-size:.95rem;">
+  Followers: {{ followers }}
+</span>
+
+
+
+

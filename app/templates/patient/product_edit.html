@@ -1,0 +1,90 @@
+﻿{% extends "base.html" %}
+{% block title %}Edit Product | Kushwell Care{% endblock %}
+
+{% block content %}
+<div class="kw-container">
+  <div class="kw-card" style="padding:16px;">
+    <div class="kw-row" style="justify-content:space-between; align-items:center;">
+      <h1 class="kw-card__title" style="margin:0;">Edit Product</h1>
+      <a class="kw-btn kw-btn--ghost" href="{{ url_for('patient.product_detail', product_id=product.id) }}">Back</a>
+    </div>
+
+    {% if not is_unverified %}
+      <div class="kw-alert kw-warning" style="margin-top:10px;">
+        This product is verified; edits may be restricted.
+      </div>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data" class="kw-grid"
+          style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:12px; margin-top:12px;">
+
+      <label>
+        <span class="kw-meta">Name</span>
+        <input class="kw-input" name="name" value="{{ product.name or '' }}" required>
+      </label>
+
+      <label>
+        <span class="kw-meta">Brand</span>
+        <input class="kw-input" name="brand" value="{{ (product.brand if product.brand is defined else '') }}">
+      </label>
+
+      <label>
+        <span class="kw-meta">Classification</span>
+        <select class="kw-input" name="classification">
+          <option value=""></option>
+          {% for c in classifications %}
+            <option value="{{ c }}" {% if product.classification is defined and product.classification == c %}selected{% endif %}>{{ c }}</option>
+          {% endfor %}
+        </select>
+      </label>
+
+      <label>
+        <span class="kw-meta">Application Method</span>
+        <input class="kw-input" name="application_method" list="appMethods" value="{{ product.application_method if product.application_method is defined else '' }}">
+        <datalist id="appMethods">
+          {% for m in application_methods %}<option value="{{ m }}"></option>{% endfor %}
+        </datalist>
+      </label>
+
+      <label>
+        <span class="kw-meta">Primary Affliction</span>
+        <input class="kw-input" name="affliction" list="afflictionsMaster" value="{{ product.affliction if product.affliction is defined else '' }}">
+        <datalist id="afflictionsMaster">
+          {% for a in afflictions_list %}<option value="{{ a }}"></option>{% endfor %}
+        </datalist>
+      </label>
+
+      <label>
+        <span class="kw-meta">THC %</span>
+        <input class="kw-input" name="thc_pct"
+               value="{% if product.thc_pct is defined and product.thc_pct is not none %}{{ '%.1f'|format(product.thc_pct) }}{% elif product.thc_percent is defined and product.thc_percent is not none %}{{ '%.1f'|format(product.thc_percent) }}{% elif product.thc is defined and product.thc is not none %}{{ '%.1f'|format(product.thc) }}{% else %}{% endif %}"
+               inputmode="decimal" pattern="[0-9]*[.]?[0-9]*" placeholder="e.g., 18.5">
+      </label>
+
+      <label>
+        <span class="kw-meta">CBD %</span>
+        <input class="kw-input" name="cbd_pct"
+               value="{% if product.cbd_pct is defined and product.cbd_pct is not none %}{{ '%.1f'|format(product.cbd_pct) }}{% elif product.cbd_percent is defined and product.cbd_percent is not none %}{{ '%.1f'|format(product.cbd_percent) }}{% elif product.cbd is defined and product.cbd is not none %}{{ '%.1f'|format(product.cbd) }}{% else %}{% endif %}"
+               inputmode="decimal" pattern="[0-9]*[.]?[0-9]*" placeholder="e.g., 0.9">
+      </label>
+
+      <label style="grid-column:1/-1;">
+        <span class="kw-meta">Description</span>
+        <textarea class="kw-textarea" name="description" rows="4">{{ product.description if product.description is defined else '' }}</textarea>
+      </label>
+
+      <label style="grid-column:1/-1;">
+        <span class="kw-meta">Image</span>
+        <input class="kw-input" type="file" name="image" accept=".png,.jpg,.jpeg,.gif,.webp">
+      </label>
+
+      <div style="grid-column:1/-1; display:flex; gap:10px; margin-top:6px;">
+        <button class="kw-btn" type="submit">Save Changes</button>
+        <a class="kw-btn kw-btn--ghost" href="{{ url_for('patient.product_detail', product_id=product.id) }}">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+

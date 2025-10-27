@@ -1,0 +1,61 @@
+﻿{# FILE: templates/patient/partials/_product_card_small.html #}
+{% include "_card/_head.html" %}
+{# Kushwell-native card (no Tailwind, no inline styles) #}
+
+{# ---- derive approval state for border styling ---- #}
+{% set _st =
+  (product.approval_status if product.approval_status is defined else None)
+  or (product.status if product.status is defined else None)
+  or (product.state if product.state is defined else None)
+%}
+{% set _st_l = (_st|string|lower) if _st is not none else '' %}
+{% set state = 'approved' if _st_l in ['approved','authorized','verified','active','published'] else 'pending' %}
+
+{# ---- pick best-available numeric fields safely ---- #}
+{% set score = product.score if (product.score is defined and product.score is not none) else
+               (product.avg_score if (product.avg_score is defined and product.avg_score is not none) else None) %}
+
+{% set thc = product.thc if (product.thc is defined and product.thc is not none) else
+             (product.thc_pct if (product.thc_pct is defined and product.thc_pct is not none) else None) %}
+
+{% set cbd = product.cbd if (product.cbd is defined and product.cbd is not none) else
+             (product.cbd_pct if (product.cbd_pct is defined and product.cbd_pct is not none) else None) %}
+
+{# ---- small formatter helpers ---- #}
+{% macro fmt_1(v) -%}
+  {{ '%.1f'|format(v) }}
+{%- endmacro %}
+
+<article class="product-card {{ 'product-card--approved' if state=='approved' else 'product-card--pending' }}"
+         data-state="{{ state }}"
+         data-target-url="{{ url_for('patient.product_detail', product_id=product.id) }}"
+         aria-label="Open {{ product.name }}">
+  <header class="product-card__header">
+    <h3 class="product-card__title">
+      <a class="kw-link" href="{{ url_for('patient.product_detail', product_id=product.id) }}">
+        {{ product.name }}
+      </a>
+    </h3>
+    {% if product.brand is defined and product.brand %}
+      <div class="product-card__brand kw-meta">{{ product.brand }}</div>
+    {% endif %}
+  </header>
+
+  <div class="kw-card product-card__chips">
+    <span class="kw-chip">
+      Score:
+      {% if score is not none %}{{ fmt_1(score) }}{% else %}&mdash;{% endif %}
+    </span>
+    <span class="kw-chip">
+      THC:
+      {% if thc is not none %}{{ fmt_1(thc) }}%{% else %}&mdash;{% endif %}
+    </span>
+    <span class="kw-chip">
+      CBD:
+      {% if cbd is not none %}{{ fmt_1(cbd) }}%{% else %}&mdash;{% endif %}
+    </span>
+  </div>
+</article>
+
+
+

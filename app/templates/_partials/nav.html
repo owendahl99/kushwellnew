@@ -1,0 +1,61 @@
+﻿{% include "_card/_head.html" %}
+<header class="kw-header" role="banner">
+  <div class="kw-container kw-header__inner">
+    <!-- Brand (logo + wordmark) â€” always top-left -->
+    <a class="kw-brand kw-brand--home" href="{{ url_for('public.landing') }}" aria-label="Kushwell home">
+      <img
+        class="kushwell-logo"
+        src="{{ url_for('static', filename='images/kushwell-logo.png') }}"
+        alt="Kushwell logo"
+        width="96" height="96"
+      />
+      <span class="kw-brand__text">Kushwell</span>
+    </a>
+
+    <!-- Primary nav -->
+    <nav class="kw-nav" aria-label="Primary">
+      <ul class="kw-nav-list">
+        <li><a class="kw-nav-link" href="{{ url_for('public.landing') }}">Home</a></li>
+
+        <li>
+          <a class="kw-nav-link"
+             href="{{ safe_url_for('patient.products_list', 'main.home') if has_endpoint('patient.products_list') else url_for('public.landing') }}">
+            Products
+          </a>
+        </li>
+
+        <li>
+          <a class="kw-nav-link"
+             href="{{ safe_url_for('patient.dashboard', 'main.home') if has_endpoint('patient.dashboard') else url_for('public.landing') }}">
+            Patient Dashboard
+          </a>
+        </li>
+
+        <li>
+          <a class="kw-nav-link"
+             href="{{ safe_url_for('enterprise.dashboard', 'main.home') if has_endpoint('enterprise.dashboard') else url_for('public.landing') }}">
+            Enterprise
+          </a>
+        </li>
+
+        <li>
+          <a class="kw-nav-link"
+             href="{{ safe_url_for('provider.dashboard', 'main.home') if has_endpoint('provider.dashboard') else url_for('public.landing') }}">
+            Providers
+          </a>
+        </li>
+
+        <li>
+          <a class="kw-nav-link"
+             href="{{ safe_url_for('auth.logout', 'auth.login') if has_endpoint('auth.logout') else url_for('auth.login') }}">
+            Logout
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+
+
+

@@ -1,0 +1,309 @@
+{# app/templates/patient_record.html #}
+{% extends "base.html" %}
+{% block title %}Patient Record{% endblock %}
+
+{% block content %}
+<section class="kw-shell" style="max-width:1100px;margin:auto;">
+  <h1 class="kw-title">Patient Record</h1>
+  <p class="kw-meta" style="margin-bottom:1rem;">
+    Manage your personal data, preferences, and health information in one secure place.
+  </p>
+
+  <!-- ========================= -->
+  <!-- MAIN TAB NAVIGATION -->
+  <!-- ========================= -->
+  <nav class="kw-tabs">
+    <button class="kw-tab active" data-tab="account">Account Info</button>
+    <button class="kw-tab" data-tab="preferences">Preferences</button>
+    <button class="kw-tab" data-tab="medical">Medical Details</button>
+    <button class="kw-tab" data-tab="security">Security & Sharing</button>
+  </nav>
+
+  <!-- ========================= -->
+  <!-- MAIN TAB CONTENT -->
+  <!-- ========================= -->
+  <div class="kw-tab-content">
+
+    <!-- ========================= -->
+    <!-- ACCOUNT INFO -->
+    <!-- ========================= -->
+    <section id="tab-account" class="kw-tab-panel active">
+      <form method="post" action="{{ url_for('patient.update_account') }}" class="kw-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <h2>Account Information</h2>
+        <div class="kw-hr"></div>
+
+        <label>Name
+          <input class="kw-input" type="text" name="name" value="{{ current_user.name or '' }}">
+        </label>
+        <label>Email
+          <input class="kw-input" type="email" name="email" value="{{ current_user.email or '' }}">
+        </label>
+        <label>Alias
+          <input class="kw-input" type="text" name="alias" value="{{ current_user.alias or '' }}">
+        </label>
+        <label>Password
+          <input class="kw-input" type="password" name="password" placeholder="••••••••">
+        </label>
+        <label>Zip Code
+          <input class="kw-input" type="text" name="zip_code" value="{{ current_user.zip_code or '' }}">
+        </label>
+
+        <div style="margin-top:1rem;">
+          <button type="submit" class="kw-btn">Save</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- ========================= -->
+    <!-- PREFERENCES -->
+    <!-- ========================= -->
+    <section id="tab-preferences" class="kw-tab-panel">
+      <form method="post" action="{{ url_for('patient.update_preferences') }}" class="kw-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <h2>Preferences</h2>
+        <div class="kw-hr"></div>
+
+        <label>Preferred Dispensary
+          <select name="preferred_dispensary" class="kw-input">
+            <option value="">Select</option>
+            {% for d in DISPENSARIES %}
+              <option value="{{ d.sid }}" {{ 'selected' if patient.preferred_dispensary == d.sid else '' }}>{{ d.name }}</option>
+            {% endfor %}
+          </select>
+        </label>
+
+        <label>Preferred Providers
+          <select name="preferred_providers" class="kw-input" multiple>
+            {% for p in PROVIDERS %}
+              <option value="{{ p.sid }}" {{ 'selected' if p.sid in patient.provider_preferences else '' }}>{{ p.name }}</option>
+            {% endfor %}
+          </select>
+        </label>
+
+        <label>Preferred Manufacturers
+          <select name="preferred_manufacturers" class="kw-input" multiple>
+            {% for m in MANUFACTURERS %}
+              <option value="{{ m.sid }}" {{ 'selected' if m.sid in patient.manufacturer_preferences else '' }}>{{ m.name }}</option>
+            {% endfor %}
+          </select>
+        </label>
+
+        <div style="margin-top:1rem;">
+          <button type="submit" class="kw-btn">Save</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- ========================= -->
+    <!-- MEDICAL DETAILS (with sub-tabs) -->
+    <!-- ========================= -->
+    <section id="tab-medical" class="kw-tab-panel">
+      <nav class="kw-subtabs">
+        <button class="kw-subtab active" data-subtab="demographics">Demographics & Health</button>
+        <button class="kw-subtab" data-subtab="cannabis">Cannabis Use</button>
+        <button class="kw-subtab" data-subtab="history">Medical History</button>
+        <button class="kw-subtab" data-subtab="medications">Medications & Records</button>
+      </nav>
+
+      <div class="kw-subtab-content">
+        <!-- DEMOGRAPHICS -->
+        <section id="subtab-demographics" class="kw-subtab-panel active">
+          <form method="post" action="{{ url_for('patient.update_demographics') }}" class="kw-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <h3>Demographics & Current Health</h3>
+            <div class="kw-hr"></div>
+
+            <label>Sex
+              <select name="sex" class="kw-input">
+                <option value="">Select</option>
+                <option value="Male" {{ 'selected' if patient.sex == 'Male' else '' }}>Male</option>
+                <option value="Female" {{ 'selected' if patient.sex == 'Female' else '' }}>Female</option>
+                <option value="Other" {{ 'selected' if patient.sex == 'Other' else '' }}>Other</option>
+              </select>
+            </label>
+
+            <label>Address
+              <input class="kw-input" type="text" name="address" value="{{ patient.address or '' }}">
+            </label>
+
+            <div style="display:flex; gap:10px;">
+              <label style="flex:1;">City
+                <input class="kw-input" type="text" name="city" value="{{ patient.city or '' }}">
+              </label>
+              <label style="flex:1;">State
+                <input class="kw-input" type="text" name="state" value="{{ patient.state or '' }}">
+              </label>
+            </div>
+
+            <label>Country
+              <input class="kw-input" type="text" name="country" value="{{ patient.country or '' }}">
+            </label>
+
+            <div style="display:flex; gap:10px;">
+              <label style="flex:1;">Height (ft)
+                <input class="kw-input" type="number" name="height_feet" min="0" max="8" value="{{ patient.height_feet or '' }}">
+              </label>
+              <label style="flex:1;">Height (in)
+                <input class="kw-input" type="number" name="height_inches" min="0" max="11" value="{{ patient.height_inches or '' }}">
+              </label>
+              <label style="flex:1;">Weight (lbs)
+                <input class="kw-input" type="number" step="0.1" name="weight_lbs" value="{{ patient.weight_lbs or '' }}">
+              </label>
+            </div>
+
+            <div style="margin-top:1rem;">
+              <button type="submit" class="kw-btn">Save Demographics</button>
+            </div>
+          </form>
+        </section>
+
+        <!-- CANNABIS USE -->
+        <section id="subtab-cannabis" class="kw-subtab-panel">
+          <form method="post" action="{{ url_for('patient.update_cannabis') }}" class="kw-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <h3>Cannabis Use History</h3>
+            <div class="kw-hr"></div>
+
+            <label>Age when you first used cannabis
+              <input class="kw-input" type="number" name="cannabis_use_start_age" value="{{ patient.cannabis_use_start_age or '' }}">
+            </label>
+
+            <label>Frequency of Use
+              <select name="cannabis_use_frequency" class="kw-input">
+                <option value="">Select</option>
+                {% for freq in ['daily','multiple_per_week','weekly','monthly','occasional','social_only','recreational_only','none'] %}
+                  <option value="{{ freq }}" {{ 'selected' if patient.cannabis_use_frequency == freq else '' }}>{{ freq.replace('_',' ').title() }}</option>
+                {% endfor %}
+              </select>
+            </label>
+
+            <label>Describe your relationship with cannabis
+              <textarea name="cannabis_use_characterization" class="kw-input" rows="3">{{ patient.cannabis_use_characterization or '' }}</textarea>
+            </label>
+
+            <div style="margin-top:1rem;">
+              <button type="submit" class="kw-btn">Save Cannabis Use</button>
+            </div>
+          </form>
+        </section>
+
+        <!-- MEDICAL HISTORY -->
+        <section id="subtab-history" class="kw-subtab-panel">
+          <form method="post" action="{{ url_for('patient.update_history') }}" class="kw-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <h3>Medical History</h3>
+            <div class="kw-hr"></div>
+
+            <!-- Existing fields -->
+            <label>Known Conditions
+              <input type="text" class="kw-input typeahead" name="condition_name" placeholder="e.g., Hypertension">
+            </label>
+            <label>Diagnosis Date
+              <input type="date" class="kw-input" name="diagnosis_date">
+            </label>
+            <label>Status
+              <select name="status" class="kw-input">
+                <option value="Active">Active</option>
+                <option value="Resolved">Resolved</option>
+              </select>
+            </label>
+            <label>Notes
+              <textarea class="kw-input" name="notes" rows="3"></textarea>
+            </label>
+
+            <div class="kw-hr"></div>
+            
+          <section id="subtab-afflictions" class="kw-subtab-panel">
+            <h4>Afflictions</h4>
+
+            <!-- List of existing afflictions -->
+            <div id="affliction-list">
+              {% for aff in patient.afflictions %}
+                <div class="affliction-entry" style="display:flex; gap:10px; align-items:center; margin-bottom:5px;">
+                  <span style="flex:1;">{{ aff.name }}</span>
+                  <span style="width:120px; text-align:center;">{{ aff.severity }}</span>
+                  <button type="button" class="kw-btn kw-btn-small" onclick="removeAffliction('{{ aff.id }}')">Remove</button>
+                </div>
+              {% endfor %}
+            </div>
+
+            <!-- Add Affliction Form -->
+            <form id="affliction-form" class="kw-form" method="post" action="{{ url_for('patient.add_affliction') }}">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+              <div style="display:flex; gap:10px; margin-top:10px; align-items:center;">
+                <!-- Affliction Name (typeahead) -->
+                <input class="kw-input typeahead" type="text" name="name" placeholder="Affliction name"
+                      data-typeahead-source='{{ AFFLICTION_LIST | tojson }}' required style="flex:2;">
+
+                <!-- Severity Dropdown -->
+                <select class="kw-input" name="severity" required style="flex:1;">
+                  <option value="">Select Severity</option>
+                  {% for level in AFFLICTION_LEVELS %}
+                    <option value="{{ level }}">{{ level }}</option>
+                  {% endfor %}
+                </select>
+
+                <!-- Add Button -->
+                <button type="submit" class="kw-btn" style="flex:0;">Add</button>
+              </div>
+            </form>
+
+            <!-- Save Medical History Button -->
+            <div style="margin-top:1rem;">
+              <button type="submit" class="kw-btn" form="medical-history-form">Save Medical History</button>
+            </div>
+          </section>
+
+          <!-- ================= AFFLICTION SCRIPT ================= -->
+          <script>
+            // AJAX: Add Affliction
+            document.getElementById('affliction-form').addEventListener('submit', async e => {
+              e.preventDefault();
+              const form = e.target;
+              const data = new FormData(form);
+
+              try {
+                const res = await fetch(form.action, { method: 'POST', body: data });
+                if(res.ok){
+                  const json = await res.json();
+                  const container = document.getElementById('affliction-list');
+
+                  const div = document.createElement('div');
+                  div.classList.add('affliction-entry');
+                  div.style.display = 'flex';
+                  div.style.gap = '10px';
+                  div.style.alignItems = 'center';
+                  div.style.marginBottom = '5px';
+
+                  div.innerHTML = `
+                    <span style="flex:1;">${json.name}</span>
+                    <span style="width:120px; text-align:center;">${json.severity}</span>
+                    <button type="button" class="kw-btn kw-btn-small" onclick="removeAffliction('${json.id}')">Remove</button>
+                  `;
+                  container.appendChild(div);
+                  form.reset();
+                } else {
+                  alert("Error adding affliction.");
+                }
+              } catch (err) {
+                console.error(err);
+                alert("Network error while adding affliction.");
+              }
+            });
+
+            // AJAX: Remove Affliction
+            function removeAffliction(id){
+              fetch('{{ url_for("patient.remove_affliction") }}', {
+                method: 'POST',
+                body: new URLSearchParams({ affliction_id: id, csrf_token: '{{ csrf_token() }}' })
+              }).then(res => {
+                if(res.ok){
+                  document.querySelector(`.affliction-entry button[onclick="removeAffliction('${id}')"]`).parentElement.remove();
+                } else {
+                  alert('Error removing affliction.');
+                }
+              });
+            }
+          </script>

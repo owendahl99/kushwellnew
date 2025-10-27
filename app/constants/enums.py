@@ -1,0 +1,42 @@
+"""
+Centralized enums used across the app.
+"""
+
+# app/constants/enums.py
+from enum import Enum
+
+class UserRoleEnum(Enum):
+    ADMIN = "ADMIN"
+    ENTERPRISE = "ENTERPRISE"
+    PATIENT = "PATIENT"
+    PROVIDER = "PROVIDER"
+    SUPPLIER = "SUPPLIER"
+    DISPENSARY = "DISPENSARY"
+
+class ProductStatus(Enum):
+    ENTERPRISE_PENDING  = "enterprise_pending"
+    ENTERPRISE_APPROVED = "enterprise_approved"
+    ENTERPRISE_REJECTED = "enterprise_rejected"
+    GRASSROOTS_PENDING  = "grassroots_pending"
+    GRASSROOTS_APPROVED = "grassroots_approved"
+    GRASSROOTS_REJECTED = "grassroots_rejected"
+
+
+class ModerationReason(str, Enum):
+    PRODUCT_UNAVAILABLE = "product_unavailable"
+    DUPLICATE_ENTRY = "duplicate_entry"
+    NO_EVIDENCE_OF_BENEFIT = "no_evidence_of_benefit"
+    PHISHING_SPAM = "phishing_spam"
+    BULLYING_OR_HARASSMENT = "bullying_or_harassment"
+    VIOLATES_TERMS = "violates_terms"
+    MISLEADING_CLAIMS = "misleading_claims"
+    INAPPROPRIATE_CONTENT = "inappropriate_content"
+
+
+class SubmissionType(str, Enum):
+    ENTERPRISE = "enterprise"
+    GRASSROOTS = "grassroots"
+
+
+
+

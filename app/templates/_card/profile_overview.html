@@ -1,0 +1,89 @@
+<section class="kw-card kw-profile-overview" aria-labelledby="kw-profile-title">
+  <div class="kw-card__head">
+    <h3 id="kw-profile-title" class="kw-card__title">Profile Overview</h3>
+  </div>
+
+  <div class="kw-card__body" style="display:flex; flex-direction:column; align-items:center; text-align:center; gap:12px; padding:1.25rem 1rem;">
+    {% set alias = current_user.alias or "User" %}
+    {% set initial = alias[0]|upper if alias else "U" %}
+
+    <!-- Avatar Circle -->
+    <div class="kw-avatar-circle" aria-label="Profile avatar">
+      <span class="kw-avatar-initial">{{ initial }}</span>
+    </div>
+
+    <!-- Alias Name -->
+    <h2 class="kw-alias" style="margin:0; font-size:1.25rem;">{{ alias }}</h2>
+
+    <!-- Public Visibility Summary -->
+    {% if can_view(current_user, current_user.id, 'afflictions') %}
+      <p class="kw-meta" style="color:#6b7280;">Some sections of your profile are public.</p>
+    {% else %}
+      <p class="kw-meta" style="color:#6b7280;">Your profile is currently private.</p>
+    {% endif %}
+
+    <!-- Optional public info -->
+    {% if public_profile_data %}
+      <div class="kw-public-info" style="margin-top:8px; font-size:0.95rem; color:#374151;">
+        {{ public_profile_data.display_bio or "No public bio added yet." }}
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- Actions -->
+  <div class="kw-card__actions" style="display:flex; justify-content:center; padding:0.75rem;">
+    <a class="kw-btn kw-btn--primary"
+       href="{{ url_for('patient.public_profile', user_id=current_user.id) if has_endpoint('patient.public_profile') else '#' }}">
+       View Public Profile
+    </a>
+  </div>
+</section>
+
+<style>
+.kw-profile-overview {  
+  background: linear-gradient(145deg, #0f1f17, #142d22);
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+  color: #f9fafb;
+}
+
+.kw-avatar-circle {
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  background: #1a4030;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border: 2px solid rgba(255,255,255,0.1);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+}
+
+.kw-avatar-initial {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #ffd338;
+}
+
+.kw-card__title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #f9fafb;
+}
+
+.kw-meta {
+  font-size: 0.9rem;
+}
+
+.kw-btn--primary {
+  background: #15803d;
+  color: #fff;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  transition: all 0.2s ease;
+}
+
+.kw-btn--primary:hover {
+  background: #16a34a;
+}
+</style>

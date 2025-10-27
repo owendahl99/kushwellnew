@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Inbox</h2>
+<ul>
+  {% for c in conversations %}
+    <li>
+      <a href="{{ url_for('comm_bp.view_conversation', conversation_id=c.id) }}">
+        {{ c.title or ('Broadcast' if c.is_broadcast else ('Group' if c.is_group else 'Direct')) }} ({{ unread_map.get(c.id, 0) }} unread)
+      </a>
+    </li>
+  {% else %}
+    <li>No conversations yet.</li>
+  {% endfor %}
+</ul>
+
+<h3>Start Direct/Group</h3>
+<form method="post" action="{{ url_for('comm_bp.start_conversation') }}">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <div><label>Title <input name="title"></label></div>
+  <div><label>Participant IDs (comma-separated) <input name="participant_ids" required></label></div>
+  <button type="submit">Start</button>
+</form>
+
+{% if current_user.role.name == 'ADMIN' %}
+<h3>Admin Broadcast</h3>
+<form method="post" action="{{ url_for('comm_bp.broadcast') }}">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <div><label>Title <input name="title"></label></div>
+  <div><label>Target User IDs (comma-separated) <input name="target_user_ids" required></label></div>
+  <div><label>Body<br><textarea name="body" rows="5" required></textarea></label></div>
+  <button type="submit">Send Broadcast</button>
+</form>
+{% endif %}
+{% endblock %}
+
+

@@ -1,0 +1,62 @@
+﻿{# FILE: _wellness_history_chart.html #}
+<section class="kw-card" aria-labelledby="wellness-history-card-title">
+  <div class="kw-card__head">
+    <h3 id="wellness-history-card-title" class="kw-card__title">Wellness History</h3>
+    <div class="kw-meta">Your past check-ins visualized over time.</div>
+  </div>
+
+  <div class="kw-card__body">
+    <canvas id="wellnessHistoryChart" width="400" height="200"></canvas>
+  </div>
+</section>
+
+<!-- Inline script to render chart -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const ctx = document.getElementById("wellnessHistoryChart").getContext("2d");
+  const historyData = {{ wellness_history_json|default([])|tojson }};
+  
+  // Prepare labels and dataset
+  const labels = historyData.map(item => item.date || "");
+  const datasets = [
+    {
+      label: "Wellness Score",
+      data: historyData.map(item => item.qol || 0),
+      fill: true,
+      backgroundColor: "rgba(76, 175, 80, 0.2)",
+      borderColor: "#4caf50",
+      tension: 0.3,
+      pointRadius: 4,
+      pointBackgroundColor: "#4caf50"
+    }
+  ];
+
+  if(window.Chart){
+    new Chart(ctx, {
+      type: "line",
+      data: { labels, datasets },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: true, position: "top" },
+          tooltip: { mode: "index", intersect: false }
+        },
+        scales: {
+          y: {
+            min: 0,
+            max: 100,
+            title: { display: true, text: "QoL Score" }
+          },
+          x: {
+            title: { display: true, text: "Date" }
+          }
+        }
+      }
+    });
+  } else {
+    console.warn("Chart.js is not loaded.");
+  }
+});
+</script>
+
+

@@ -1,0 +1,40 @@
+﻿{% extends "base.html" %}
+
+{% from "_partials/forms.html" import open as form_open, close as form_close %}
+
+{% block title %}Manage Inventory{% endblock %}
+
+{% block content %}
+<h1 class="text-2xl font-semibold mb-4">Manage Inventory</h1>
+{% if all_products %}
+  {{ form_open(url_for('enterprise.manage_inventory')) }}
+  <table class="w-full table-auto border-collapse text-sm">
+    <thead class="bg-gray-100">
+      <tr>
+        <th class="p-2 border">Product</th>
+        <th class="p-2 border">Quantity</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for product in all_products %}
+        <tr class="border-b">
+          <td class="p-2 border">{{ product.name }}</td>
+          <td class="p-2 border">
+            <input type="hidden" name="product_ids" value="{{ product.id }}" />
+            <input type="number" name="quantities" min="0" class="border rounded px-2 py-1 w-full" />
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <div class="mt-4 flex justify-end">
+    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Submit Inventory</button>
+  </div>
+  {{ form_close() }}
+{% else %}
+  <p class="text-gray-500">No approved products available to report.</p>
+{% endif %}
+{% endblock %}
+
+
+

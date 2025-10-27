@@ -1,0 +1,67 @@
+﻿<!-- ROW 2: Wellness Gauges -->
+<section class="kw-row row-2-gauges grid grid-cols-3 gap-4">
+  <!-- Left: Current score -->
+  <div class="kw-card text-center">
+    <h3 class="kw-h3">Your Current Wellness</h3>
+    <svg id="wellnessCurrent" viewBox="0 0 200 120" width="100%" height="160">
+      <!-- Background arc -->
+      <path d="M10 110 A90 90 0 0 1 190 110"
+            stroke="#333"
+            stroke-width="20"
+            fill="none"/>
+      <!-- Filled arc -->
+      <path id="currentArc"
+            d="M10 110 A90 90 0 0 1 190 110"
+            stroke="#4caf50"
+            stroke-width="20"
+            stroke-linecap="round"
+            fill="none"
+            stroke-dasharray="0 283"/>
+      <!-- Labels -->
+      <text x="20" y="115" font-size="12" fill="white">0</text>
+      <text x="90" y="45" font-size="12" fill="white">50</text>
+      <text x="165" y="115" font-size="12" fill="white">100</text>
+    </svg>
+    <div id="currentValue" class="kw-gauge-value">0</div>
+  </div>
+
+  <!-- Middle: Comparative change -->
+  <div class="kw-card text-center flex items-center justify-center">
+    <span class="kw-comparison">
+      {% if latest_qol and last_checkin_at %}
+        Î” <strong id="wellnessDiff">{{ latest_qol.diff or "0" }}</strong>
+      {% else %}
+        No prior data
+      {% endif %}
+    </span>
+  </div>
+
+  <!-- Right: Prior check-in -->
+  <div class="kw-card text-center">
+    <h3 class="kw-h3">Last Check-in</h3>
+    <svg id="wellnessLast" viewBox="0 0 200 120" width="100%" height="160">
+      <!-- Background arc -->
+      <path d="M10 110 A90 90 0 0 1 190 110"
+            stroke="#333"
+            stroke-width="20"
+            fill="none"/>
+      <!-- Filled arc -->
+      <path id="lastArc"
+            d="M10 110 A90 90 0 0 1 190 110"
+            stroke="#f44336"
+            stroke-width="20"
+            stroke-linecap="round"
+            fill="none"
+            stroke-dasharray="0 283"/>
+      <!-- Labels -->
+      <text x="20" y="115" font-size="12" fill="white">0</text>
+      <text x="90" y="45" font-size="12" fill="white">50</text>
+      <text x="165" y="115" font-size="12" fill="white">100</text>
+    </svg>
+    <div id="lastValue" class="kw-gauge-value">
+      {{ last_score or 0 }}
+    </div>
+  </div>
+</section>
+
+

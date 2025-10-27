@@ -1,0 +1,170 @@
+﻿{# FILE: app/templates/_partials/card_wellness_checkin.html #}
+{% include "_card/_head.html" %}
+{# Inputs:
+   wellness_post_url : url_for('patient.wellness_submit')    (HTML action)
+   wellness_json_url : url_for('patient.baseline_checkin')   (JSON endpoint)
+   last_levels       : {'pain','mood','energy','clarity','appetite'}
+   total_score       : int
+   afflictions_list  : list[str]
+   back_url          : optional return link
+   heading           : optional title
+#}
+
+{% set _post_url = wellness_post_url or url_for('patient.wellness_submit') %}
+{% set _json_url = wellness_json_url or url_for('patient.baseline_checkin') %}
+{% set lv = (last_levels or {'pain':6,'mood':6,'energy':6,'clarity':6,'appetite':6}) %}
+{% set _aff = (afflictions_list if afflictions_list is defined and afflictions_list
+               else (AFFLICTIONS if AFFLICTIONS is defined else [])) %}
+{% set _levels = (ROMAN_SCALE if ROMAN_SCALE is defined else ['I','II','III','IV']) %}
+{% set _title = heading or "Wellness Check-in" %}
+
+<section class="kw-card" aria-labelledby="wellness-card-title" data-wellness-card>
+  <div class="kw-card__head" style="margin-bottom:.5rem;">
+    <h2 id="wellness-card-title" class="kw-card__title">{{ _title }}</h2>
+    <div class="kw-meta">Use the sliders (1–10). Lower pain improves score.</div>
+  </div>
+
+  <form id="wellness-form"
+      method="POST"
+      action="{{ url_for('patient.wellness_submit', next=(back_url or request.args.get('next') or url_for('patient.dashboard'))) }}"
+      data-json-action="{{ url_for('patient.baseline_checkin', next=(back_url or request.args.get('next') or url_for('patient.dashboard'))) }}">
+    {% if csrf_token is defined %}<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">{% endif %}
+    <input type="hidden" name="next" value="{{ back_url or request.args.get('next') or url_for('patient.dashboard') }}">
+    <input type="hidden" id="wc-total-hidden" name="total_score" value="{{ total_score or 0 }}">
+
+    <div class="kw-grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px;">
+      {% for id,label,val in [
+        ('pain_level','Pain (1–10, lower is better)', lv.pain),
+        ('mood_level','Mood (1–10)', lv.mood),
+        ('energy_level','Energy (1–10)', lv.energy),
+        ('clarity_level','Clarity (1–10)', lv.clarity),
+        ('appetite_level','Appetite (1–10)', lv.appetite)
+      ] %}
+        <div class="slider-wrap">
+          <label class="kw-meta" for="{{ id }}">{{ label }}</label>
+          <div class="kw-row" style="align-items:flex-end; gap:.5rem;">
+            <input class="kw-input" id="{{ id }}" name="{{ id }}" type="range"
+                   min="1" max="10" step="1" value="{{ val|default(6, true) }}"
+                   aria-valuemin="1" aria-valuemax="10" aria-valuenow="{{ val|default(6, true) }}">
+            <span class="slider-value" data-for="{{ id }}">{{ val|default(6, true) }}</span>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <label style="display:block; margin-top:.7rem;">
+      <span class="kw-meta">Notes (optional)</span>
+      <textarea class="kw-textarea" name="notes" rows="3" placeholder="Anything to add?"></textarea>
+    </label>
+
+    <hr style="border:none;border-top:1px solid var(--kw-border);margin:10px 0;">
+
+    <div>
+      <div class="kw-meta" style="margin-bottom:.35rem;">Afflictions (optional)</div>
+
+      <datalist id="afflictionsMaster">
+        {% for item in _aff %}<option value="{{ item }}"></option>{% endfor %}
+      </datalist>
+
+      <div class="kw-row" style="gap:.5rem; align-items:center; flex-wrap:wrap;">
+        <input id="affInput" class="kw-input" list="afflictionsMaster" placeholder="Start typing…" style="min-width:260px;">
+        <select id="affLevel" class="kw-input" style="width:120px;">
+          {% for lvl in _levels %}<option value="{{ lvl }}">{{ lvl }}</option>{% endfor %}
+        </select>
+        <button type="button" class="kw-btn" id="affAdd">Add</button>
+      </div>
+      <div id="affChips" style="display:flex; flex-wrap:wrap; gap:.4rem; margin-top:.4rem;"></div>
+      <input type="hidden" name="afflictions_touched" value="1">
+    </div>
+
+    <div class="kw-row" style="margin-top:.75rem; justify-content:space-between; align-items:center;">
+      <div class="kw-meta">Current total score: <strong id="wc-total">{{ total_score or 0 }}</strong> / 100</div>
+      <div style="display:flex; gap:.5rem;">
+        {% if back_url %}<a class="kw-btn kw-btn--ghost" href="{{ back_url }}">Cancel</a>{% endif %}
+        <button type="submit" class="kw-btn" id="wc-submit">Save Wellness</button>
+      </div>
+    </div>
+  </form>
+</section>
+
+<script>
+(() => {
+  const ids = ["pain_level","mood_level","energy_level","clarity_level","appetite_level"];
+
+  const clamp = (n, lo, hi) => {
+    n = parseInt(n ?? 0, 10);
+    if (Number.isNaN(n)) n = 6;
+    return Math.max(lo, Math.min(hi, n));
+  };
+  const inv = (x) => 11 - clamp(x, 1, 10); // pain inverted
+
+  const scoreFor = (pain, mood, energy, clarity, appetite) => {
+    const total = inv(pain) + clamp(mood,1,10) + clamp(energy,1,10) + clamp(clarity,1,10) + clamp(appetite,1,10);
+    return Math.max(0, Math.min(100, Math.round(total * 2))); // 5..50 ? 10..100
+  };
+
+  const sync = () => {
+    const v = Object.fromEntries(ids.map(id => [id, document.getElementById(id)?.value]));
+    const score = scoreFor(v.pain_level, v.mood_level, v.energy_level, v.clarity_level, v.appetite_level);
+    const totalEl = document.getElementById('wc-total');
+    const hiddenEl = document.getElementById('wc-total-hidden');
+    if (totalEl) totalEl.textContent = score;
+    if (hiddenEl) hiddenEl.value = score;
+  };
+
+  // slider badges + live score
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    const badge = document.querySelector(`.slider-value[data-for="${id}"]`);
+    if (!el || !badge) return;
+    const upd = () => { badge.textContent = el.value; sync(); };
+    el.addEventListener('input',  upd);
+    el.addEventListener('change', upd);
+  });
+  sync();
+
+  // Affliction chips with I/II/III/IV, de-duped
+  const chips = document.getElementById('affChips');
+  const input = document.getElementById('affInput');
+  const lvl   = document.getElementById('affLevel');
+  const addBtn= document.getElementById('affAdd');
+  const have  = new Set();
+
+  function addChip(name, severity){
+    const nm = (name || "").trim();
+    if (!nm || have.has(nm)) return;
+    have.add(nm);
+
+    const chip = document.createElement('div');
+    chip.className = 'kw-chip';
+    chip.style.display = 'inline-flex';
+    chip.style.alignItems = 'center';
+    chip.style.gap = '6px';
+    chip.innerHTML = `
+      <span>${nm}</span>
+      <span class="kw-tag">${severity}</span>
+      <button type="button" class="kw-btn kw-btn--ghost" aria-label="Remove">×</button>
+      <input type="hidden" name="afflictions[]" value="${nm}">
+      <input type="hidden" name="affliction_severity[${nm}]" value="${severity}">
+    `;
+    chip.querySelector('button').addEventListener('click', () => { have.delete(nm); chip.remove(); });
+    chips.appendChild(chip);
+  }
+
+  addBtn?.addEventListener('click', () => {
+    addChip(input.value, (lvl.value || 'I'));
+    input.value = '';
+    input.focus();
+  });
+  input?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') { e.preventDefault(); addBtn.click(); }
+  });
+
+  // prevent double submit
+  const form = document.getElementById('wellness-form');
+  const submit = document.getElementById('wc-submit');
+  form?.addEventListener('submit', () => { submit?.setAttribute('disabled', 'disabled'); });
+})();
+</script>
+
+

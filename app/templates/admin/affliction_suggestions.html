@@ -1,0 +1,46 @@
+﻿{% extends "base.html" %}
+{% block title %}Affliction Suggestions{% endblock %}
+{% block content %}
+<h1 class="text-2xl font-bold mb-4">Affliction Suggestions</h1>
+{% if suggestions %}
+    <table class="min-w-full bg-white">
+        <thead>
+            <tr>
+                <th class="px-4 py-2 text-left">Affliction</th>
+                <th class="px-4 py-2 text-left">Requests</th>
+                <th class="px-4 py-2 text-left">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for name, count in suggestions %}
+                <tr class="border-t">
+                    <td class="px-4 py-2">{{ name }}</td>
+                    <td class="px-4 py-2">{{ count }}</td>
+                    <td class="px-4 py-2 space-x-2">
+                        <form action="{{ url_for('admin.approve_affliction', affliction_name=name) }}" method="post" class="inline-block">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="text-green-600 hover:underline">Approve</button>
+                        </form>
+                        <form action="{{ url_for('admin.reject_affliction', affliction_name=name) }}" method="post" class="inline-block">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="text-red-600 hover:underline">Reject</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>No affliction suggestions pending.</p>
+{% endif %}
+<div class="mt-4">
+    {% if override %}
+        <a href="{{ url_for('admin.affliction_suggestions') }}" class="text-blue-600 hover:underline">Hide low frequency suggestions</a>
+    {% else %}
+        <a href="{{ url_for('admin.affliction_suggestions', override=1) }}" class="text-blue-600 hover:underline">Show all suggestions</a>
+    {% endif %}
+{% endblock %}
+
+
+
+

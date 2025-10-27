@@ -1,0 +1,324 @@
+﻿{# FILE: app/templates/_card/minimal_profile_card.html #}
+{# Expects `public_profile_data` in context with keys: display_name, alias #}
+<section id="kw-minimal-profile-card"
+         class="kw-card kw-card--minimal-profile"
+         role="region"
+         aria-label="Patient profile"
+         tabindex="0"
+         style="--outer-color:#0d3f2a; --inner-color:#0a1f17; --accent:#ffd338;"
+         data-base-w="180" data-base-h="140">
+
+  <!-- header (drag handle) -->
+  <div class="kw-card__head" role="toolbar" aria-label="Patient profile toolbar" tabindex="0">
+    <h3 class="kw-card__title" id="kw-minimal-profile-title" style="margin:0; font-size:1rem;">
+      Profile
+    </h3>
+    <button id="kw-card-lock-toggle" class="kw-btn kw-btn--icon" aria-pressed="false" title="Lock/Unlock (Ctrl+Shift+L)">
+      🔒
+    </button>
+  </div>
+
+  <!-- inner content that will be scaled from top-left -->
+  <div class="kw-card__inner" aria-labelledby="kw-minimal-profile-title">
+    <div class="kw-avatar kw-avatar--circle" aria-hidden="false" role="img" aria-label="Profile avatar">
+      {% set name_for_initials = public_profile_data.alias or public_profile_data.display_name %}
+      {% set parts = name_for_initials.split() %}
+      {% set initials = (parts[0][0] ~ (parts[-1][0] if parts|length>1 else ''))|upper %}
+      <span class="kw-initials">{{ initials }}</span>
+    </div>
+
+    <div class="kw-display-name" aria-live="polite">
+      {{ name_for_initials }}
+    </div>
+  </div>
+
+  <!-- resize handle -->
+  <div class="kw-card-resize-handle" role="separator" aria-orientation="horizontal" tabindex="0" aria-label="Resize handle"></div>
+</section>
+
+<style>
+/* minimal, production-ready styles (feel free to adjust variables) */
+.kw-card--minimal-profile{
+  position: absolute;           /* dashboard expects absolute positioning */
+  width: 180px;
+  height: 140px;
+  min-width: 120px;
+  min-height: 96px;
+  border-radius: 10px;
+  padding: 10px;
+  box-sizing: border-box;
+  background: linear-gradient(180deg,var(--inner-color), #07120d);
+  color: #fff;
+  box-shadow: 0 8px 22px rgba(0,0,0,0.35);
+  overflow: visible;
+  user-select: none;
+}
+
+/* header (drag handle) */
+.kw-card__head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:8px;
+  cursor:grab;
+  padding:2px 4px;
+}
+.kw-card__head:active { cursor:grabbing; }
+
+/* inner container that will be scaled from top-left */
+.kw-card__inner{
+  transform-origin: 0 0; /* top-left anchor */
+  width: 100%;
+  height: calc(100% - 38px); /* leave header area */
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:flex-start; /* left aligned */
+  gap:8px;
+  padding:6px 2px;
+  box-sizing: border-box;
+}
+
+/* avatar circle at top-left */
+.kw-avatar--circle{
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background: #0a1f17;
+  border: 2px solid rgba(255,255,255,0.05);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.3);
+  flex-shrink: 0;
+}
+
+/* initials */
+.kw-initials{
+  color: var(--accent);
+  font-weight: 900;
+  font-size: 1.15rem;
+  letter-spacing: .02em;
+}
+
+/* name */
+.kw-display-name{
+  margin-top: 6px;
+  font-weight:700;
+  font-size: 0.98rem;
+  color: #fff;
+  word-break: break-word;
+}
+
+/* resize handle bottom-right */
+.kw-card-resize-handle{
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+  background: rgba(255,255,255,0.14);
+  border-radius: 3px;
+  cursor: se-resize;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:10px;
+  color:rgba(0,0,0,0.6);
+}
+.kw-card--minimal-profile.locked .kw-card__head { cursor: default; }
+</style>
+
+<script>
+(function(){
+  const root = document.getElementById('kw-minimal-profile-card');
+  if(!root) return;
+
+  const inner = root.querySelector('.kw-card__inner');
+  const head  = root.querySelector('.kw-card__head');
+  const handle = root.querySelector('.kw-card-resize-handle');
+  const lockBtn = document.getElementById('kw-card-lock-toggle');
+
+  // Base dimensions (for proportional scaling)
+  const BASE_W = parseFloat(root.dataset.baseW || root.offsetWidth || 180);
+  const BASE_H = parseFloat(root.dataset.baseH || root.offsetHeight || 140);
+
+  // Persist key
+  const STORAGE_KEY = 'kw_minimal_profile_card_layout';
+
+  // State
+  let locked = false; // default unlocked
+  let dragging = false, dx=0, dy=0;
+  let resizing = false, startW=0, startH=0, startX=0, startY=0;
+
+  // Helpers
+  const clampInsideViewport = (l,t,w,h) => {
+    const maxL = Math.max(8, window.innerWidth - w - 8);
+    const maxT = Math.max(8, window.innerHeight - h - 8);
+    return [ Math.max(8, Math.min(l, maxL)), Math.max(8, Math.min(t, maxT)) ];
+  };
+
+  // restore layout if present
+  function restore(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(!raw) return;
+      const parsed = JSON.parse(raw);
+      if(parsed.left) root.style.left = parsed.left;
+      if(parsed.top)  root.style.top  = parsed.top;
+      if(parsed.width) root.style.width = parsed.width;
+      if(parsed.height) root.style.height = parsed.height;
+      if(typeof parsed.locked !== 'undefined') toggleLock(parsed.locked, false);
+      // apply scale to inner
+      applyScale();
+    }catch(e){ console.warn('restore failed', e); }
+  }
+
+  // save
+  let saveTimer=null;
+  function save(){
+    if(saveTimer) clearTimeout(saveTimer);
+    saveTimer = setTimeout(()=>{
+      const payload = {
+        left: root.style.left || null,
+        top: root.style.top || null,
+        width: root.style.width || null,
+        height: root.style.height || null,
+        locked: !!locked
+      };
+      try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(payload)); }catch(e){}
+    }, 150);
+  }
+
+  // apply proportional scale to inner area
+  function applyScale(){
+    const w = parseFloat(getComputedStyle(root).width) || root.offsetWidth;
+    const h = parseFloat(getComputedStyle(root).height) || root.offsetHeight;
+    // use the usable content height (subtract header approx height)
+    // However scale based on width primarily to keep proportions; use average of width/height scale
+    const scaleX = w / BASE_W;
+    const scaleY = h / BASE_H;
+    // pick the smaller of the two to keep content proportion stable
+    const scale = Math.max(0.5, Math.min(2.5, Math.min(scaleX, scaleY)));
+    inner.style.transform = `scale(${scale})`;
+    // we also must ensure the element's height allows scaled content to display.
+    // To avoid clipping, set CSS variables or padding-bottom if needed (we keep simpler: leave overflow visible)
+  }
+
+  // lock toggle
+  function toggleLock(v, saveNow=true){
+    locked = !!v;
+    root.classList.toggle('locked', locked);
+    lockBtn.textContent = locked ? '🔒' : '🔓';
+    lockBtn.setAttribute('aria-pressed', locked ? 'true' : 'false');
+    if(saveNow) save();
+  }
+
+  // keyboard shortcut to toggle
+  document.addEventListener('keydown', (e)=> {
+    if(e.ctrlKey && e.shiftKey && e.key.toLowerCase()==='l'){
+      toggleLock(!locked);
+    }
+  });
+
+  // make sure root has initial absolute position if none
+  if(!root.style.left) root.style.left = (20 + (Math.floor(Math.random()*3)*200)) + 'px';
+  if(!root.style.top)  root.style.top  = (20 + (Math.floor(Math.random()*3)*150)) + 'px';
+  if(!root.style.width) root.style.width = (BASE_W) + 'px';
+  if(!root.style.height) root.style.height = (BASE_H) + 'px';
+
+  // pointer dragging
+  head.addEventListener('pointerdown', function(e){
+    if(locked) return;
+    // if user started on the resize handle, ignore
+    if(e.target === handle || handle.contains(e.target)) return;
+    if(e.button !== 0) return;
+    dragging = true;
+    root.setPointerCapture && root.setPointerCapture(e.pointerId);
+    const rect = root.getBoundingClientRect();
+    dx = e.clientX - rect.left;
+    dy = e.clientY - rect.top;
+    head.classList.add('dragging');
+    e.preventDefault();
+  });
+
+  // global move
+  window.addEventListener('pointermove', function(e){
+    if(dragging){
+      let left = e.clientX - dx;
+      let top  = e.clientY - dy;
+      [left, top] = clampInsideViewport(left, top, root.offsetWidth, root.offsetHeight);
+      root.style.left = Math.round(left) + 'px';
+      root.style.top  = Math.round(top) + 'px';
+    } else if(resizing){
+      const nw = Math.max(120, Math.round(startW + (e.clientX - startX)));
+      const nh = Math.max(96,  Math.round(startH + (e.clientY - startY)));
+      root.style.width = nw + 'px';
+      root.style.height = nh + 'px';
+      applyScale();
+    }
+  }, { passive: false });
+
+  window.addEventListener('pointerup', function(e){
+    if(dragging){
+      dragging = false;
+      head.classList.remove('dragging');
+      save();
+    }
+    if(resizing){
+      resizing = false;
+      save();
+    }
+  });
+
+  // resize start
+  handle.addEventListener('pointerdown', function(e){
+    if(locked) return;
+    if(e.button !== 0) return;
+    resizing = true;
+    startX = e.clientX;
+    startY = e.clientY;
+    startW = root.offsetWidth;
+    startH = root.offsetHeight;
+    root.setPointerCapture && root.setPointerCapture(e.pointerId);
+    e.preventDefault();
+  });
+
+  // keyboard accessible resizing (arrow keys while handle focused)
+  handle.addEventListener('keydown', function(e){
+    if(locked) return;
+    const step = e.shiftKey ? 20 : 8;
+    let changed=false;
+    if(e.key === 'ArrowRight'){ root.style.width = (root.offsetWidth + step) + 'px'; changed=true; }
+    if(e.key === 'ArrowLeft'){ root.style.width = Math.max(120, root.offsetWidth - step) + 'px'; changed=true; }
+    if(e.key === 'ArrowDown'){ root.style.height = (root.offsetHeight + step) + 'px'; changed=true; }
+    if(e.key === 'ArrowUp'){ root.style.height = Math.max(96, root.offsetHeight - step) + 'px'; changed=true; }
+    if(changed){ applyScale(); save(); e.preventDefault(); }
+  });
+
+  // lock button
+  lockBtn.addEventListener('click', ()=> toggleLock(!locked) );
+
+  // watch for direct style changes via other scripts and reapply scale
+  const mo = new MutationObserver(function(muts){
+    muts.forEach(m=>{
+      if(m.attributeName === 'style') applyScale();
+    });
+  });
+  mo.observe(root, { attributes: true });
+
+  // on window resize, keep inside viewport
+  window.addEventListener('resize', ()=> {
+    const left = parseInt(root.style.left || 0, 10);
+    const top  = parseInt(root.style.top  || 0, 10);
+    const [L, T] = clampInsideViewport(left, top, root.offsetWidth, root.offsetHeight);
+    root.style.left = L + 'px';
+    root.style.top  = T + 'px';
+    save();
+  });
+
+  // initial apply
+  applyScale();
+  restore();
+})();
+</script>

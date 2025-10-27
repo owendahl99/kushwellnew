@@ -1,0 +1,16 @@
+﻿{# FILE: app/templates/patient/partials/_feedback.html #}
+<div class="feedback-section">
+  <h2>Feedback & Insights</h2>
+
+  {% if feedback %}
+  <ul class="feedback-list">
+    {% for f in feedback %}
+      <li class="feedback-item">{{ f }}</li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p>No feedback available yet. Complete more check-ins to get insights.</p>
+  {% endif %}
+</div>
+
+

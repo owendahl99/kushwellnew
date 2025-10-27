@@ -1,0 +1,14 @@
+﻿{% include "_card/_head.html" %}
+{% macro product_link(p, cls='kw-link') -%}
+  {# Progressive enhancement:
+     - With JS: opens modal via [data-product-id]
+     - Without JS: normal link goes to detail page #}
+  <a href="{{ url_for('patient.product_detail', product_id=p.id) }}"
+     class="{{ cls }}"
+     data-product-id="{{ p.id }}">
+     {{ p.name }}
+  </a>
+{%- endmacro %}
+
+
+

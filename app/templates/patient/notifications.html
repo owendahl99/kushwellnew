@@ -1,0 +1,40 @@
+﻿{# FILE: app/templates/patient/notifications.html #}
+{% extends "base.html" %}
+
+{% block title %}Notifications{% endblock %}
+
+{% block content %}
+  <div class="kw-container">
+    <div class="kw-card">
+      <h2 class="kw-card__title">Notifications</h2>
+
+      {% if notifications and notifications|length %}
+        <ul>
+          {% for notification in notifications %}
+            <li class="kw-card">
+              <div>
+                <p class="{{ 'kw-muted' if notification.read else '' }}">{{ notification.message }}</p>
+                <p class="kw-muted">
+                  {{ notification.created_at.strftime('%Y-%m-%d %H:%M') if notification.created_at else '' }}
+                </p>
+              </div>
+
+              {% if not notification.read %}
+                <form action="{{ url_for('patient.notification_mark_read', notification_id=notification.id) }}" method="post">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                  <button type="submit" class="kw-btn tertiary">Mark as read</button>
+                </form>
+              {% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="kw-muted">No notifications.</p>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}
+
+
+
+

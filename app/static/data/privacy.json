@@ -1,0 +1,15 @@
+﻿{
+  "discoverable": true,
+  "visibility": {
+    "alias": "public",
+    "avatar": "friends",
+    "real_name": "private",
+    "age": "friends",
+    "date_of_birth": "private",
+    "afflictions": "friends",
+    "favorites": "friends",
+    "recommendations": "friends",
+    "qol_scores": "private"
+  }
+}
+

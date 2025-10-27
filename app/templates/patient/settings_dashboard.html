@@ -1,0 +1,26 @@
+﻿Hey, Cortana. Change. Hey, Cortana. Hey, Cortana. Hey, Cortana. Hey, Cortana. Hey, Cortana. {% extends "base.html" %}
+{% block title %}Settings Dashboard{% endblock %}
+
+{% block content %}
+<div class="board-bg" style="padding:24px; display:grid; gap:24px; max-width:960px; margin-inline:auto;">
+
+  <!-- SECURITY CARD -->
+  {% include "_cards/security.html" %}
+
+  <!-- ALIAS CARD -->
+  {% include "_cards/edit_alias.html" %}
+
+  <!-- BACKGROUND CARD -->
+  {% include "_cards/edit_background.html" %}
+
+  <!-- PREFERENCES CARD -->
+  {% include "_cards/patient_preferences.html" %}
+
+</div>
+
+<div style="margin-top:24px; text-align:center;">
+  <a href="{{ url_for('patient.dashboard') }}" class="kw-btn kw-btn--ghost">Back to Dashboard</a>
+</div>
+{% endblock %}
+
+

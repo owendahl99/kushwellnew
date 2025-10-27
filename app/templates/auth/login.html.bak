@@ -1,0 +1,126 @@
+{# FILE: app/templates/auth/login.html #}
+{% extends "base.html" %}
+{% block title %}Sign in | Kushwell{% endblock %}
+
+{% block extra_head %}
+<style>
+  body.kw-body { background:#0b1c14; color:#e7f3ec; }
+  .door-wrap{min-height:calc(100vh - 120px);display:flex;align-items:center;justify-content:center;padding:24px;}
+  .door-scene{position:relative; width:min(96vw, 720px); height:min(88vh, 760px); display:flex; align-items:center; justify-content:center; perspective:1600px;}
+
+  .door-frame{position:absolute; inset:0; border:10px solid #223a2f; border-radius:14px;
+    background:radial-gradient(120% 120% at 50% -10%, rgba(255,255,255,.08), rgba(0,0,0,0) 60%),
+               linear-gradient(180deg,#0e241c 0%, #0b1c14 35%, #07140f 100%);
+    box-shadow:inset 0 0 0 1px #2a6c50, 0 20px 60px rgba(0,0,0,.55), 0 2px 0 rgba(255,255,255,.04);
+  }
+  .door-panel{position:absolute; inset:18px; background:linear-gradient(180deg,#113126,#0f2a21 30%,#0d251d 100%);
+    border:6px solid #1f3b31; border-radius:10px; transform-origin:left center; transform:rotateY(0deg);
+    transition:transform .45s ease-in-out; box-shadow:inset 0 0 0 1px #2a6c50, inset 0 12px 24px rgba(0,0,0,.35);
+  }
+  .door-knob{position:absolute; right:28px; top:50%; transform:translateY(-50%); width:16px; height:16px; border-radius:50%;
+    background:radial-gradient(circle at 30% 30%, #f5d547, #b3911b 70%, #6e5c10); box-shadow:0 0 0 2px #2d2810, 0 3px 6px rgba(0,0,0,.5);
+  }
+  .hinge{position:absolute; left:-6px; width:6px; height:46px; background:#274b3c; border-right:1px solid #183529; border-radius:2px; top:24%; box-shadow:inset -1px 0 0 rgba(0,0,0,.35);}
+  .hinge.h2{ top:66%; }
+
+  /* SMALLER SIGN */
+  .sign{
+    position:relative; z-index:3; display:flex; flex-direction:column; align-items:stretch; justify-content:center;
+    width:min(86vw, 230px);        /* was 420px */
+    padding:6px 8px;             /* was 18px 18px 16px */
+    border-radius:8px;
+    background:radial-gradient(140% 110% at 50% 35%, #6fd3a9 0%, #58bd91 45%, #3b9d76 100%);
+    border:2px solid #0e3c22;
+    box-shadow:0 14px 40px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.25), inset 0 -1px 0 rgba(0,0,0,.2);
+    color:#10251d; transform-origin:top center; transition:transform .25s ease;
+  }
+  .twine{position:absolute; top:-28px; left:50%; transform:translateX(-50%); width:2px; height:28px; background:linear-gradient(#cfa96b,#8b6a3b); box-shadow:0 0 0 1px rgba(0,0,0,.2);}
+  .sign h1{margin:0 0 6px 0; text-align:center; font-weight:900; letter-spacing:.5px; color:#0f2a21; text-shadow:0 1px 0 rgba(255,255,255,.4); font-size:clamp(1.1rem,3.1vw,1.45rem);}
+  .sign .sub{text-align:center; margin-bottom:8px; color:#103f31; font-weight:700; letter-spacing:.35px; font-size:.95rem;}
+
+  .form-row{display:flex; flex-direction:column; gap:6px; margin:8px 0;}  
+  .form-row label{font-weight:700; color:#0f2a21; font-size:.95rem;}  
+  .form-input{background:#e7f6ef; color:#0f2a21; border:2px solid #0e3c22; border-radius:10px; padding:.6rem .75rem; font-size:1rem; outline:none;}
+  .form-input:focus{box-shadow:0 0 0 3px rgba(245,213,71,.35);}
+
+  .btn-primary{display:inline-block; text-align:center; cursor:pointer; background:#103f31; color:#e7f3ec;
+    border:2px solid #0e3c22; border-radius:10px; padding:.6rem .9rem; font-weight:800; font-size:1rem;}
+  .btn-primary:hover{filter:brightness(1.08);}
+
+  .help-line{margin-top:6px; display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;}
+  .link-small{color:#0c2f25; text-decoration:underline; font-weight:700; font-size:.95rem;}
+  .alert{margin:8px 0; padding:.55rem .7rem; border-radius:10px; border:2px solid #7a1f1f; background:#3a1313; color:#ffe9e9; font-weight:700; font-size:.95rem;}
+
+  .door-scene.opening .sign{ transform: rotateX(20deg); }
+  .door-scene.opening .door-panel{ transform: rotateY(-80deg); }
+
+  .under-note{margin-top:6px; text-align:center; color:#cfe0d7; font-size:.9rem;}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="door-wrap">
+  <div id="doorScene" class="door-scene" aria-live="polite">
+    <div class="door-frame" aria-hidden="true"></div>
+    <div class="door-panel" aria-hidden="true">
+      <span class="door-knob" aria-hidden="true"></span>
+      <span class="hinge h1" aria-hidden="true"></span>
+      <span class="hinge h2" aria-hidden="true"></span>
+    </div>
+
+    <form id="loginForm" method="POST" action="{{ url_for('auth.login') }}" class="sign" novalidate>
+      <span class="twine" aria-hidden="true"></span>
+      <h1>OPEN</h1>
+      <div class="sub">Sign in to enter</div>
+
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+
+      {% with msgs = get_flashed_messages(with_categories=true) %}
+        {% if msgs %}
+          {% for cat, msg in msgs %}
+            {% if cat == 'danger' %}<div class="alert" role="alert">{{ msg }}</div>{% endif %}
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      <div class="form-row">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" required autocomplete="username"
+               class="form-input" placeholder="you@example.com"
+               value="{{ request.form.get('email','') }}">
+      </div>
+
+      <div class="form-row">
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" required autocomplete="current-password"
+               class="form-input" placeholder="••••••••">
+      </div>
+
+      <div class="form-row">
+        <button type="submit" class="btn-primary" aria-label="Sign in">Sign in</button>
+      </div>
+
+      <div class="help-line">
+        <a class="link-small" href="{{ url_for('auth.register') }}">Create account</a>
+        <a class="link-small" href="{{ url_for('auth.forgot_password') if has_endpoint('auth.forgot_password') else '#' }}">Forgot password?</a>
+      </div>
+
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function(){
+  const form = document.getElementById('loginForm');
+  const scene = document.getElementById('doorScene');
+  form.addEventListener('submit', function(e){
+    scene.classList.add('opening');
+    setTimeout(()=>form.submit(), 180);
+    e.preventDefault();
+  });
+})();
+</script>
+{% endblock %}
+

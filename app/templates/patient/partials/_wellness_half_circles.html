@@ -1,0 +1,70 @@
+﻿{# FILE: app/templates/patient/partials/_wellness_half_circles.html #}
+
+<div class="kw-card" aria-labelledby="half-circle-section">
+  <div class="kw-card__head">
+    <h3 id="half-circle-section" class="kw-card__title">Wellness Score Comparison</h3>
+  </div>
+  <div class="kw-card__body" style="display:flex; justify-content:space-around; align-items:center;">
+    <div style="text-align:center;">
+      <div id="half-circle-current" class="half-circle" style="width:80px; height:40px; border-radius:80px 80px 0 0; background:#e5e7eb; margin:0 auto;"></div>
+      <div>Current</div>
+    </div>
+    <div style="text-align:center;">
+      <div id="half-circle-last" class="half-circle" style="width:80px; height:40px; border-radius:80px 80px 0 0; background:#e5e7eb; margin:0 auto;"></div>
+      <div>Last</div>
+    </div>
+    <div style="text-align:center;">
+      <div id="half-circle-pct-diff" class="kw-badge">â€”</div>
+      <div>Change</div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const lastLevels = {{ last_levels|default({})|tojson }};
+  
+  // JS QoL function
+  function calculateQol(vals){
+    const defaults = {pain:6, mood:6, energy:6, clarity:6, appetite:6};
+    const v = Object.assign({}, defaults, vals||{});
+    const p = 11 - (parseFloat(v.pain) || defaults.pain);
+    const arr = [p,v.mood,v.energy,v.clarity,v.appetite].map(x => Math.max(1,Math.min(10,Math.round(x))));
+    return Math.round((arr.reduce((s,x)=>s+x,0)/50)*100);
+  }
+
+  // Update half-circle visuals
+  function updateHalfCircles(currentVals){
+    const score = calculateQol(currentVals);
+    const lastScore = calculateQol(lastLevels);
+
+    const currentCircle = document.getElementById('half-circle-current');
+    const lastCircle = document.getElementById('half-circle-last');
+    const pctDiffEl = document.getElementById('half-circle-pct-diff');
+
+    if(currentCircle) currentCircle.style.background = `conic-gradient(#22c55e ${score*1.8}deg, #e5e7eb 0deg)`;
+    if(lastCircle) lastCircle.style.background = `conic-gradient(#64748b ${lastScore*1.8}deg, #e5e7eb 0deg)`;
+    if(pctDiffEl){
+      const diffPct = lastScore ? Math.round(((score-lastScore)/lastScore)*100) : 0;
+      pctDiffEl.textContent = `${diffPct>=0?'+':''}${diffPct}%`;
+    }
+  }
+
+  // Initial render with lastLevels (or defaults)
+  updateHalfCircles(lastLevels);
+
+  // Optional: update dynamically if sliders change
+  document.querySelectorAll('.kw-slider-input').forEach(s=>{
+    s.addEventListener('input', ()=>{
+      const vals = {};
+      ["pain","mood","energy","clarity","appetite"].forEach(k=>{
+        const el = document.querySelector(`[name="${k}"]`);
+        vals[k] = el ? parseInt(el.value||el.getAttribute('data-init')||6) : 6;
+      });
+      updateHalfCircles(vals);
+    });
+  });
+})();
+</script>
+
+

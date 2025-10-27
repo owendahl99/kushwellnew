@@ -1,0 +1,112 @@
+﻿{# FILE: app/templates/patient/partials/product_checkin.html #}
+<section class="kw-card" aria-labelledby="product-checkin-card-title" data-products-card
+         style="padding:16px; border-radius:14px; background-color:#3a6a3a; box-shadow:0 8px 20px rgba(0,0,0,0.15);">
+
+  <!-- Header -->
+  <div class="kw-card__head" style="margin-bottom:12px;">
+    <h3 id="product-checkin-card-title" class="kw-card__title" style="color:#f0fff0;">Products</h3>
+    <div class="kw-meta" style="color:#d0ffd0;">We’ve pulled your product list from your last check-in. Confirm whether this is still accurate.</div>
+  </div>
+
+  <!-- Body -->
+  <div class="kw-card__body">
+
+    <!-- Last recorded products -->
+    {% if last_products and last_products|length %}
+      <div class="prior-products" style="margin-top:12px;">
+        <h4 style="color:#f0fff0;">Your recorded products</h4>
+        <table class="kw-table" style="width:100%; margin-top:6px; border-collapse:collapse;">
+          <thead>
+            <tr>
+              <th style="text-align:left;">Product</th>
+              <th style="text-align:center;">Dosage</th>
+              <th style="text-align:center;">Frequency</th>
+              <th style="text-align:center;">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for p in last_products %}
+              <tr>
+                <td><a href="{{ p.url }}" style="color:#aaffaa; text-decoration:underline;">{{ p.product_name }}</a></td>
+                <td style="text-align:center;">{{ p.dosage_mg or '—' }}</td>
+                <td style="text-align:center;">{{ p.times_per_day or '—' }}</td>
+                <td style="text-align:center;">
+                  <button type="button" class="kw-btn kw-btn--secondary discontinue-btn"
+                          data-product-id="{{ p.id }}">
+                    Discontinued
+                  </button>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <p class="muted" style="color:#d0ffd0;">No products recorded from last check-in.</p>
+    {% endif %}
+
+    <!-- Ask patient if products have changed -->
+    <div style="margin-top:16px;">
+      <div class="kw-subhead" style="color:#f0fff0;">Have your products changed since your last check-in?</div>
+      <div style="margin-top:8px; display:flex; gap:8px;">
+        <button class="kw-btn kw-btn--secondary" type="button" onclick="submitNoChange()">
+          No — keep this list
+        </button>
+        <button class="kw-btn kw-btn--primary" type="button" onclick="handleProductCheckinChange(true)">
+          Yes — update products
+        </button>
+      </div>
+    </div>
+
+    <!-- Hidden update form -->
+    <div id="product-update-form" style="display:none; margin-top:14px;">
+      {% include "patient/partials/product_update_form.html" %}
+    </div>
+
+    <!-- Hidden "No change" form -->
+    <form id="no-change-form" method="POST" action="{{ url_for('patient.confirm_product_list') }}" style="display:none;">
+      <input type="hidden" name="no_change" value="1">
+    </form>
+
+  </div>
+</section>
+
+<!-- Inline scripts -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  // Show/hide update form
+  window.handleProductCheckinChange = function(show) {
+    const updateForm = document.getElementById("product-update-form");
+    if(updateForm) updateForm.style.display = show ? "block" : "none";
+  };
+
+  // Submit "No change" form
+  window.submitNoChange = function() {
+    const form = document.getElementById("no-change-form");
+    if(form) form.submit();
+  };
+
+  // Discontinue product button logic (front-end only)
+  document.querySelectorAll(".discontinue-btn").forEach(btn => {
+    btn.addEventListener("click", e => {
+      const row = e.target.closest("tr");
+      if (!row) return;
+
+      // Visual feedback
+      row.style.opacity = "0.5";
+      row.style.textDecoration = "line-through";
+
+      // Disable button after click
+      e.target.disabled = true;
+      e.target.textContent = "Discontinued";
+
+      // TODO: connect to backend
+      console.log("Discontinue clicked for product ID:", e.target.dataset.productId);
+    });
+  });
+
+});
+</script>
+
+

@@ -1,0 +1,42 @@
+﻿{# app/templates/_partials/_footer.html #}
+{% include "_card/_head.html" %}
+<footer class="kw-footer" role="contentinfo" aria-label="Site footer">
+  <div class="kw-footer-inner" style="display:flex; align-items:center; justify-content:flex-start; gap:16px; padding:12px 24px;">
+    <a class="kw-brand" href="{{ safe_url_for('public.landing', fallback='/' ) }}">
+      <img class="kw-logo-footer" src="{{ url_for('static', filename='images/kushwell_logo.png') }}"
+           alt="Kushwell" style="height:75px; width:auto;">
+    </a>
+    <div class="kw-values" style="font-size:0.9rem; color:#333;">“Clarity • Compassion • Integrity”</div>
+    <div class="kw-copy" style="font-size:0.8rem; color:#666;">© {{ current_year }} Kushwell. All rights reserved.</div>
+  </div>
+</footer>
+
+<style>
+  /* Ensure footer stays at the bottom and content is left-aligned */
+  .kw-footer {
+    background: #f9f9f9;
+    border-top: 1px solid #e1e1e1;
+    padding: 0;
+  }
+
+  .kw-footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .kw-logo-footer {
+    display: block;
+    height: 75px;
+    width: auto;
+  }
+
+  .kw-values, .kw-copy {
+    line-height: 1.2;
+  }
+</style>
+
+

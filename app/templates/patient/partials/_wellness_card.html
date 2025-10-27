@@ -1,0 +1,67 @@
+﻿{# FILE: app/templates/patient/partials/_wellness_card.html #}
+<article class="kw-card" aria-label="Wellness Snapshot" 
+         style="background:#0e221b; border:2px solid #1c4b37; border-radius:16px;
+                box-shadow:0 10px 28px rgba(0,0,0,.25); color:#e8f5ef; padding:16px;">
+
+  {# === TOP: Existing Wellness Summary Card === #}
+  {% include "_cards/wellness.html" ignore missing with context %}
+
+  {# === AFFLICTIONS SECTION === #}
+  <section class="checkin-section" style="margin-top:16px;">
+    <h2 style="margin:0 0 8px; font-weight:900; color:#f5d547;">Afflictions</h2>
+    <p style="opacity:.8;">Have your afflictions changed since your last check-in?</p>
+
+    <label style="display:block; margin-top:6px;">
+      <input type="radio" name="afflictions_changed" value="no" checked>
+      No â€“ Keep my last afflictions
+    </label>
+    <label style="display:block; margin-top:6px;">
+      <input type="radio" name="afflictions_changed" value="yes">
+      Yes â€“ I want to update them
+    </label>
+
+    <div id="afflictionsUpdate" class="toggle-block" style="display:none; margin-top:12px;">
+      {% include "patient/partials/_afflictions.html" ignore missing with context %}
+    </div>
+  </section>
+
+  {# === PRODUCTS SECTION === #}
+  <section class="checkin-section" style="margin-top:16px;">
+    <h2 style="margin:0 0 8px; font-weight:900; color:#f5d547;">Products</h2>
+    <p style="opacity:.8;">Have your product usage patterns changed?</p>
+
+    <label style="display:block; margin-top:6px;">
+      <input type="radio" name="products_changed" value="no" checked>
+      No â€“ Keep my last products
+    </label>
+    <label style="display:block; margin-top:6px;">
+      <input type="radio" name="products_changed" value="yes">
+      Yes â€“ I want to update them
+    </label>
+
+    <div id="productsUpdate" class="toggle-block" style="display:none; margin-top:12px;">
+      {% include "patient/partials/_products_checkin.html" ignore missing with context %}
+    </div>
+  </section>
+
+</article>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  // Toggle afflictions block
+  const afflictionsRadios = document.querySelectorAll("input[name='afflictions_changed']");
+  const afflictionsBlock = document.getElementById("afflictionsUpdate");
+  afflictionsRadios.forEach(r => r.addEventListener("change", function () {
+    afflictionsBlock.style.display = (this.value === "yes") ? "block" : "none";
+  }));
+
+  // Toggle products block
+  const productsRadios = document.querySelectorAll("input[name='products_changed']");
+  const productsBlock = document.getElementById("productsUpdate");
+  productsRadios.forEach(r => r.addEventListener("change", function () {
+    productsBlock.style.display = (this.value === "yes") ? "block" : "none";
+  }));
+});
+</script>
+
+

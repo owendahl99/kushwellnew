@@ -1,0 +1,24 @@
+﻿{% extends "base.html" %}
+{% block title %}Submission Detail{% endblock %}
+{% block content %}
+<h1 class="text-2xl font-bold mb-4">Product Submission Detail</h1>
+<div class="border p-4 rounded bg-white">
+    <h2 class="text-xl font-semibold">{{ submission.name }}</h2>
+    <p>{{ submission.description }}</p>
+    <p class="text-sm text-gray-500">Submitted at {{ submission.last_checkin_at }}</p>
+    <div class="mt-4">
+        <form action="{{ url_for('admin.approve_product_submission', submission_id=submission.id) }}" method="post" class="inline-block mr-2">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded">Approve</button>
+        </form>
+        <form action="{{ url_for('admin.reject_product_submission', submission_id=submission.id) }}" method="post" class="inline-block">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded">Reject</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+
+
+

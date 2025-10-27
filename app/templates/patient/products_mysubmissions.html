@@ -1,0 +1,43 @@
+﻿{# FILE: app/templates/patient/my_submissions.html #}
+{% extends "base.html" %}
+{% block title %}My Submitted Products{% endblock %}
+
+{% block content %}
+  <div class="kw-container">
+    <div class="kw-card">
+      <div class="kw-row" style="justify-content:space-between; align-items:center;">
+        <h2 class="kw-card__title">My Submissions</h2>
+        <a class="kw-btn kw-btn--ghost" href="{{ url_for('patient.product_submit') }}">Submit another</a>
+      </div>
+
+      {% if submitted_products and submitted_products|length %}
+        <div class="kw-table-wrap">
+          <table class="kw-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Status</th>
+                <th>Submitted</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for product in submitted_products %}
+                <tr>
+                  <td>{{ product.name }}</td>
+                  <td><span class="kw-chip">{{ (product.status or '')|replace('_',' ')|title }}</span></td>
+                  <td>{{ product.created_at.strftime('%Y-%m-%d') if product.created_at else '' }}</td>
+                  <td><a href="{{ url_for('patient.product_detail', product_id=product.id) }}" class="kw-link">View</a></td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <p class="kw-muted">You haven't submitted any products yet.</p>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}
+
+

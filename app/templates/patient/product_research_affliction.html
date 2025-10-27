@@ -1,0 +1,41 @@
+﻿{% extends "base.html" %}
+{% block title %}{{ affliction.name }} Products | Kushwell{% endblock %}
+{% block content %}
+<div class="max-w-6xl mx-auto p-6 space-y-6">
+
+  <h1 class="text-2xl font-bold">Top Products for {{ affliction.name }}</h1>
+
+  <table class="min-w-full border border-gray-300 text-sm">
+    <thead class="bg-gray-100">
+      <tr>
+        <th class="px-3 py-2">Rank</th>
+        <th class="px-3 py-2 text-left">Product</th>
+        <th class="px-3 py-2">QoL Score</th>
+        <th class="px-3 py-2">Upvotes</th>
+        <th class="px-3 py-2">Usage</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in product_rows %}
+      <tr>
+        <td class="px-3 py-2">
+          {% if loop.index == 1 %}ðŸ¥‡{% elif loop.index == 2 %}ðŸ¥ˆ{% elif loop.index == 3 %}ðŸ¥‰{% else %}{{ loop.index }}{% endif %}
+        </td>
+        <td class="px-3 py-2">
+          <a href="{{ url_for('products.detail', product_id=row.id) }}" class="text-blue-600 hover:underline">
+            {{ row.name }}
+          </a>
+        </td>
+        <td class="px-3 py-2">{{ row.qol_score }}</td>
+        <td class="px-3 py-2">{{ row.upvotes }}</td>
+        <td class="px-3 py-2">{{ row.usage }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+</div>
+{% endblock %}
+
+
+

@@ -1,0 +1,158 @@
+﻿{# FILE: app/templates/public/landing.html #}
+{% extends "base.html" %}
+{% block title %}Welcome | Kushwell{% endblock %}
+
+{% block content %}
+
+{# ======================= 1) JOIN BANNER ======================= #}
+<section aria-label="Join our family"
+  style="
+    forced-color-adjust:none;
+    background:#0f271f;           /* dark green */
+    color:#e7f3ec;
+    padding:48px 18px 56px;
+    border-bottom:1px solid rgba(0,0,0,.25);
+  ">
+  <div style="max-width:1200px;margin:0 auto;">
+    <h1 style="
+      margin:0 0 14px;
+      font-weight:900;
+      letter-spacing:.4px;
+      font-size:clamp(1.6rem,3.4vw,2.1rem);
+      color:#f5d547;">
+      Join the Kushwell Family
+    </h1>
+
+    <p style="
+      margin:0 0 32px;
+      color:#d7ece3;
+      font-size:clamp(1rem,2.1vw,1.125rem);
+      max-width:72ch;">
+      A community for patients and partners — clarity, compassion, integrity.
+    </p>
+
+    <div style="
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:28px;
+      align-items:start;
+    ">
+      <!-- Patient side -->
+      <div style="min-width:0;">
+        <a href="{{ choose_url('auth.register') ~ '?role=patient' }}"
+           style="
+             display:block;text-decoration:none;background:#14532d;color:#ffffff;
+             border:1px solid #0e3c22;border-radius:14px;padding:20px 24px;
+             font-weight:800;font-size:1.1rem;text-align:center;">
+          Patient Registration
+        </a>
+        <a href="{{ choose_url('public.patient','public.start','public.landing') }}"
+           style="
+             display:inline-block;margin-top:12px;color:#f5d547;
+             text-decoration:underline;font-size:1rem;font-weight:800;">
+          Learn more
+        </a>
+      </div>
+
+      <!-- Enterprise side -->
+      <div style="min-width:0;">
+        <a href="{{ choose_url('auth.register') ~ '?role=enterprise' }}"
+           style="
+             display:block;text-decoration:none;background:#14532d;color:#ffffff;
+             border:1px solid #0e3c22;border-radius:14px;padding:20px 24px;
+             font-weight:800;font-size:1.1rem;text-align:center;">
+          Enterprise Registration
+        </a>
+        <a href="{{ choose_url('public.enterprise','public.start','public.landing') }}"
+           style="
+             display:inline-block;margin-top:12px;color:#f5d547;
+             text-decoration:underline;font-size:1rem;font-weight:800;">
+          Learn more
+        </a>
+      </div>
+    </div>
+
+    <!-- Mobile: stack columns -->
+    <style>
+      @media (max-width: 720px){
+        section[aria-label="Join our family"] .grid-mobile-2 {
+          grid-template-columns: 1fr !important;
+        }
+      }
+    </style>
+  </div>
+</section>
+
+{# ======================= 2) ABOUT BANNER (SMALLER) ======================= #}
+<section aria-label="About Kushwell"
+  style="
+    forced-color-adjust:none;
+    background:#0b1c14;              /* site base green */
+    color:#e7f3ec;
+    padding:24px 16px 30px;
+    border-bottom:1px solid rgba(0,0,0,.25);
+  ">
+  <div style="max-width:1200px;margin:0 auto;">
+    <h2 style="
+      margin:0 0 14px 0;
+      font-size:clamp(1.2rem,2.4vw,1.5rem);
+      font-weight:900;color:#f5d547;">
+      Learn About Us
+    </h2>
+
+    <div style="
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:16px;
+      align-items:stretch;
+    ">
+      <!-- Our Story -->
+      <div style="
+        text-align:center;background:#0f271f;border:1px solid #0c3227;
+        border-radius:12px;padding:18px;">
+        <div style="font-weight:900;margin-bottom:10px;font-size:1.05rem;">Our Story</div>
+        <a href="{{ choose_url('public.our_story','public.about','public.start','public.landing') }}"
+           style="
+             display:inline-block;text-decoration:none;background:#14532d;color:#fff;
+             border:1px solid #0e3c22;border-radius:10px;padding:11px 16px;
+             font-weight:800;font-size:1rem;">
+          Read More
+        </a>
+      </div>
+
+      <!-- How We Began -->
+      <div style="
+        text-align:center;background:#0f271f;border:1px solid #0c3227;
+        border-radius:12px;padding:18px;">
+        <div style="font-weight:900;margin-bottom:10px;font-size:1.05rem;">How We Began</div>
+        <a href="{{ choose_url('public.about','public.our_story','public.start','public.landing') }}"
+           style="
+             display:inline-block;text-decoration:none;background:#14532d;color:#fff;
+             border:1px solid #0e3c22;border-radius:10px;padding:11px 16px;
+             font-weight:800;font-size:1rem;">
+          Read More
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ======================= 3) VALUES STRIP ======================= #}
+<section aria-label="Values"
+  style="
+    forced-color-adjust:none;
+    background:#0b1c14;
+    color:#f5d547;
+    padding:14px 16px;
+    border-top:1px solid rgba(0,0,0,.25);
+  ">
+  <div style="
+    max-width:1200px;margin:0 auto;text-align:center;
+    font-weight:900;letter-spacing:.4px;font-size:1.05rem;">
+    Clarity • Compassion • Integrity
+  </div>
+</section>
+
+{% endblock %}
+
+

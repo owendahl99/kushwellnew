@@ -1,0 +1,642 @@
+[
+  {
+    "id": "fact001",
+    "name": "Kushwell Philosophy",
+    "text": "Did you know that Kushwell emphasizes education over promotion, providing unbiased cannabis guidance focused on patient empowerment?",
+    "source": "https://kushwell.com/philosophy",
+    "popup": true,
+    "category": "Kushwell"
+  },
+  {
+    "id": "fact002",
+    "name": "Strain Origins",
+    "text": "Did you know that nearly all modern cannabis strains trace back to two species — Cannabis sativa and Cannabis indica?",
+    "source": "https://www.leafly.com/learn/strains",
+    "popup": true,
+    "category": "Strains"
+  },
+  {
+    "id": "fact003",
+    "name": "Hybrid Balance",
+    "text": "Did you know hybrid strains are intentionally bred to combine the uplifting energy of sativas with the calming effects of indicas?",
+    "source": "https://www.leafly.com/news/cannabis-101/what-is-a-cannabis-hybrid",
+    "popup": true,
+    "category": "Strains"
+  },
+  {
+    "id": "fact004",
+    "name": "CBD Benefits",
+    "text": "Did you know CBD interacts with the body's endocannabinoid system without producing a 'high' and is studied for pain, anxiety, and sleep support?",
+    "source": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6678684/",
+    "popup": true,
+    "category": "CBD"
+  },
+  {
+    "id": "fact005",
+    "name": "Topical Relief",
+    "text": "Did you know cannabis-infused topicals can provide localized relief for pain or inflammation without entering the bloodstream?",
+    "source": "https://www.healthline.com/health/cbd-for-pain",
+    "popup": true,
+    "category": "Topicals"
+  },
+  {
+    "id": "fact006",
+    "name": "Terpene Interaction",
+    "text": "Did you know terpenes not only give cannabis its aroma but also interact synergistically with cannabinoids to affect mood and wellness?",
+    "source": "https://www.leafly.com/news/cannabis-101/terpenes-and-cannabis-effects",
+    "popup": true,
+    "category": "Terpenes"
+  },
+  {
+    "id": "fact007",
+    "name": "Strain Names",
+    "text": "Did you know cannabis strain names are often inspired by appearance, effects, lineage, or pop culture references?",
+    "source": "https://www.leafly.com/news/cannabis-101/whats-in-a-name-cannabis-strain-naming",
+    "popup": true,
+    "category": "Strains"
+  },
+  {
+    "id": "fact008",
+    "name": "Medical History",
+    "text": "Did you know cannabis has been used medicinally for thousands of years, with references in ancient Chinese and Egyptian texts?",
+    "source": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3165946/",
+    "popup": true,
+    "category": "History"
+  },
+  {
+    "id": "fact009",
+    "name": "THC Potency",
+    "text": "Did you know THC levels in modern cannabis have increased significantly over the last 40 years due to selective breeding?",
+    "source": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3998228/",
+    "popup": true,
+    "category": "Strains"
+  },
+  {
+    "id": "fact010",
+    "name": "CBD Research",
+    "text": "Did you know extensive research is exploring CBD for epilepsy treatment, with FDA-approved medications now available?",
+    "source": "https://www.fda.gov/news-events/press-announcements/fda-approves-first-drug-comprised-active-ingredient-derived-marijuana-treat-rare-seizures",
+    "popup": true,
+    "category": "CBD"
+  },
+  {
+    "id": "fact011",
+    "name": "Endocannabinoid System",
+    "text": "Did you know the human body produces endocannabinoids naturally, which help regulate mood, pain, appetite, and sleep?",
+    "source": "https://www.ncbi.nlm.nih.gov/books/NBK507809/",
+    "popup": true,
+    "category": "Research"
+  },
+  {
+    "id": "fact012",
+    "name": "Topical Penetration",
+    "text": "Did you know certain cannabinoids are formulated to penetrate the skin effectively, reaching muscles and joints for relief?",
+    "source": "https://www.sciencedirect.com/science/article/pii/S2210803317300085",
+    "popup": true,
+    "category": "Topicals"
+  },
+  {
+    "id": "fact013",
+    "name": "Strain Preservation",
+    "text": "Did you know cannabis breeders preserve rare strains using cloning or seed banks to maintain genetic diversity?",
+    "source": "https://www.leafly.com/news/cannabis-101/cloning-and-preserving-cannabis-genetics",
+    "popup": true,
+    "category": "Strains"
+  },
+  {
+    "id": "fact014",
+    "name": "Entourage Effect",
+    "text": "Did you know the 'entourage effect' refers to cannabinoids and terpenes working together to enhance therapeutic effects?",
+    "source": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3165946/",
+    "popup": true,
+    "category": "Research"
+  },
+  {
+    "id": "fact015",
+    "name": "CBD for Anxiety",
+    "text": "Did you know studies suggest CBD may help reduce anxiety and improve stress management in humans?",
+    "source": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4604171/",
+    "popup": true,
+    "category": "CBD"
+  },
+  {
+    "id": "fact016",
+    "name": "Sativa Energy",
+    "text": "Did you know sativa strains are often chosen for their uplifting, energizing effects compared to indica strains?",
+    "source": "https://www.leafly.com/strains/sativa",
+    "popup": true,
+    "category": "Strains"
+  },
+  {
+    "id": "fact017",
+    "name": "Indica Calm",
+    "text": "Did you know indica strains are traditionally associated with calming, sedating effects and are often used in the evening?",
+    "source": "https://www.leafly.com/strains/indica",
+    "popup": true,
+    "category": "Strains"
+  },
+  {
+    "id": "fact018",
+    "name": "Topical CBD",
+    "text": "Did you know CBD topicals are being studied for arthritis and joint pain relief, providing targeted benefits?",
+    "source": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6678684/",
+    "popup": true,
+    "category": "Topicals"
+  },
+  {
+    "id": "fact019",
+    "name": "Strain Hybrids",
+    "text": "Did you know hybrid strains can be balanced, sativa-dominant, or indica-dominant to tailor effects?",
+    "source": "https://www.leafly.com/news/cannabis-101/what-is-a-cannabis-hybrid",
+    "popup": true,
+    "category": "Strains"
+  },
+  {
+    "id": "fact020",
+    "name": "Medical Applications",
+    "text": "Did you know cannabis is being researched for multiple medical applications, including chronic pain, MS, PTSD, and nausea?",
+    "source": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2503660/",
+    "popup": true,
+    "category": "Medical Use"
+  },
+  {
+    "id": "fact021",
+    "name": "CBD Sleep Aid",
+    "text": "Did you know CBD may improve sleep quality by addressing underlying issues such as anxiety or pain?",
+    "source": "https://www.sleepfoundation.org/cbd",
+    "popup": true,
+    "category": "CBD"
+  },
+  {
+    "id": "fact022",
+    "name": "Topical Anti-Inflammatory",
+    "text": "Did you know cannabis topicals are being studied for their potential anti-inflammatory properties for localized skin conditions?",
+    "source": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5922297/",
+    "popup": true,
+    "category": "Topicals"
+  },
+  {
+    "id": "fact023",
+    "name": "Ancient Use",
+    "text": "Did you know cannabis was used in ancient India for spiritual and medicinal purposes over 3,000 years ago?",
+    "source": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3165946/",
+    "popup": true,
+    "category": "History"
+  },
+  {
+    "id": "fact024",
+    "name": "CBD Anti-Seizure",
+    "text": "Did you know CBD has been proven effective in reducing seizures in children with Dravet Syndrome and Lennox-Gastaut Syndrome?",
+    "source": "https://www.fda.gov/news-events/press-announcements/fda-approves-first-drug-comprised-active-ingredient-derived-marijuana-treat-rare-seizures",
+    "popup": true,
+    "category": "CBD"
+  },
+  {
+    "id": "fact025",
+    "name": "Cannabis Chemistry",
+    "text": "Did you know the chemical composition of cannabis — including THC, CBD, and terpenes — can be adjusted through selective breeding and cultivation techniques?",
+    "source": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3165946/",
+    "popup": true,
+    "category": "Research"
+  },
+  {
+    "id": "fact026",
+    "name": "Topical Skin Health",
+    "text": "Did you know some cannabis topicals are formulated with additional botanicals for enhanced skin hydration and anti-aging effects?",
+    "source": "https://www.healthline.com/health/cbd-for-skin",
+    "popup": true,
+    "category": "Topicals"
+  },
+  {
+    "id": "fact027",
+    "name": "Strain Preservation",
+    "text": "Did you know cannabis breeders preserve rare strains using cloning or seed banks to maintain genetic diversity?",
+    "source": "https://www.leafly.com/news/cannabis-101/cloning-and-preserving-cannabis-genetics",
+    "popup": true,
+    "category": "Strains"
+  },
+  {
+    "id": "fact028",
+    "name": "Entourage Effect",
+    "text": "Did you know the 'entourage effect' refers to cannabinoids and terpenes working together to enhance therapeutic effects?",
+    "source": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3165946/",
+    "popup": true,
+    "category": "Research"
+  },
+  {
+    "id": "fact029",
+    "name": "CBD for Anxiety",
+    "text": "Did you know studies suggest CBD may help reduce anxiety and improve stress management in humans?",
+    "source": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4604171/",
+    "popup": true,
+    "category": "CBD"
+  },
+  {
+    "id": "fact030",
+    "name": "Sativa Energy",
+    "text": "Did you know sativa strains are often chosen for their uplifting, energizing effects compared to indica strains?",
+    "source": "https://www.leafly.com/strains/sativa",
+    "popup": true,
+    "category": "Strains"
+  },
+  {
+    "id": "fact031",
+    "name": "Indica Calm",
+    "text": "Did you know indica strains are traditionally associated with calming, sedating effects and are often used in the evening?",
+    "source": "https://www.leafly.com/strains/indica",
+    "popup": true,
+    "category": "Strains"
+  },
+  {
+    "id": "fact032",
+    "name": "Topical CBD",
+    "text": "Did you know CBD topicals are being studied for arthritis and joint pain relief, providing targeted benefits?",
+    "source": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6678684/",
+    "popup": true,
+    "category": "Topicals"
+  },
+  {
+    "id": "fact033",
+    "name": "Strain Hybrids",
+    "text": "Did you know hybrid strains can be balanced, sativa-dominant, or indica-dominant to tailor effects?",
+    "source": "https://www.leafly.com/news/cannabis-101/what-is-a-cannabis-hybrid",
+    "popup": true,
+    "category": "Strains"
+  },
+  {
+    "id": "fact034",
+    "name": "Medical Applications",
+    "text": "Did you know cannabis is being researched for multiple medical applications, including chronic pain, MS, PTSD, and nausea?",
+    "source": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2503660/",
+    "popup": true,
+    "category": "Medical Use"
+  },
+  {
+    "id": "fact035",
+    "name": "CBD Neuroprotection",
+    "text": "Did you know CBD is being investigated for potential neuroprotective effects in conditions like Parkinson's and Alzheimer's disease?",
+    "source": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7180010/",
+    "popup": true,
+    "category": "CBD"
+  },
+  {
+    "id": "fact036",
+    "name": "Topical Arthritis Relief",
+    "text": "Did you know cannabis-infused topicals may help reduce inflammation and pain in arthritis patients without psychoactive effects?",
+    "source": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6678684/",
+    "popup": true,
+    "category": "Topicals"
+  },
+  {
+    "id": "fact037",
+    "name": "Historical Strains",
+    "text": "Did you know that some modern strains trace their lineage to landrace strains from Afghanistan, Colombia, Thailand, and Mexico?",
+    "source": "https://www.leafly.com/news/cannabis-101/landrace-strains",
+    "popup": true,
+    "category": "History"
+  },
+  {
+    "id": "fact038",
+    "name": "CBD Skin Benefits",
+    "text": "Did you know CBD may help reduce acne and inflammation when applied topically due to its anti-inflammatory properties?",
+    "source": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5922297/",
+    "popup": true,
+    "category": "Topicals"
+  },
+  {
+    "id": "fact039",
+    "name": "THC Effects",
+    "text": "Did you know THC binds primarily to CB1 receptors in the brain, producing the characteristic psychoactive effects?",
+    "source": "https://www.ncbi.nlm.nih.gov/books/NBK425740/",
+    "popup": true,
+    "category": "Research"
+  },
+  {
+    "id": "fact040",
+    "name": "CBD and Pain",
+    "text": "Did you know studies suggest CBD may help manage chronic pain conditions by modulating inflammatory pathways?",
+    "source": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2503660/",
+    "popup": true,
+    "category": "CBD"
+  },
+  {
+    "id": "fact041",
+    "name": "CBD Heart Health",
+    "text": "Did you know CBD is being studied for its potential to support cardiovascular health by reducing blood pressure and oxidative stress?",
+    "source": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6678684/",
+    "popup": true,
+    "category": "CBD"
+  },
+  {
+    "id": "fact042",
+    "name": "Cannabis in Ancient China",
+    "text": "Did you know cannabis seeds were used in Ancient China for food and medicine as early as 2700 BCE?",
+    "source": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3165946/",
+    "popup": true,
+    "category": "History"
+  },
+  {
+    "id": "fact043",
+    "name": "Topical Pain Relief",
+    "text": "Did you know cannabis topicals can provide localized pain relief without causing psychoactive effects?",
+    "source": "https://www.healthline.com/health/cbd-for-pain",
+    "popup": true,
+    "category": "Topicals"
+  },
+  {
+    "id": "fact044",
+    "name": "CBD for Depression",
+    "text": "Did you know studies suggest CBD may have antidepressant-like effects by influencing serotonin receptors?",
+    "source": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4604171/",
+    "popup": true,
+    "category": "CBD"
+  },
+  {
+    "id": "fact045",
+    "name": "THC Anti-Nausea",
+    "text": "Did you know THC has been shown to reduce nausea and vomiting in chemotherapy patients?",
+    "source": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2503660/",
+    "popup": true,
+    "category": "Research"
+  },
+  {
+    "id": "fact046",
+    "name": "Strain Terpene Profiles",
+    "text": "Did you know the aroma and effect of a strain is influenced by its terpene profile, which can be altered by cultivation techniques?",
+    "source": "https://www.leafly.com/news/cannabis-101/terpenes-cannabis-aroma-effects",
+    "popup": true,
+    "category": "Strains"
+  },
+  {
+    "id": "fact047",
+    "name": "CBD Anti-Inflammatory",
+    "text": "Did you know CBD may reduce inflammation by interacting with the endocannabinoid system and immune cells?",
+    "source": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6678684/",
+    "popup": true,
+    "category": "CBD"
+  },
+  {
+    "id": "fact048",
+    "name": "Hybrid Effects",
+    "text": "Did you know hybrid strains are bred to combine the effects of indica and sativa for a balanced experience?",
+    "source": "https://www.leafly.com/news/cannabis-101/what-is-a-cannabis-hybrid",
+    "popup": true,
+    "category": "Strains"
+  },
+  {
+    "id": "fact049",
+    "name": "Cannabis for PTSD",
+    "text": "Did you know cannabis is being researched as a treatment option for PTSD due to its potential to reduce anxiety and improve sleep?",
+    "source": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2503660/",
+    "popup": true,
+    "category": "Medical Use"
+  },
+  {
+    "id": "fact050",
+    "name": "CBD for Skin Conditions",
+    "text": "Did you know CBD topicals may help with eczema and psoriasis due to their anti-inflammatory properties?",
+    "source": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5922297/",
+    "popup": true,
+    "category": "Topicals"
+  },
+  {
+    "id": "fact051",
+    "name": "THC Psychoactivity",
+    "text": "Did you know THC binds primarily to CB1 receptors in the brain, producing psychoactive effects such as euphoria and altered perception?",
+    "source": "https://www.ncbi.nlm.nih.gov/books/NBK425740/",
+    "popup": true,
+    "category": "Research"
+  },
+  {
+    "id": "fact052",
+    "name": "CBD and Epilepsy",
+    "text": "Did you know CBD is approved in the US for treatment of certain epilepsy syndromes due to its anticonvulsant effects?",
+    "source": "https://www.fda.gov/news-events/press-announcements/fda-approves-first-drug-comprised-active-ingredient-derived-marijuana-treat-rare-seizures",
+    "popup": true,
+    "category": "CBD"
+  },
+  {
+    "id": "fact053",
+    "name": "Cannabis Research Explosion",
+    "text": "Did you know scientific research on cannabis has exploded over the last decade, uncovering new medical and therapeutic uses?",
+    "source": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2503660/",
+    "popup": true,
+    "category": "Research"
+  },
+  {
+    "id": "fact054",
+    "name": "CBD and Anxiety Reduction",
+    "text": "Did you know CBD may reduce social anxiety and improve mood in clinical studies?",
+    "source": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4604171/",
+    "popup": true,
+    "category": "CBD"
+  },
+  {
+    "id": "fact055",
+    "name": "Cannabis in Medicine",
+    "text": "Did you know cannabis was used in Western medicine in the 19th century to treat pain, migraines, and seizures?",
+    "source": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3165946/",
+    "popup": true,
+    "category": "History"
+  },
+  {
+    "id": "fact056",
+    "name": "THC Appetite Stimulation",
+    "text": "Did you know THC is known to stimulate appetite, which can benefit patients with eating disorders or chemotherapy-related nausea?",
+    "source": "https://www.ncbi.nlm.nih.gov/books/NBK425740/",
+    "popup": true,
+    "category": "Research"
+  },
+  {
+    "id": "fact057",
+    "name": "Topical CBD Pain Study",
+    "text": "Did you know a 2019 study found CBD topicals significantly reduced pain and inflammation in animal models?",
+    "source": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6678684/",
+    "popup": true,
+    "category": "Topicals"
+  },
+  {
+    "id": "fact058",
+    "name": "Sativa Creativity",
+    "text": "Did you know sativa strains are often chosen for creative tasks due to their uplifting and energizing effects?",
+    "source": "https://www.leafly.com/strains/sativa",
+    "popup": true,
+    "category": "Strains"
+  },
+  {
+    "id": "fact059",
+    "name": "CBD Pain Relief",
+    "text": "Did you know CBD may modulate pain by interacting with neurotransmitters and reducing inflammation?",
+    "source": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2503660/",
+    "popup": true,
+    "category": "CBD"
+  },
+  {
+    "id": "fact060",
+    "name": "Cannabis Terpene Variety",
+    "text": "Did you know there are over 100 different terpenes in cannabis, each potentially influencing aroma, taste, and effect?",
+    "source": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3165946/",
+    "popup": true,
+    "category": "Research"
+  },
+  {
+    "id": "fact061",
+    "name": "CBD Neuroprotection",
+    "text": "Did you know CBD is being studied for its potential neuroprotective effects in conditions like Alzheimer's and Parkinson's?",
+    "source": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7023045/",
+    "popup": true,
+    "category": "CBD"
+  },
+  {
+    "id": "fact062",
+    "name": "Topicals for Arthritis",
+    "text": "Did you know cannabis-infused topicals are being explored to relieve arthritis pain and stiffness without psychoactive effects?",
+    "source": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2503660/",
+    "popup": true,
+    "category": "Topicals"
+  },
+  {
+    "id": "fact063",
+    "name": "Cannabis and Sleep",
+    "text": "Did you know certain cannabis strains may improve sleep quality by reducing anxiety and promoting relaxation?",
+    "source": "https://www.sleepfoundation.org/insomnia/cannabis-and-sleep",
+    "popup": true,
+    "category": "Medical Use"
+  },
+  {
+    "id": "fact064",
+    "name": "Historical Hash Use",
+    "text": "Did you know hashish has been used for centuries in the Middle East and Asia for both recreational and medicinal purposes?",
+    "source": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3165946/",
+    "popup": true,
+    "category": "History"
+  },
+  {
+    "id": "fact065",
+    "name": "CBD Skin Benefits",
+    "text": "Did you know CBD may help reduce acne and inflammation due to its sebostatic and anti-inflammatory properties?",
+    "source": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4151231/",
+    "popup": true,
+    "category": "Topicals"
+  },
+  {
+    "id": "fact066",
+    "name": "Terpene Myrcene",
+    "text": "Did you know the terpene myrcene may enhance the sedative effects of cannabis and is common in indica strains?",
+    "source": "https://www.leafly.com/news/cannabis-101/what-are-cannabis-terpenes",
+    "popup": true,
+    "category": "Strains"
+  },
+  {
+    "id": "fact067",
+    "name": "CBD Anti-Seizure",
+    "text": "Did you know CBD has been shown to reduce the frequency of seizures in patients with Dravet syndrome and Lennox-Gastaut syndrome?",
+    "source": "https://www.fda.gov/news-events/press-announcements/fda-approves-first-drug-comprised-active-ingredient-derived-marijuana-treat-rare-seizures",
+    "popup": true,
+    "category": "CBD"
+  },
+  {
+    "id": "fact068",
+    "name": "THC vs. CBD Psychoactivity",
+    "text": "Did you know THC is psychoactive, whereas CBD does not produce a high but can modulate THC's effects?",
+    "source": "https://www.ncbi.nlm.nih.gov/books/NBK425740/",
+    "popup": true,
+    "category": "Research"
+  },
+  {
+    "id": "fact069",
+    "name": "Cannabis for Anxiety",
+    "text": "Did you know certain strains of cannabis can reduce symptoms of anxiety, while others may increase it depending on THC content?",
+    "source": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4604171/",
+    "popup": true,
+    "category": "Medical Use"
+  },
+  {
+    "id": "fact070",
+    "name": "Hybrid Breeding",
+    "text": "Did you know hybrid strains are intentionally bred to combine sativa and indica traits for specific therapeutic or recreational effects?",
+    "source": "https://www.leafly.com/news/cannabis-101/what-is-a-cannabis-hybrid",
+    "popup": true,
+    "category": "Strains"
+  },
+  {
+    "id": "fact071",
+    "name": "CBD Anti-Anxiety Study",
+    "text": "Did you know a study found CBD significantly reduced anxiety in patients during a public speaking test?",
+    "source": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4604171/",
+    "popup": true,
+    "category": "CBD"
+  },
+  {
+    "id": "fact072",
+    "name": "Topical Absorption",
+    "text": "Did you know cannabis topicals are absorbed through the skin and act locally on CB2 receptors without entering the bloodstream significantly?",
+    "source": "https://www.healthline.com/health/cbd-for-pain",
+    "popup": true,
+    "category": "Topicals"
+  },
+  {
+    "id": "fact073",
+    "name": "Ancient Cannabis Rituals",
+    "text": "Did you know cannabis was used in religious and spiritual rituals in India over 2,000 years ago?",
+    "source": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3165946/",
+    "popup": true,
+    "category": "History"
+  },
+  {
+    "id": "fact074",
+    "name": "THC Pain Relief",
+    "text": "Did you know THC can help manage chronic pain by binding to CB1 receptors in the central nervous system?",
+    "source": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2503660/",
+    "popup": true,
+    "category": "Research"
+  },
+  {
+    "id": "fact075",
+    "name": "CBD for Addiction",
+    "text": "Did you know CBD is being studied as a potential treatment to reduce cravings and relapse in substance use disorders?",
+    "source": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4604171/",
+    "popup": true,
+    "category": "CBD"
+  },
+  {
+    "id": "fact076",
+    "name": "Sativa Uplift",
+    "text": "Did you know sativa strains are often chosen for daytime use because they can boost energy and focus?",
+    "source": "https://www.leafly.com/strains/sativa",
+    "popup": true,
+    "category": "Strains"
+  },
+  {
+    "id": "fact077",
+    "name": "Cannabis Research Growth",
+    "text": "Did you know peer-reviewed cannabis research publications have increased exponentially in the last decade?",
+    "source": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2503660/",
+    "popup": true,
+    "category": "Research"
+  },
+  {
+    "id": "fact078",
+    "name": "CBD Anti-Inflammatory Study",
+    "text": "Did you know CBD reduces inflammation in preclinical studies by affecting cytokine production and immune cell activity?",
+    "source": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6678684/",
+    "popup": true,
+    "category": "CBD"
+  },
+  {
+    "id": "fact079",
+    "name": "Cannabis and Creativity",
+    "text": "Did you know many artists and musicians have used cannabis to enhance creative thinking, although effects vary by strain and dose?",
+    "source": "https://www.leafly.com/news/cannabis-101/creative-effects-of-cannabis",
+    "popup": true,
+    "category": "Strains"
+  },
+  {
+    "id": "fact080",
+    "name": "CBD for Neuropathic Pain",
+    "text": "Did you know CBD is being researched for neuropathic pain relief, potentially offering an alternative to opioids?",
+    "source": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6678684/",
+    "popup": true,
+    "category": "CBD"
+  }
+]

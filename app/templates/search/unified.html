@@ -1,0 +1,96 @@
+﻿{# app/templates/search/unified.html #}
+{% extends "base.html" %}
+{% block title %}Search{% endblock %}
+
+{% block content %}
+<div class="kw-shell">
+
+  <form method="get" action="{{ url_for('search.unified') }}" class="kw-row kw-gap" style="margin-bottom:.75rem;">
+    <input class="kw-input" name="q" value="{{ q }}" placeholder="Search people, enterprises, groups">
+    <select class="kw-input" name="scope" aria-label="Scope">
+      <option value="all" {{ 'selected' if scope=='all' else '' }}>All</option>
+      <option value="people" {{ 'selected' if scope=='people' else '' }}>People</option>
+      <option value="enterprises" {{ 'selected' if scope=='enterprises' else '' }}>Enterprises</option>
+      <option value="groups" {{ 'selected' if scope=='groups' else '' }}>Support Groups</option>
+    </select>
+    <button class="kw-btn" type="submit">Search</button>
+  </form>
+
+  {# quick totals #}
+  {% set people_count = (results.people | length) if results.people is defined else 0 %}
+  {% set ent_count    = (results.enterprises | length) if results.enterprises is defined else 0 %}
+  {% set group_count  = (results.groups | length) if results.groups is defined else 0 %}
+  {% set total_count  = people_count + ent_count + group_count %}
+
+  <div class="kw-meta" style="margin-bottom:.5rem;">
+    Results{% if q %} for â€œ{{ q }}â€{% endif %}: <span class="kw-chip">{{ total_count }}</span>
+  </div>
+
+  {% if total_count == 0 %}
+    <section class="kw-card">
+      <h3 class="kw-card__title">No results</h3>
+      <p class="kw-meta">Try a different term or switch the scope.</p>
+    </section>
+  {% endif %}
+
+  <div class="kw-grid">
+    {# ---------- People ---------- #}
+    {% if people_count %}
+      <section class="kw-card" aria-labelledby="sec-people">
+        <h3 id="sec-people" class="kw-card__title">People <span class="kw-chip">{{ people_count }}</span></h3>
+        <ul class="kw-tight" style="list-style:none;margin:0;padding:0;">
+          {% for r in results.people %}
+            {% set primary = r.alias or r.name %}
+            {% set secondary = (r.name if r.alias and r.name and r.alias != r.name else '') %}
+            <li style="padding:.5rem 0;border-bottom:1px solid var(--kw-border);display:flex;justify-content:space-between;gap:.75rem;align-items:center;">
+              <div style="min-width:0;">
+                <div class="kw-ellipsis">{{ primary or 'Hidden' }}</div>
+                {% if secondary %}
+                  <div class="kw-meta kw-ellipsis">{{ secondary }}</div>
+                {% endif %}
+              </div>
+              <a class="kw-btn kw-btn--ghost" href="{{ r.profile_url or '#' }}" aria-label="Open profile">Open</a>
+            </li>
+          {% endfor %}
+        </ul>
+      </section>
+    {% endif %}
+
+    {# ---------- Enterprises ---------- #}
+    {% if ent_count %}
+      <section class="kw-card" aria-labelledby="sec-ent">
+        <h3 id="sec-ent" class="kw-card__title">Enterprises <span class="kw-chip">{{ ent_count }}</span></h3>
+        <ul class="kw-tight" style="list-style:none;margin:0;padding:0;">
+          {% for e in results.enterprises %}
+            <li style="padding:.5rem 0;border-bottom:1px solid var(--kw-border);display:flex;justify-content:space-between;gap:.75rem;align-items:center;">
+              <span class="kw-ellipsis">
+                {{ e.name }}
+                <span class="kw-chip">{{ e.kind }}</span>
+              </span>
+              <a class="kw-btn kw-btn--ghost" href="{{ enterprise_public_url(e) }}" aria-label="Open enterprise">Open</a>
+            </li>
+          {% endfor %}
+        </ul>
+      </section>
+    {% endif %}
+
+    {# ---------- Support Groups ---------- #}
+    {% if group_count %}
+      <section class="kw-card" aria-labelledby="sec-groups">
+        <h3 id="sec-groups" class="kw-card__title">Support Groups <span class="kw-chip">{{ group_count }}</span></h3>
+        <ul class="kw-tight" style="list-style:none;margin:0;padding:0;">
+          {% for g in results.groups %}
+            <li style="padding:.5rem 0;border-bottom:1px solid var(--kw-border);display:flex;justify-content:space-between;gap:.75rem;align-items:center;">
+              <span class="kw-ellipsis">{{ g.name }}</span>
+              {# Hook up to a group detail route later if/when you add one #}
+              <span class="kw-meta">{{ g.kind }}</span>
+            </li>
+          {% endfor %}
+        </ul>
+      </section>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+
+

@@ -1,0 +1,41 @@
+﻿{% extends "base.html" %}
+
+{% block title %}Report Behavior{% endblock %}
+
+{% from "_partials/forms.html" import open as form_open, close as form_close %}
+
+{% block content %}
+<h1 class="text-2xl font-semibold mb-4">Report Behavior</h1>
+<p class="text-sm text-gray-600 mb-4">Use this form to report problematic behavior or content. Reports remain confidential and help keep our community safe.</p>
+{{ form_open(url_for('enterprise.report_behavior')) }}
+  <div class="space-y-4">
+    <div>
+      <label class="block font-medium mb-1">Target Type</label>
+      <select name="target_type" class="border rounded px-2 py-1 w-full" required>
+        <option value="product">Product</option>
+        <option value="provider">Provider</option>
+        <option value="supplier">Supplier</option>
+        <option value="dispensary">Dispensary</option>
+      </select>
+    </div>
+    <div>
+      <label for="target_id" class="block font-medium mb-1">Target ID</label>
+      <input type="number" id="target_id" name="target_id" required class="border rounded px-2 py-1 w-full" />
+    </div>
+    <div>
+      <label for="reason" class="block font-medium mb-1">Reason</label>
+      <input type="text" id="reason" name="reason" required class="border rounded px-2 py-1 w-full" />
+    </div>
+    <div>
+      <label for="details" class="block font-medium mb-1">Details</label>
+      <textarea id="details" name="details" rows="3" class="border rounded p-2 w-full"></textarea>
+    </div>
+    <div class="flex justify-end">
+      <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">Submit Report</button>
+    </div>
+  </div>
+{{ form_close() }}
+{% endblock %}
+
+
+

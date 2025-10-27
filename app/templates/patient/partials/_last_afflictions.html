@@ -1,0 +1,16 @@
+﻿{# FILE: app/templates/patient/partials/_last_afflictions.html #}
+<div class="last-afflictions">
+  <h2>Recent Conditions</h2>
+
+  {% if last_afflictions %}
+  <ul class="afflictions-list">
+    {% for a in last_afflictions %}
+      <li>{{ a.name }} {% if a.level %}- {{ a.level }}{% endif %}</li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p>No recent conditions recorded.</p>
+  {% endif %}
+</div>
+
+

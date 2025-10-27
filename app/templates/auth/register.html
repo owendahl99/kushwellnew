@@ -1,0 +1,214 @@
+﻿<!-- FILE: app/templates/auth/register.html -->
+{% extends "base.html" %}
+{% block title %}Sign Up | Kushwell{% endblock %}
+{% block body_class %}kw-body theme-chalk{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+  <div class="auth-card">
+    <h1>Create Your Account</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul class="flash-messages">
+          {% for category, message in messages %}
+            <li class="flash-{{ category }}">{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    <form action="{{ url_for('auth.register') }}" method="POST" novalidate>
+      <!-- Email -->
+      <div class="form-field">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email"
+               value="{{ request.form.get('email', '') }}" required>
+      </div>
+
+      <!-- Password -->
+      <div class="form-field">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required>
+      </div>
+
+      <!-- Role -->
+      <div class="form-field">
+        <label for="role">Account Type</label>
+        {% if preset_role %}
+          <input type="hidden" name="role" value="{{ preset_role }}">
+          <div class="role-display">{{ preset_role|capitalize }}</div>
+        {% else %}
+          <select name="role" id="role" required>
+            <option value="">Select account type</option>
+            <option value="PATIENT" {% if request.form.get('role') == 'PATIENT' %}selected{% endif %}>PATIENT</option>
+            <option value="ENTERPRISE" {% if request.form.get('role') == 'ENTERPRISE' %}selected{% endif %}>ENTERPRISE</option>
+          </select>
+        {% endif %}
+      </div>
+
+      <!-- Patient-specific fields -->
+      <div id="patient-fields" {% if preset_role == 'ENTERPRISE' or request.form.get('role') == 'ENTERPRISE' %}style="display:none"{% endif %}>
+        <div class="form-field">
+          <label for="full_name">Full Name</label>
+          <input type="text" id="full_name" name="full_name"
+                 value="{{ request.form.get('full_name', '') }}">
+        </div>
+
+        <div class="form-field">
+          <label for="alias_name">Alias</label>
+          <input type="text" id="alias_name" name="alias_name"
+                 value="{{ request.form.get('alias_name', '') }}">
+        </div>
+
+        <div class="form-field">
+          <label for="birthdate">Birth Date</label>
+          <input type="date" id="birthdate" name="birthdate"
+                 value="{{ request.form.get('birthdate', '') }}">
+        </div>
+
+        <div class="form-field">
+          <label for="zip_code">ZIP Code</label>
+          <input type="text" id="zip_code" name="zip_code"
+                 value="{{ request.form.get('zip_code', '') }}">
+        </div>
+      </div>
+
+      <input type="hidden" name="next" value="{{ request.args.get('next', '') }}">
+
+      <button type="submit" class="btn-primary">Create Account</button>
+    </form>
+
+    <p class="auth-footer">
+      Already registered?
+      <a href="{{ url_for('auth.login') }}">Log in</a>
+    </p>
+  </div>
+</div>
+
+<script>
+  // Toggle patient fields dynamically
+  const roleSelect = document.getElementById('role');
+  const patientFields = document.getElementById('patient-fields');
+
+  if (roleSelect) {
+    roleSelect.addEventListener('change', () => {
+      patientFields.style.display = (roleSelect.value === 'PATIENT') ? 'block' : 'none';
+    });
+  }
+</script>
+
+<style>
+  /* Layout */
+  body {
+    background: linear-gradient(180deg, #f0f7f2 0%, #e8f3ea 100%);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    color: #133118;
+  }
+
+  .auth-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 15px;
+  }
+
+  .auth-card {
+    background: #ffffff;
+    padding: 2.5rem;
+    border-radius: 18px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+    width: 100%;
+    max-width: 460px;
+  }
+
+  h1 {
+    text-align: center;
+    font-size: 1.75rem;
+    color: #103f31;
+    margin-bottom: 1.5rem;
+  }
+
+  /* Form styling */
+  .form-field {
+    margin-bottom: 1.2rem;
+  }
+
+  label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #0f2d20;
+    margin-bottom: 6px;
+  }
+
+  input, select {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid #b8cbbd;
+    background: #f9fbf9;
+    font-size: 1rem;
+    transition: all 0.25s ease;
+    outline: none;
+  }
+
+  input:focus, select:focus {
+    border-color: #107123;
+    box-shadow: 0 0 0 3px rgba(16, 113, 35, 0.2);
+    background: #ffffff;
+  }
+
+  select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 140 140' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 50 L70 100 L120 50' stroke='%23107123' stroke-width='15' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 12px;
+  }
+
+  .btn-primary {
+    width: 100%;
+    padding: 12px;
+    background: #107123;
+    border: none;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 1rem;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.25s ease, transform 0.1s ease;
+  }
+
+  .btn-primary:hover {
+    background: #0b531a;
+    transform: translateY(-1px);
+  }
+
+  .auth-footer {
+    text-align: center;
+    margin-top: 1.2rem;
+    font-size: 0.9rem;
+  }
+
+  .auth-footer a {
+    color: #107123;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .auth-footer a:hover {
+    text-decoration: underline;
+  }
+
+  .flash-messages li {
+    margin-bottom: 0.5rem;
+    padding: 10px;
+    border-radius: 8px;
+  }
+
+  .flash-success { background: #e0f6e7; color: #104f22; }
+  .flash-danger { background: #fae0e0; color: #6b1010; }
+  .flash-warning { background: #fff7df; color: #745f00; }
+</style>
+{% endblock %}

@@ -1,0 +1,72 @@
+﻿<div class="kw-card kw-communications">
+  <div class="kw-card__head">
+    💌 Messaging
+    <button id="compose-btn" class="kw-btn kw-btn--sm kw-btn--primary">New</button>
+  </div>
+
+  <div class="kw-card__body">
+    <div id="compose-modal" class="kw-modal hidden">
+      <div class="kw-modal-content">
+        <h4>New Message</h4>
+        <textarea id="message-body" placeholder="Type your message..."></textarea>
+        <div class="kw-modal-actions">
+          <button id="cancel-msg" class="kw-btn kw-btn--secondary">Cancel</button>
+          <button id="send-msg" class="kw-btn kw-btn--primary">Send</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="messages-list" class="kw-list">
+      {% if messages %}
+        {% for msg in messages %}
+          <div class="kw-message">
+            <div class="kw-message-head">
+              <span>{{ msg.sender_name }}</span>
+              <span class="kw-time">{{ msg.sent_at.strftime('%b %d %H:%M') }}</span>
+            </div>
+            <div class="kw-message-body">{{ msg.body|truncate(120) }}</div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="kw-meta">No messages yet.</div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<style>
+.kw-communications {
+  background: linear-gradient(145deg,#0b6e4f,#0891b2);
+  color: #fff;
+}
+.kw-card__head {
+  display:flex; justify-content:space-between; align-items:center;
+  font-weight:600; font-size:1rem;
+}
+.kw-list { max-height:220px; overflow:auto; }
+.kw-message { padding:6px 8px; border-radius:8px; margin-bottom:6px; background:rgba(255,255,255,0.1); }
+.kw-message-head { font-size:0.9rem; display:flex; justify-content:space-between; }
+.kw-time { opacity:0.7; font-size:0.8rem; }
+.kw-modal.hidden { display:none; }
+.kw-modal { position:fixed; inset:0; background:rgba(0,0,0,0.6); display:flex; align-items:center; justify-content:center; z-index:100; }
+.kw-modal-content { background:#fff; color:#000; border-radius:10px; padding:16px; width:320px; }
+.kw-modal-content textarea { width:100%; height:100px; border-radius:6px; border:1px solid #ccc; padding:6px; }
+.kw-modal-actions { display:flex; justify-content:flex-end; gap:6px; margin-top:8px; }
+</style>
+
+<script>
+const compose=document.getElementById('compose-btn');
+const modal=document.getElementById('compose-modal');
+const cancel=document.getElementById('cancel-msg');
+const send=document.getElementById('send-msg');
+compose.onclick=()=>modal.classList.remove('hidden');
+cancel.onclick=()=>modal.classList.add('hidden');
+send.onclick=()=>{
+  const body=document.getElementById('message-body').value.trim();
+  if(!body){alert('Message cannot be empty');return;}
+  alert('Message sent: '+body);
+  modal.classList.add('hidden');
+  document.getElementById('message-body').value='';
+};
+</script>
+

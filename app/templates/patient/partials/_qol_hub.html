@@ -1,0 +1,95 @@
+﻿<!-- ================== QoL Hub (Production-Ready, Rows + Emojis + Dynamic Arrows) ================== -->
+<div class="qol-hub">
+
+  {% for metric in ['pain','mood','energy','clarity','appetite'] %}
+  <div class="qol-row" data-metric="{{ metric }}">
+    <!-- Left: Current slider + emojis -->
+    <div class="qol-column">
+      <div class="qol-index">Current {{ metric|capitalize }}: <span class="current-index">{{ latest_levels[metric] }}</span></div>
+      <div class="wellness-slider">
+        <input type="range" min="0" max="100" value="{{ latest_levels[metric] }}" class="slider current-slider">
+        <div class="slider-emojis">
+          {% if metric == 'pain' %}<span>ðŸ˜¢</span><span>ðŸ˜</span><span>ðŸ˜Š</span>{% endif %}
+          {% if metric == 'mood' %}<span>ðŸ˜ž</span><span>ðŸ˜</span><span>ðŸ˜</span>{% endif %}
+          {% if metric == 'energy' %}<span>ðŸ˜«</span><span>ðŸ˜</span><span>ðŸ’ª</span>{% endif %}
+          {% if metric == 'clarity' %}<span>ðŸ˜µ</span><span>ðŸ˜</span><span>ðŸ˜Ž</span>{% endif %}
+          {% if metric == 'appetite' %}<span>ðŸ˜¡</span><span>ðŸ˜</span><span>ðŸ˜‹</span>{% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Middle: Percentage change -->
+    <div class="qol-column middle">
+      <div class="percentage-box">0%</div>
+    </div>
+
+    <!-- Right: Prior value + dynamic arrow -->
+    <div class="qol-column">
+      <div class="qol-index">
+        Prior {{ metric|capitalize }}: <span class="prior-index">{{ last_levels[metric] }}</span> 
+        <span class="arrow">&#x25B2;</span>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+
+  <button class="submit-btn">Submit Check-In</button>
+</div>
+
+<style>
+.qol-hub { display:flex; flex-direction:column; gap:20px; padding:20px; }
+.qol-row { display:flex; align-items:center; gap:15px; }
+.qol-column { flex:1; text-align:center; }
+.qol-column.middle { flex:0 0 120px; font-weight:bold; font-size:1.2rem; }
+.percentage-box { padding:8px 12px; border:2px solid #aaa; border-radius:10px; background:#f9f9f9; font-weight:bold; font-size:1.1rem; }
+.wellness-slider { position:relative; margin-top:8px; }
+input.slider[type=range] { -webkit-appearance:none; width:100%; height:25px; border-radius:12px; background:#ddd; outline:none; }
+input.slider[type=range]::-webkit-slider-thumb { -webkit-appearance:none; appearance:none; width:36px; height:36px; border-radius:50%; background:#4caf50; cursor:pointer; box-shadow:0 2px 5px rgba(0,0,0,0.3); transition:background 0.3s; }
+input.slider[type=range]:active::-webkit-slider-thumb { background:#45a049; }
+.slider-emojis { display:flex; justify-content:space-between; margin-top:5px; font-size:1.5rem; }
+.arrow { font-size:1.5rem; margin-left:5px; }
+.submit-btn { width:180px; padding:12px; font-weight:bold; cursor:pointer; margin:10px auto 0; display:block; border-radius:8px; border:none; background:#4caf50; color:white; font-size:1rem; }
+.submit-btn:hover { background:#45a049; }
+</style>
+
+<script>
+document.querySelectorAll('.qol-row').forEach(row => {
+  const currentSlider = row.querySelector('.current-slider');
+  const priorIndexEl = row.querySelector('.prior-index');
+  const currentIndexEl = row.querySelector('.current-index');
+  const percentageBox = row.querySelector('.percentage-box');
+  const arrowEl = row.querySelector('.arrow');
+
+  function updateValues() {
+    const current = parseFloat(currentSlider.value);
+    const prior = parseFloat(priorIndexEl.textContent);
+
+    // Update current display
+    currentIndexEl.textContent = current;
+
+    // Calculate percentage change
+    const change = prior === 0 ? 0 : ((current - prior) / prior * 100).toFixed(1);
+    percentageBox.textContent = change + '%';
+    percentageBox.style.color = change >= 0 ? 'green' : 'red';
+
+    // Dynamic arrow based on slider vs prior
+    arrowEl.innerHTML = change >= 0 ? '&#x25B2;' : '&#x25BC;';
+    arrowEl.style.color = change >= 0 ? 'green' : 'red';
+  }
+
+  currentSlider.addEventListener('input', updateValues);
+  updateValues();
+});
+
+// Submit button updates the prior values
+document.querySelector('.submit-btn').addEventListener('click', () => {
+  document.querySelectorAll('.qol-row').forEach(row => {
+    const currentSlider = row.querySelector('.current-slider');
+    const priorIndexEl = row.querySelector('.prior-index');
+    priorIndexEl.textContent = currentSlider.value;
+  });
+  alert('Check-in submitted! Prior values updated.');
+});
+</script>
+
+

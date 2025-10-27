@@ -1,0 +1,31 @@
+﻿    {#
+  Form helper macros.
+
+  Use these macros to open and close forms in your templates. Each form
+  automatically includes a CSRF token when used in conjunction with
+  Flaskâ€‘WTF's CSRFProtect extension.  To use:
+
+      {% from "_partials/forms.html" import open as form_open, close as form_close %}
+      {{ form_open(url_for('some_endpoint')) }}
+        <!-- your inputs here -->
+      {{ form_close() }}
+
+  The ``classes`` parameter allows you to add custom CSS classes to the
+  ``<form>`` tag.  The ``method`` parameter defaults to ``post``.  See
+  planning.md for context.
+#}
+
+{% include "_card/_head.html" %}
+{# app/templates/_partials/forms.html #}
+{% macro open(action, method="post", classes="") -%}
+<form method="{{ method|lower }}" action="{{ action }}" class="{{ classes }}">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+{%- endmacro %}
+
+{% macro close() -%}
+</form>
+{%- endmacro %}
+
+
+
+

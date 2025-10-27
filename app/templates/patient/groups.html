@@ -1,0 +1,77 @@
+﻿{% extends "base.html" %}
+{% block title %}Support Groups{% endblock %}
+{% block content %}
+<style>
+  .g-wrap { max-width: 1040px; margin: 0 auto; }
+  .g-h1 { font-size: 1.9rem; font-weight: 900; margin: .5rem 0 1rem; }
+  .g-grid { display:grid; gap:14px; grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); }
+  .g-card { border:2px solid #111; border-radius:14px; padding:14px; background:#fafafa; display:flex; flex-direction:column; gap:.5rem; }
+  .g-card h2 { font-size:1.25rem; margin:0; font-weight:800; }
+  .g-meta { font-size:1.05rem; color:#111; opacity:.9; }
+  .tag { display:inline-block; border:2px solid #111; border-radius:10px; padding:.15rem .5rem; background:#fff; font-size:.95rem; }
+  .g-actions { display:flex; gap:.6rem; margin-top:.4rem; }
+  .btn { padding:.6rem 1rem; border-radius:.65rem; border:2px solid #111; background:#000; color:#fff; text-decoration:none; font-weight:800; }
+  .btn-ghost { background:#f7f7f7; color:#000; }
+  .btn[disabled]{ opacity:.6; cursor:not-allowed; }
+</style>
+
+<div class="g-wrap">
+  <h1 class="g-h1">Support Groups</h1>
+
+  {% if not groups %}
+    <div class="g-card"><p class="g-meta">No afflictions configured.</p></div>
+  {% else %}
+    <div class="g-grid">
+      {% for g in groups %}
+        {# ---- Robust field fallbacks (works for strings, dicts, orm objects) ---- #}
+        {% set name = g if g is string else (g.name or g.title or g.label or 'Group') %}
+        {% set desc = ('' if g is string else (g.description or g.summary)) or ('Support for ' ~ name) %}
+        {% set mcnt = (0 if g is string else (g.member_count or g.members_count or (g.members|length if g.members is defined else 0))) %}
+        {% set joined = (false if g is string else (g.joined if g.joined is defined else (g.is_member if g.is_member is defined else false))) %}
+
+        {# Derive a slug key from the name (no backslashes, safe quoting) #}
+        {% set key = name
+                      |lower
+                      |replace('â€™','')
+                      |replace("'", '')
+                      |replace('`','')
+                      |replace(' & ', ' and ')
+                      |replace('&','and')
+                      |replace('/','-')
+                      |replace('+','plus')
+                      |replace(' ', '-') %}
+
+        <article class="g-card" aria-label="Group: {{ name }}">
+          <h2>{{ name }}</h2>
+          <p class="g-meta">{{ desc }}</p>
+          <span class="tag">{{ mcnt }} member{{ '' if mcnt == 1 else 's' }}</span>
+
+          <div class="g-actions">
+            <a class="btn-ghost btn" href="{{ url_for('patient.group_detail', group_key=key) }}">View group</a>
+
+            <form method="POST" action="{{ url_for('patient.group_join') }}">
+              {% if csrf_token is defined %}<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">{% endif %}
+              <input type="hidden" name="group_key" value="{{ key }}">
+              <input type="hidden" name="next" value="{{ request.full_path }}">
+              <button class="btn" type="submit" {% if joined %}disabled{% endif %}>Join</button>
+            </form>
+
+            <form method="POST" action="{{ url_for('patient.group_leave') }}">
+              {% if csrf_token is defined %}<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">{% endif %}
+              <input type="hidden" name="group_key" value="{{ key }}">
+              <input type="hidden" name="next" value="{{ request.full_path }}">
+              <button class="btn-ghost btn" type="submit" {% if not joined %}disabled{% endif %}>Leave</button>
+            </form>
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <div class="g-actions" style="justify-content:flex-end; margin-top:1rem;">
+    <a class="btn-ghost btn" href="{{ url_for('patient.patient_dashboard') }}">Back to Dashboard</a>
+  </div>
+</div>
+{% endblock %}
+
+
